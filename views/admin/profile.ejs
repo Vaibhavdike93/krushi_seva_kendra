@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .profile-card {
+      max-width: 700px;
+      margin: auto;
+      border-radius: 10px;
+    }
+    .profile-heading {
+      font-weight: 600;
+    }
+    .form-label {
+      font-weight: 500;
+    }
+    .form-control {
+      border-radius: 8px;
+    }
+    .btn-primary {
+      border-radius: 30px;
+      padding: 8px 30px;
+    }
+    .btn-success {
+      border-radius: 30px;
+      padding: 8px 25px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container my-5">
+  <div class="card shadow p-4 profile-card bg-white">
+    
+    <div class="text-center mb-4">
+      <h3 class="profile-heading mb-1"><%= admin.name %></h3>
+      <span class="text-muted">Admin Panel User</span>
+    </div>
+
+    <div class="row mb-4 text-center text-md-start px-2">
+      <div class="col-md-4 mb-2"><strong>Name:</strong> <%= admin.name %></div>
+      <div class="col-md-4 mb-2"><strong>Email:</strong> <%= admin.email %></div>
+      <div class="col-md-4 mb-2"><strong>Phone:</strong><%= admin.phone %></div>
+    </div>
+<a href="/admin/" class="btn btn-outline-danger m-2">Cancel</a>
+    <div class="text-center">
+      <a class="btn btn-primary" data-bs-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="editForm">
+        Edit Profile
+      </a>
+    </div>
+
+    <!-- Collapsible Edit Form -->
+    <div class="collapse mt-4" id="editForm">
+      <form action="/accounts/update-profile" method="POST">
+        <input type="hidden" name="admin_id" value="<%= admin.admin_id %>">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" value="<%= admin.name %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" value="<%= admin.email %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control" value="<%= admin.phone %>">
+          </div>
+        </div>
+        <div class="text-end mt-4">
+          <button type="submit" class="btn btn-success">Save Changes</button>
+        </div>
+      </form>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Bootstrap JS (needed for collapse) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

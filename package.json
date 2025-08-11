@@ -1,11 +1,17 @@
 {
+  "name": "water_purifier_api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "body-parser": "^2.2.0",
-    "ejs": "^3.1.10",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
-    "express-fileupload": "^1.5.2",
-    "express-session": "^1.18.2",
-    "mysql": "^2.18.1",
-    "util": "^0.12.5"
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2"
   }
 }
