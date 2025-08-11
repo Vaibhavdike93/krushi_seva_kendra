@@ -1,0 +1,210 @@
+ <!-- Footer -->
+        <footer class="footer mt-auto">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                        <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                            <i class="bi bi-droplet-fill text-primary me-2"></i>
+                            <span class="fw-bold">AquaPure Admin</span>
+                        </div>
+                        <div class="small text-muted">
+                            &copy; 2023 AquaPure. All rights reserved.
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center mb-3 mb-md-0">
+                        <div class="footer-links">
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Terms of Service</a>
+                            <a href="#">Help Center</a>
+                            <a href="#">Contact</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center text-md-end">
+                        <div class="social-icons">
+                            <a href="#"><i class="bi bi-facebook"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-linkedin"></i></a>
+                            <a href="#"><i class="bi bi-instagram"></i></a>
+                        </div>
+                        <div class="small text-muted mt-1">
+                            Version 1.2.5
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mobile Sidebar Toggle Button (Fixed at bottom) -->
+    <div class="position-fixed bottom-0 start-0 m-3 d-lg-none" style="z-index: 1030;">
+        <button class="btn btn-primary rounded-circle shadow" id="mobileSidebarToggle" style="width: 50px; height: 50px;">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Sidebar Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            // Function to check window width and set initial state
+            function checkWidth() {
+                if (window.innerWidth < 992) {
+                    sidebar.classList.remove('collapsed');
+                    sidebar.classList.remove('show');
+                    mainContent.classList.remove('expanded');
+                    sidebarOverlay.classList.remove('show');
+                } else {
+                    // Default to expanded sidebar on desktop
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                }
+            }
+            
+            // Set initial state
+            checkWidth();
+            
+            // Toggle sidebar on desktop button click
+            sidebarToggle.addEventListener('click', function() {
+                if (window.innerWidth >= 992) {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                } else {
+                    sidebar.classList.add('show');
+                    sidebarOverlay.classList.add('show');
+                }
+            });
+            
+            // Toggle sidebar on mobile button click
+            mobileSidebarToggle.addEventListener('click', function() {
+                sidebar.classList.add('show');
+                sidebarOverlay.classList.add('show');
+            });
+            
+            // Close sidebar on X button click
+            sidebarClose.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+            });
+            
+            // Close sidebar when clicking overlay
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', checkWidth);
+            
+            // Handle dropdown menus in collapsed sidebar
+            const dropdownItems = document.querySelectorAll('.nav-item');
+            dropdownItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    if (sidebar.classList.contains('collapsed') && window.innerWidth >= 992) {
+                        const submenu = this.querySelector('.submenu');
+                        if (submenu) {
+                            submenu.classList.add('show');
+                        }
+                    }
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    if (sidebar.classList.contains('collapsed') && window.innerWidth >= 992) {
+                        const submenu = this.querySelector('.submenu');
+                        if (submenu) {
+                            submenu.classList.remove('show');
+                        }
+                    }
+                });
+            });
+            
+            // Initialize Chart
+            const ctx = document.getElementById('waterQualityChart').getContext('2d');
+            const waterQualityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'TDS Level',
+                            data: [120, 135, 125, 130, 110, 105, 115],
+                            borderColor: '#0891B2',
+                            backgroundColor: 'rgba(8, 145, 178, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'pH Level',
+                            data: [7.2, 7.1, 7.3, 7.4, 7.2, 7.0, 7.1],
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Chlorine',
+                            data: [0.5, 0.6, 0.4, 0.5, 0.7, 0.6, 0.5],
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+            
+            // Handle Bootstrap dropdowns in mobile view
+            if (window.innerWidth < 768) {
+                const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+                dropdownMenus.forEach(menu => {
+                    menu.classList.add('dropdown-menu-end');
+                });
+            }
+            
+            // Remove blue highlight on click for mobile devices
+            document.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                    e.target.blur();
+                }
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9640aa586546ff6e',t:'MTc1MzMzMTI1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+<!-- !-- Before </body> -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Buttons -->
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+<!-- fontawesome -->
+ <script src="https://kit.fontawesome.com/fdac57032b.js" crossorigin="anonymous"></script>
+</html>
