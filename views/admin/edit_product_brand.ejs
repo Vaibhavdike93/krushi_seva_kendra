@@ -1,0 +1,42 @@
+<%- include("navbar") %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0">Edit Product Brand</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/edit_brand/<%= brand[0].id %>" method="POST" enctype="multipart/form-data">
+                        
+                        <!-- Brand Name -->
+                        <div class="mb-3">
+                            <label for="brandName" class="form-label">Brand Name</label>
+                            <input type="text" class="form-control" id="brandName" name="brandName" value="<%= brand[0].brand_name %>" required>
+                        </div>
+
+                        <!-- Current Image -->
+                        <div class="mb-3">
+                            <label class="form-label">Current Image</label><br>
+                            <img src="/brands/<%= brand[0].barnd_img %>" alt="<%= brand[0].brand_name %>" class="img-thumbnail" style="width:100px;">
+                        </div>
+
+                        <!-- Change Image -->
+                        <div class="mb-3">
+                            <label for="brandImage" class="form-label">Change Image (optional)</label>
+                            <input type="file" class="form-control" id="brandImage" name="brandImage" accept="image/*">
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-success w-100">Update Brand</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<%- include("footer") %>

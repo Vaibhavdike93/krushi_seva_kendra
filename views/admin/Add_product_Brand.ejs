@@ -1,0 +1,75 @@
+<%- include("navbar") %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Add Product Brand</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/add_brand" method="POST" enctype="multipart/form-data">
+                        <!-- Brand Name -->
+                        <div class="mb-3">
+                            <label for="brandName" class="form-label">Brand Name</label>
+                            <input type="text" class="form-control" id="brandName" name="brandName" placeholder="Enter brand name" required>
+                        </div>
+
+                        <!-- Brand Image -->
+                        <div class="mb-3">
+                            <label for="brandImage" class="form-label">Brand Image</label>
+                            <input type="file" class="form-control" id="brandImage" name="brandImage" accept="image/*" required>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-success w-100">Save Brand</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Brand List Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Product Brand List</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Brand Name</th>
+                        <th>Brand Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (brands.length > 0) { %>
+                        <% brands.forEach(function(brand, index) { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= brand.brand_name %></td>
+                                <td>
+                                    <img src="/brands/<%= brand.barnd_img %>" alt="<%= brand.brand_name %>" class="img-thumbnail" style="width:80px; height:auto;">
+                                </td>
+                                <td>
+                                    <a href="/admin/edit_brand/<%= brand.id %>" class="btn btn-warning btn-sm me-1">Update</a>
+                                    <a href="/admin/delete_brand/<%= brand.id %>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this brand?')">Delete</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" class="text-muted">No brands found</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<%- include("footer") %>
