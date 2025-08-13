@@ -1,0 +1,72 @@
+<%- include("navbar") %>
+
+<div class="container my-4">
+    <div class="card shadow border-0">
+        <!-- Header -->
+        <div class="card-header text-white" style="
+            background: linear-gradient(135deg, #007BFF, #00CFC8);
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        ">
+            <i class="fas fa-folder-plus"></i> Add Category
+        </div>
+
+        <!-- Form -->
+        <div class="card-body">
+            <form action="/admin/add_category" method="POST" enctype="multipart/form-data">
+                
+                <!-- Category Name EN -->
+                <div class="mb-3">
+                    <label for="categoryNameEn" class="form-label fw-semibold">Category Name (English)</label>
+                    <input type="text" class="form-control" id="categoryNameEn" name="categoryNameEn" placeholder="Enter category name in English" required>
+                </div>
+
+                <!-- Category Name HI -->
+                <div class="mb-3">
+                    <label for="categoryNameHi" class="form-label fw-semibold">Category Name (Hindi)</label>
+                    <input type="text" class="form-control" id="categoryNameHi" name="categoryNameHi" placeholder="श्रेणी का नाम दर्ज करें" required>
+                </div>
+
+                <!-- Category Name MR -->
+                <div class="mb-3">
+                    <label for="categoryNameMr" class="form-label fw-semibold">Category Name (Marathi)</label>
+                    <input type="text" class="form-control" id="categoryNameMr" name="categoryNameMr" placeholder="श्रेणीचे नाव टाका" required>
+                </div>
+
+                <!-- Category Image -->
+                <div class="mb-3">
+                    <label for="categoryImage" class="form-label fw-semibold">Category Image</label>
+                    <input class="form-control" type="file" id="categoryImage" name="categoryImage" accept="image/*" required onchange="previewImage(event)">
+                </div>
+
+                <!-- Image Preview -->
+                <div class="mb-3">
+                    <img id="preview" src="https://via.placeholder.com/150" alt="Preview" class="img-thumbnail shadow-sm" style="width:150px; display:none;">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-success px-4 shadow-sm">
+                    <i class="fas fa-save"></i> Save Category
+                </button>
+                <a href="/admin/category_list" class="btn btn-secondary px-4 shadow-sm">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Image Preview Script -->
+<script>
+function previewImage(event) {
+    const preview = document.getElementById('preview');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+    preview.style.display = 'block';
+}
+</script>
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<%- include("footer") %>

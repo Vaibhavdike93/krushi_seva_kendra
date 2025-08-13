@@ -1,0 +1,157 @@
+<%- include("navbar") %>
+
+<div class="container py-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4><i class="fas fa-box-open"></i> Edit Product</h4>
+    </div>
+    <div class="card-body">
+      <form action="/admin/product_update/<%= product.product_id %>" method="POST" enctype="multipart/form-data">
+
+        <!-- Row 1: Product Name & Category -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Product Name</label>
+            <input type="text" name="product_name_<%= lang %>" class="form-control"
+                   value="<%= product['product_name_' + lang] %>" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Category</label>
+            <select name="category_id" class="form-select" required>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat.category_id %>" <%= product.category_id === cat.category_id ? "selected" : "" %>>
+                  <%= cat['category_name_' + lang] %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Brand & Season -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Brand</label>
+            <select name="brand_id" class="form-select" required>
+              <% brands.forEach(b => { %>
+                <option value="<%= b.brand_id %>" <%= product.brand_id === b.brand_id ? "selected" : "" %>>
+                  <%= b['brand_name_' + lang] %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Season</label>
+            <select name="season" class="form-select">
+              <option value="summer" <%= product.season === "summer" ? "selected" : "" %>>Summer</option>
+              <option value="rainy" <%= product.season === "rainy" ? "selected" : "" %>>Rainy</option>
+              <option value="winter" <%= product.season === "winter" ? "selected" : "" %>>Winter</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 3: Discount & Crops (crops will be full width below since multiple checkboxes) -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Discount (%)</label>
+            <input type="number" name="discount" class="form-control" value="<%= product.discount || 0 %>"
+                   min="0" max="100" step="0.01" placeholder="Enter discount percentage">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Suitable Crops</label><br>
+            <% cropsList.forEach(crop => { %>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="crops[]" value="<%= crop.crop_id %>"
+                       <%= selectedCrops.includes(String(crop.crop_id)) ? "checked" : "" %>>
+                <label class="form-check-label"><%= crop['crop_name_' + lang] %></label>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <!-- Row 4: Description & Dosage -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea name="description_<%= lang %>" class="form-control" rows="4"><%= product['description_' + lang] %></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Dosage</label>
+            <textarea name="dosage_<%= lang %>" class="form-control" rows="4"><%= product['dosage_' + lang] %></textarea>
+          </div>
+        </div>
+
+        <!-- Row 5: Features & Product Image -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Features</label>
+            <textarea name="features_<%= lang %>" class="form-control" rows="4"><%= product['features_' + lang] %></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Product Image</label>
+            <input type="file" name="product_image" class="form-control" accept="image/*" onchange="previewProductImage(event)">
+            <div class="mt-3">
+              <img id="productPreview" src="<%= product.product_image ? '/uploads/' + product.product_image : 'https://via.placeholder.com/200' %>"
+                   class="img-thumbnail" style="max-width:200px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Variants (full width) -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Weight & Price Variants</label>
+          <div id="variantsContainer">
+            <% variants.forEach(v => { %>
+              <div class="row g-2 mb-2 variant-row">
+                <div class="col-md-5">
+                  <input type="text" name="weight"... class="form-control" value="<%= v.weight %>" placeholder="Weight">
+                </div>
+                <div class="col-md-5">
+                  <input type="number" name="variant_price"... class="form-control" value="<%= v.price %>" placeholder="Price">
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow(this)">Remove</button>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="addVariantRow()">Add Variant</button>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Update Product</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function changeLanguage(lang) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.location.href = url.toString();
+  }
+  function previewProductImage(event) {
+    document.getElementById('productPreview').src = URL.createObjectURL(event.target.files[0]);
+  }
+  function addVariantRow() {
+    const container = document.getElementById('variantsContainer');
+    const div = document.createElement('div');
+    div.className = 'row g-2 mb-2 variant-row';
+    div.innerHTML = `
+      <div class="col-md-5">
+        <input type="text" name="weight"... class="form-control" placeholder="Weight">
+      </div>
+      <div class="col-md-5">
+        <input type="number" name="variant_price"... class="form-control" placeholder="Price">
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow(this)">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+  }
+  function removeVariantRow(btn) {
+    btn.closest('.variant-row').remove();
+  }
+</script>
+
+<%- include("footer") %>
