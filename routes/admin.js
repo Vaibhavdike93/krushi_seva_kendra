@@ -59,6 +59,7 @@ router.get("/delete_brand/:id",async function(req,res){
    res.redirect("/admin/Add_product_Brand")
 });
 
+<<<<<<< Updated upstream
 router.get("/add_category",function(req,res){
   res.render("admin/add_category.ejs")
 });
@@ -563,6 +564,10 @@ router.get("/company_info",async function(req,res){
   var sql = `SELECT * FROM company_info`;
   var records = await exe(sql);
   res.render("admin/company_info.ejs",{records})
+=======
+router.get("/soil_testing_report",function(req,res){
+  res.render("admin/soil_testing.ejs")
+>>>>>>> Stashed changes
 })
 
 
