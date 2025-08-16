@@ -9,18 +9,18 @@
                     <h4 class="mb-0">Edit Product Brand</h4>
                 </div>
                 <div class="card-body">
-                    <form action="/admin/edit_brand/<%= brand[0].id %>" method="POST" enctype="multipart/form-data">
+                    <form action="/admin/edit_brand/<%= brand[0].brand_id %>" method="POST" enctype="multipart/form-data">
                         
                         <!-- Brand Name -->
                         <div class="mb-3">
                             <label for="brandName" class="form-label">Brand Name</label>
-                            <input type="text" class="form-control" id="brandName" name="brandName" value="<%= brand[0].brand_name %>" required>
+                            <input type="text" class="form-control" id="brandName" name="brandName" value="<%= brand[0].brandName %>" required>
                         </div>
 
                         <!-- Current Image -->
                         <div class="mb-3">
                             <label class="form-label">Current Image</label><br>
-                            <img src="/brands/<%= brand[0].barnd_img %>" alt="<%= brand[0].brand_name %>" class="img-thumbnail" style="width:100px;">
+                            <img src="/uploads/<%= brand[0].brandImage %>" alt="<%= brand[0].brandName %>" class="img-thumbnail" style="width:100px;">
                         </div>
 
                         <!-- Change Image -->

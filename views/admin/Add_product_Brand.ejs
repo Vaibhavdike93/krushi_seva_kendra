@@ -10,66 +10,55 @@
                 </div>
                 <div class="card-body">
                     <form action="/admin/add_brand" method="POST" enctype="multipart/form-data">
-                        <!-- Brand Name -->
+                        
+                        <!-- Brand Name EN -->
                         <div class="mb-3">
-                            <label for="brandName" class="form-label">Brand Name</label>
-                            <input type="text" class="form-control" id="brandName" name="brandName" placeholder="Enter brand name" required>
+                            <label for="brandNameEn" class="form-label fw-semibold">Brand Name (English)</label>
+                            <input type="text" class="form-control" id="brandNameEn" name="brandNameEn" placeholder="Enter brand name in English" required>
+                        </div>
+
+                        <!-- Brand Name HI -->
+                        <div class="mb-3">
+                            <label for="brandNameHi" class="form-label fw-semibold">Brand Name (Hindi)</label>
+                            <input type="text" class="form-control" id="brandNameHi" name="brandNameHi" placeholder="ब्रांड का नाम दर्ज करें" required>
+                        </div>
+
+                        <!-- Brand Name MR -->
+                        <div class="mb-3">
+                            <label for="brandNameMr" class="form-label fw-semibold">Brand Name (Marathi)</label>
+                            <input type="text" class="form-control" id="brandNameMr" name="brandNameMr" placeholder="ब्रँडचे नाव टाका" required>
                         </div>
 
                         <!-- Brand Image -->
                         <div class="mb-3">
-                            <label for="brandImage" class="form-label">Brand Image</label>
-                            <input type="file" class="form-control" id="brandImage" name="brandImage" accept="image/*" required>
+                            <label for="brandImage" class="form-label fw-semibold">Brand Image</label>
+                            <input type="file" class="form-control" id="brandImage" name="brandImage" accept="image/*" required onchange="previewBrandImage(event)">
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div class="mb-3">
+                            <img id="brandPreview" src="https://via.placeholder.com/150" alt="Preview" class="img-thumbnail shadow-sm" style="width:150px; display:none;">
                         </div>
 
                         <!-- Submit -->
-                        <button type="submit" class="btn btn-success w-100">Save Brand</button>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-save"></i> Save Brand
+                        </button>
                     </form>
                 </div>
             </div>
 
         </div>
     </div>
-
-    <!-- Brand List Table -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
-            <h4 class="mb-0">Product Brand List</h4>
-        </div>
-        <div class="card-body table-responsive">
-            <table class="table table-bordered table-hover align-middle text-center">
-                <thead class="table-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Brand Name</th>
-                        <th>Brand Image</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (brands.length > 0) { %>
-                        <% brands.forEach(function(brand, index) { %>
-                            <tr>
-                                <td><%= index + 1 %></td>
-                                <td><%= brand.brand_name %></td>
-                                <td>
-                                    <img src="/brands/<%= brand.barnd_img %>" alt="<%= brand.brand_name %>" class="img-thumbnail" style="width:80px; height:auto;">
-                                </td>
-                                <td>
-                                    <a href="/admin/edit_brand/<%= brand.id %>" class="btn btn-warning btn-sm me-1">Update</a>
-                                    <a href="/admin/delete_brand/<%= brand.id %>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this brand?')">Delete</a>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="4" class="text-muted">No brands found</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
+
+<!-- Preview Script -->
+<script>
+function previewBrandImage(event) {
+    const preview = document.getElementById('brandPreview');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+    preview.style.display = 'block';
+}
+</script>
 
 <%- include("footer") %>
