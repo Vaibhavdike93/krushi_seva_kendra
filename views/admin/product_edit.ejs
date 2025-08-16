@@ -50,23 +50,35 @@
         </div>
 
         <!-- Row 3: Discount & Crops (crops will be full width below since multiple checkboxes) -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Discount (%)</label>
-            <input type="number" name="discount" class="form-control" value="<%= product.discount || 0 %>"
-                   min="0" max="100" step="0.01" placeholder="Enter discount percentage">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Suitable Crops</label><br>
-            <% cropsList.forEach(crop => { %>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="crops[]" value="<%= crop.crop_id %>"
-                       <%= selectedCrops.includes(String(crop.crop_id)) ? "checked" : "" %>>
-                <label class="form-check-label"><%= crop['crop_name_' + lang] %></label>
-              </div>
-            <% }) %>
-          </div>
-        </div>
+        <!-- Row 3: Discount, Stock Qty & Crops -->
+<div class="row mb-3">
+  <div class="col-md-4">
+    <label class="form-label fw-semibold">Discount (%)</label>
+    <input type="number" name="discount" class="form-control" 
+           value="<%= product.discount || 0 %>"
+           min="0" max="100" step="0.01" placeholder="Enter discount percentage">
+  </div>
+
+  <!-- Stock Quantity -->
+  <div class="col-md-4">
+    <label class="form-label fw-semibold">Stock Quantity</label>
+    <input type="number" name="stock_qty" class="form-control" 
+           value="<%= product.stock_qty || 0 %>"
+           min="0" step="1" placeholder="Enter stock quantity" required>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label fw-semibold">Suitable Crops</label><br>
+    <% cropsList.forEach(crop => { %>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="crops[]" value="<%= crop.crop_id %>"
+               <%= selectedCrops.includes(String(crop.crop_id)) ? "checked" : "" %>>
+        <label class="form-check-label"><%= crop['crop_name_' + lang] %></label>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
 
         <!-- Row 4: Description & Dosage -->
         <div class="row mb-3">

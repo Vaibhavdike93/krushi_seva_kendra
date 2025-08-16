@@ -3,6 +3,7 @@ var router = express.Router();
 var exe = require('./conn');
 var CheckLogin = require("./CheckLogin");
 const { route } = require('./admin');
+var translations = require('../translation');
 
 router.get('/', function(req, res) {
   res.render('admin/index.ejs');
@@ -245,27 +246,29 @@ router.post("/add_product", async function(req, res) {
     const featuresCol = `features_${lang}`;
 
     const insertProductSql = `
-      INSERT INTO products (
-        category_id,
-        brand_id,
-        discount,
-        season,
-        crops,
-        product_image,
-        created_at,
-        updated_at,
-        language,
-        ${productNameCol},
-        ${descriptionCol},
-        ${dosageCol},
-        ${featuresCol}
-      ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?, ?, ?)
-    `;
+  INSERT INTO products (
+    category_id,
+    brand_id,
+    discount,
+    stock_qty,
+    season,
+    crops,
+    product_image,
+    created_at,
+    updated_at,
+    language,
+    ${productNameCol},
+    ${descriptionCol},
+    ${dosageCol},
+    ${featuresCol}
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?, ?, ?)
+`;
 
-   const productValues = [
+const productValues = [
   d.category_id,
   d.brand_id,
   d.discount || 0,
+  d.stock_qty || 0, 
   d.season,
   crops,
   filename,
@@ -313,47 +316,46 @@ router.post("/add_product", async function(req, res) {
 
 router.get("/product_list", async (req, res) => {
   try {
-    const lang = req.query.lang || 'en'; 
+    const lang = req.query.lang || 'en';
 
-    const productNameCol = `product_name_${lang}`;
-    const catNameCol = `category_name_${lang}`;
-    const brandNameCol = `brand_name_${lang}`;
-    const cropNameCol = `crop_name_${lang}`;
+    let productNameCol, catNameCol, brandNameCol, cropNameCol;
+
+    if (lang === 'all') {
+      // सर्व language columns घेणार
+      productNameCol = "CONCAT_WS(' / ', product_name_en, product_name_mr, product_name_hi) AS product_name";
+      catNameCol = "CONCAT_WS(' / ', c.category_name_en, c.category_name_mr, c.category_name_hi) AS category_name";
+      brandNameCol = "CONCAT_WS(' / ', b.brand_name_en, b.brand_name_mr, b.brand_name_hi) AS brand_name";
+      cropNameCol = "CONCAT_WS(' / ', crop_name_en, crop_name_mr, crop_name_hi) AS crop_name";
+    } else {
+      // language-wise column
+      productNameCol = `p.product_name_${lang} AS product_name`;
+      catNameCol = `c.category_name_${lang} AS category_name`;
+      brandNameCol = `b.brand_name_${lang} AS brand_name`;
+      cropNameCol = `crop_name_${lang} AS crop_name`;
+    }
 
     const productsQuery = `
-      SELECT p.*,
-        p.${productNameCol} AS product_name,
-        c.${catNameCol} AS category_name,
-        b.${brandNameCol} AS brand_name
+      SELECT p.*, ${productNameCol}, ${catNameCol}, ${brandNameCol}
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.category_id
       LEFT JOIN brands b ON p.brand_id = b.brand_id
       ORDER BY p.product_id DESC
     `;
-
     const products = await exe(productsQuery);
 
     const productIds = products.map(p => p.product_id);
-    let variants = [];
+    let variantsByProduct = {};
     if (productIds.length > 0) {
-      const variantsQuery = `
-        SELECT * FROM product_variants WHERE product_id IN (?)
-      `;
-      variants = await exe(variantsQuery, [productIds]);
+      const variants = await exe(`SELECT * FROM product_variants WHERE product_id IN (?)`, [productIds]);
+      variants.forEach(v => {
+        if (!variantsByProduct[v.product_id]) variantsByProduct[v.product_id] = [];
+        variantsByProduct[v.product_id].push(v);
+      });
     }
 
-    const variantsByProduct = {};
-    variants.forEach(v => {
-      if (!variantsByProduct[v.product_id]) variantsByProduct[v.product_id] = [];
-      variantsByProduct[v.product_id].push(v);
-    });
-
-    const cropsData = await exe(`SELECT crop_id, ${cropNameCol} AS crop_name FROM crops`);
-
+    const cropsData = await exe(`SELECT crop_id, ${cropNameCol} FROM crops`);
     const cropMap = {};
-    cropsData.forEach(c => {
-      cropMap[c.crop_id] = c.crop_name;
-    });
+    cropsData.forEach(c => cropMap[c.crop_id] = c.crop_name);
 
     products.forEach(product => {
       if (product.crops) {
@@ -368,56 +370,58 @@ router.get("/product_list", async (req, res) => {
     res.render("admin/product_list", {
       products,
       variantsByProduct,
-      lang,
+      lang
     });
 
   } catch (err) {
-    console.error("Error fetching product list:", err);
+    console.error(err);
     res.status(500).send("Internal Server Error");
   }
 });
+
+
 router.get("/product_edit/:id", async (req, res) => {
   try {
     const productId = req.params.id;
 
-    // Product details
-    const [product] = await exe(
-      `SELECT 
-        product_id,
-        product_name_en,
-        product_name_hi,
-        product_name_mr,
-        description_en,
-        description_hi,
-        description_mr,
-        dosage_en,
-        dosage_hi,
-        dosage_mr,
-        features_en,
-        features_hi,
-        features_mr,
-        category_id,
-        brand_id,
-        price,
-        discount,
-        season,
-        crops,
-        product_image,
-        created_at,
-        updated_at,
-        language
-      FROM products
-      WHERE product_id = ?`,
-      [productId]
-    );
+  const [product] = await exe(
+  `SELECT 
+    product_id,
+    product_name_en,
+    product_name_hi,
+    product_name_mr,
+    description_en,
+    description_hi,
+    description_mr,
+    dosage_en,
+    dosage_hi,
+    dosage_mr,
+    features_en,
+    features_hi,
+    features_mr,
+    category_id,
+    brand_id,
+    price,
+    discount,
+    stock_qty,
+    season,
+    crops,
+    product_image,
+    created_at,
+    updated_at,
+    language
+  FROM products
+  WHERE product_id = ?`,
+  [productId]
+);
+
 
     if (!product) {
       return res.status(404).send("❌ Product not found");
     }
 
-    const lang = product.language || "en"; // DB मधला default language
+    const lang = product.language || "en"; 
 
-    // Selected crops
     const selectedCrops = product.crops
       ? product.crops.split(",").map(id => id.trim())
       : [];
@@ -475,35 +479,38 @@ router.post("/product_update/:id", async (req, res) => {
       await req.files.product_image.mv("public/uploads/" + filename);
     }
 
-    const sql = `
-      UPDATE products SET
-        product_name_${lang} = ?,
-        description_${lang} = ?,
-        dosage_${lang} = ?,
-        features_${lang} = ?,
-        category_id = ?,
-        brand_id = ?,
-        season = ?,
-        crops = ?,
-        discount = ?,               
-        product_image = ?,
-        updated_at = NOW()
-      WHERE product_id = ?
-    `;
+   const sql = `
+  UPDATE products SET
+    product_name_${lang} = ?,
+    description_${lang} = ?,
+    dosage_${lang} = ?,
+    features_${lang} = ?,
+    category_id = ?,
+    brand_id = ?,
+    season = ?,
+    crops = ?,
+    discount = ?,  
+    stock_qty = ?,             
+    product_image = ?,
+    updated_at = NOW()
+  WHERE product_id = ?
+`;
 
-    await exe(sql, [
-      d[`product_name_${lang}`],
-      d[`description_${lang}`],
-      d[`dosage_${lang}`],
-      d[`features_${lang}`],
-      d.category_id,
-      d.brand_id,
-      d.season,
-     Array.isArray(d['crops[]']) ? d['crops[]'].join(",") : (d['crops[]'] || ""),
-      d.discount || 0,          
-      filename,
-      productId
-    ]);
+await exe(sql, [
+  d[`product_name_${lang}`],
+  d[`description_${lang}`],
+  d[`dosage_${lang}`],
+  d[`features_${lang}`],
+  d.category_id,
+  d.brand_id,
+  d.season,
+  Array.isArray(d['crops[]']) ? d['crops[]'].join(",") : (d['crops[]'] || ""),
+  d.discount || 0,
+  d.stock_qty || 0,     
+  filename,
+  productId
+]);
+
 
  const weights = d.weight || [];
 const prices = d.variant_price || [];
@@ -525,7 +532,6 @@ for (let i = 0; i < weightArray.length; i++) {
   const price = parseFloat(priceArray[i]);
 
   if (!weight || isNaN(price)) {
-    // skip invalid variant instead of throwing
     console.warn(`Skipping invalid variant at index ${i}: weight=${weight}, price=${priceArray[i]}`);
     continue;
   }
@@ -558,6 +564,115 @@ router.get("/product_delete/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+
+router.get('/recomendation', async (req, res) => {
+  res.render('admin/recomendation', { translations });
+});
+
+router.post('/recommendations/add', async (req, res) => {
+  try {
+    const d = req.body;
+    let filename = '';
+
+    if (req.files && req.files.image) {
+      filename = Date.now() + '_' + req.files.image.name;
+      await req.files.image.mv('public/uploads/' + filename);
+    }
+
+    await exe(`
+      INSERT INTO recommendations 
+      (name, type, crop_name, season, soil_type, stage, product_usage, language, image) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [d.name, d.type, d.crop_name, d.season, d.soil_type, d.stage, d.product_usage, d.language, filename]
+    );
+
+    res.redirect('/admin/recomendation');
+  } catch (err) {
+    console.error("Error adding recommendation:", err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.get('/recomendation_list', async (req, res) => {
+  try {
+    const langFilter = req.query.language || ''; 
+    let sql = 'SELECT * FROM recommendations';
+    const params = [];
+
+    if (langFilter) {
+      sql += ' WHERE language = ?';
+      params.push(langFilter);
+    }
+
+    sql += ' ORDER BY rec_id DESC';
+
+    const recommendations = await exe(sql, params);
+    res.render('admin/recomendation_list', { recommendations, selectedLang: langFilter });
+  } catch (err) {
+    console.error("Error fetching recommendations:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// GET Edit form
+router.get('/recommendations_edit/:id', async (req, res) => {
+  try {
+    const recId = req.params.id;
+    const recommendations = await exe('SELECT * FROM recommendations WHERE rec_id = ?', [recId]);
+    if (recommendations.length === 0) {
+      return res.status(404).send('Recommendation not found');
+    }
+    const recommendation = recommendations[0];
+    res.render('admin/recommendations_edit', { recommendation, translations });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// POST Update
+router.post('/recommendations_edit/:id', async (req, res) => {
+  try {
+    const recId = req.params.id;
+    const d = req.body;
+    let filename = d.old_image || '';
+
+    // Image update
+    if (req.files && req.files.image) {
+      filename = Date.now() + '_' + req.files.image.name;
+      await req.files.image.mv('public/uploads/' + filename);
+    }
+
+    await exe(`
+      UPDATE recommendations SET
+      name = ?, type = ?, crop_name = ?, season = ?, soil_type = ?, stage = ?,
+      product_usage = ?, language = ?, image = ?
+      WHERE rec_id = ?`,
+      [d.name, d.type, d.crop_name, d.season, d.soil_type, d.stage, d.product_usage, d.language, filename, recId]
+    );
+
+    res.redirect('/admin/recomendation_list');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.get('/recommendations_delete/:id', async (req, res) => {
+  try {
+    const recId = req.params.id;
+    await exe('DELETE FROM recommendations WHERE rec_id = ?', [recId]);
+    res.redirect('/admin/recomendation_list');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
 
 
 

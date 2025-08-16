@@ -55,7 +55,7 @@
     padding: 12px 18px;
     border-radius: 8px;
     display: inline-block;
-  }
+  } 
 
   /* Action buttons */
   .action-btns .btn {
@@ -71,11 +71,13 @@
     </h3>
 
     <div class="lang-btns">
-      <a href="/admin/product_list?lang=en" class="btn btn-outline-primary btn-sm <%= lang === 'en' ? 'active' : '' %>">English</a>
-      <a href="/admin/product_list?lang=mr" class="btn btn-outline-success btn-sm <%= lang === 'mr' ? 'active' : '' %>">Marathi</a>
-      <a href="/admin/product_list?lang=hi" class="btn btn-outline-warning btn-sm <%= lang === 'hi' ? 'active' : '' %>">Hindi</a>
-      <a href="/admin/product_add" class="btn btn-primary btn-sm ms-2">+ Add Product</a>
-    </div>
+  <a href="/admin/product_list?lang=all" class="btn btn-outline-secondary btn-sm <%= lang === 'all' ? 'active' : '' %>">All</a>
+  <a href="/admin/product_list?lang=en" class="btn btn-outline-primary btn-sm <%= lang === 'en' ? 'active' : '' %>">English</a>
+  <a href="/admin/product_list?lang=mr" class="btn btn-outline-success btn-sm <%= lang === 'mr' ? 'active' : '' %>">Marathi</a>
+  <a href="/admin/product_list?lang=hi" class="btn btn-outline-warning btn-sm <%= lang === 'hi' ? 'active' : '' %>">Hindi</a>
+  <a href="/admin/product_add" class="btn btn-primary btn-sm ms-2">+ Add Product</a>
+</div>
+
   </div>
 
   <div class="table-card">
@@ -87,6 +89,7 @@
           <th>Category</th>
           <th>Brand</th>
           <th>Discount</th>
+          <th>Stock Qty</th>
           <th>Season</th>
           <th>Crops</th>
           <th>Variants (Weight - Price)</th>
@@ -115,6 +118,7 @@
                 <span class="small-muted">No</span>
               <% } %>
             </td>
+            <td><%= product.stock_qty %></td>
             <td><%= product.season || '—' %></td>
             <td><%= product.crops || '—' %></td>
             <td>

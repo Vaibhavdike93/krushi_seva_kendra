@@ -1,0 +1,122 @@
+  <%- include("navbar") %>
+
+  <div class="container py-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h4>Add New Recommendation</h4>
+      </div>
+      <div class="card-body">
+        <form action="/admin/recommendations/add" method="POST" enctype="multipart/form-data">
+
+          <!-- Language Select -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Language</label>
+              <select id="langSelect" class="form-select" name="language">
+                <option value="en">English</option>
+                <option value="mr">Marathi</option>
+                <option value="hi">Hindi</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 1: Name & Type -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Name</label>
+              <input type="text" name="name" class="form-control" placeholder="Enter fertilizer/pesticide name" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Type</label>
+              <select id="typeSelect" name="type" class="form-select" required></select>
+            </div>
+          </div>
+
+          <!-- Row 2: Crop Name & Season -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Crop Name</label>
+              <input type="text" name="crop_name" class="form-control" placeholder="Enter applicable crop" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Season</label>
+              <select id="seasonSelect" name="season" class="form-select" required></select>
+            </div>
+          </div>
+
+          <!-- Row 3: Soil Type & Growth Stage -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Soil Type</label>
+              <select id="soilTypeSelect" name="soil_type" class="form-select" required></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Growth Stage</label>
+              <select id="stageSelect" name="stage" class="form-select" required></select>
+            </div>
+          </div>
+
+          <!-- Row 4: Usage Instructions & Image -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Usage Instructions</label>
+              <textarea name="product_usage" class="form-control" rows="4" placeholder="Enter usage instructions" required></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Image</label>
+              <input type="file" name="image" class="form-control" accept="image/*" onchange="previewImage(event)">
+              <div class="mt-3">
+                <img id="imagePreview" src="https://via.placeholder.com/200" class="img-thumbnail" style="max-width:200px;">
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success w-100">Add Recommendation</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Translations object
+    const translations = <%- JSON.stringify(translations) %>;
+
+    const langSelect = document.getElementById('langSelect');
+    const seasonSelect = document.getElementById('seasonSelect');
+    const stageSelect = document.getElementById('stageSelect');
+    const typeSelect = document.getElementById('typeSelect');
+    const soilTypeSelect = document.getElementById('soilTypeSelect');
+
+  function populateSelect(selectElement, optionsObj) {
+  selectElement.innerHTML = '';
+  for (let key in optionsObj) {
+    const opt = document.createElement('option');
+    opt.value = optionsObj[key];   
+    opt.textContent = optionsObj[key];
+    selectElement.appendChild(opt);
+  }
+}
+
+
+    function updateLanguage() {
+      const lang = langSelect.value;
+      populateSelect(seasonSelect, translations[lang].season);
+      populateSelect(stageSelect, translations[lang].stage);
+      populateSelect(typeSelect, translations[lang].type);
+      populateSelect(soilTypeSelect, translations[lang].soil_type);
+    }
+
+    // Initial populate
+    updateLanguage();
+
+    // Change event
+    langSelect.addEventListener('change', updateLanguage);
+
+    // Image preview
+    function previewImage(event) {
+      const output = document.getElementById('imagePreview');
+      output.src = URL.createObjectURL(event.target.files[0]);
+    }
+  </script>
+
+  <%- include("footer") %>
