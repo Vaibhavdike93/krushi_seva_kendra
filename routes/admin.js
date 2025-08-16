@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var exe = require('./conn');
 var CheckLogin = require("./CheckLogin");
-const { route } = require('./admin');
 var translations = require('../translation');
+
+
 
 router.get('/', function(req, res) {
   res.render('admin/index.ejs');
@@ -565,6 +566,47 @@ router.get("/product_delete/:id", async (req, res) => {
   }
 });
 
+router.get("/company_info",async function(req,res){
+  var sql = `SELECT * FROM company_info`;
+  var records = await exe(sql);
+  res.render("admin/company_info.ejs",{records})
+})
+
+
+router.get("/contact_info/:id",async function(req,res){
+  var id =  req.params.id;
+  var sql = `SELECT * FROM company_info WHERE id = ?`;
+  var records = await exe(sql,[id]);
+  res.render("admin/edit_company_info.ejs",{records})
+})
+
+router.post("/update_company_info/:id",async function(req,res){
+  var id = req.params.id;
+  var d = req.body;
+
+var sql =` UPDATE company_info 
+SET 
+    shop_name = ?, 
+    shop_address_line1 = ?, 
+    shop_address_line2 = ?, 
+    city = ?, 
+    state = ?, 
+    country = ?, 
+    pincode = ?, 
+    phone_main = ?, 
+    phone_emergency = ?, 
+    email_general = ?, 
+    email_support = ?, 
+    hours_weekdays = ?, 
+    hours_sunday = ?, 
+    open_holidays = ?
+WHERE id = ?;`;
+var result = await exe(sql,[d.shop_name,d.shop_address_line1,
+  d.shop_address_line2,d.city,d.state,d.country,d.pincode,d.phone_main,
+  d.phone_emergency,d.email_general,d.email_support,d.hours_weekdays,
+  d.hours_sunday,d.open_holidays,id]);
+  res.send(result);
+})
 
 router.get('/recomendation', async (req, res) => {
   res.render('admin/recomendation', { translations });
@@ -693,9 +735,9 @@ router.get('/recommendations_delete/:id', async (req, res) => {
 
 
 
-
-
-
+router.get("/soil_testing_report",function(req,res){
+  res.render("admin/soil_testing.ejs")
+})
 
 
 

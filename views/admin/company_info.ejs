@@ -1,0 +1,71 @@
+<%- include('navbar') %>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-primary">Contact & Business Info</h3>
+            <div>
+                <a href="/admin/contact_info/<%= records[0].id %>" class="btn btn-warning me-2">✏️ Update</a>
+                <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Visit Shop -->
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded text-center bg-dark text-white h-100">
+                    <div class="fs-1 mb-3">📍</div>
+                    <h5 class="fw-bold"><%= records[0].shop_name %></h5>
+                    <p class="text-secondary mb-1"><%= records[0].shop_address_line1 %></p>
+                    <% if(records[0].shop_address_line2) { %>
+                        <p class="text-secondary mb-1"><%= records[0].shop_address_line2 %></p>
+                    <% } %>
+                    <p class="text-secondary mb-1"><%= records[0].city %>, <%= records[0].state %></p>
+                    <p class="text-secondary mb-0"><%= records[0].country %> - <%= records[0].pincode %></p>
+                </div>
+            </div>
+
+            <!-- Call Us -->
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded text-center bg-dark text-white h-100">
+                    <div class="fs-1 mb-3">📞</div>
+                    <h5 class="fw-bold">Call Us</h5>
+                    <p class="fw-bold mb-1"><%= records[0].phone_main %></p>
+                    <p class="text-secondary mb-1">Main Number</p>
+                    <% if(records[0].phone_emergency) { %>
+                        <p class="fw-bold text-warning mb-0">⚡ Emergency: <%= records[0].phone_emergency %></p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Email Us -->
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded text-center bg-dark text-white h-100">
+                    <div class="fs-1 mb-3">✉️</div>
+                    <h5 class="fw-bold">Email Us</h5>
+                    <p class="fw-bold mb-1"><%= records[0].email_general %></p>
+                    <p class="text-secondary mb-1">General Inquiries</p>
+                    <% if(records[0].email_support) { %>
+                        <p class="fw-bold mb-1"><%= records[0].email_support %></p>
+                        <p class="text-secondary mb-0">Technical Support</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Business Hours -->
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded text-center bg-dark text-white h-100">
+                    <div class="fs-1 mb-3">⏰</div>
+                    <h5 class="fw-bold">Business Hours</h5>
+                    <p class="mb-1"><strong>Mon - Sat:</strong> <%= records[0].hours_weekdays %></p>
+                    <p class="mb-1"><strong>Sunday:</strong> <%= records[0].hours_sunday %></p>
+                    <% if (records[0].open_holidays && records[0].open_holidays.toLowerCase() === 'yes') { %>
+                        <p class="text-warning mb-0">❗ Open on public holidays</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('footer') %>

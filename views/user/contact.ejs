@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+body {
+    background: #f4f6f8;
+    font-family: Arial, sans-serif;
+}
+
+/* Info Cards */
+.contact-card {
+    background: #1e1e1e;
+    color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+    min-height: 250px; /* Fix height */
+    display: flex; /* Equal alignment */
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+}
+
+
+.contact-card:hover {
+    background: #ff9800;
+    color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
+}
+
+.contact-card i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: #ff9800;
+    transition: color 0.3s ease-in-out;
+}
+
+.contact-card:hover i {
+    color: #000;
+}
+
+.contact-card h5 {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.contact-card p {
+    margin: 0;
+    font-size: 14px;
+}
+
+
+/* Form & Map */
+.contact-form {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+.contact-form button {
+    background: #ff9800;
+    border: none;
+}
+.contact-form button:hover {
+    background: #e68a00;
+}
+
+/* Map Styling */
+.map-container iframe {
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    border: none;
+}
+.map-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+    border: 2px solid #ff9800;
+}
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    border: none;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container py-5">
+    <h2 class="text-center mb-5 fw-bold">Contact Us</h2>
+    
+    <!-- Info Cards -->
+   <div class="row g-4 mb-5 h-100" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-md-3">
+        <div class="contact-card">
+            <i class="bi bi-geo-alt-fill"></i>
+            <h5><%= info[0].shop_name %></h5>
+            <p><%= info[0].address_line1 %></p>
+            <p><%= info[0].city %>, <%= info[0].state %></p>
+            <p><%= info[0].country %> - <%= info[0].pincode %></p>
+        </div>
+    </div>
+    <div class="col-md-3 h-100" data-aos="fade-up" data-aos-delay="200">
+        <div class="contact-card">
+            <i class="bi bi-telephone-fill"></i>
+            <h5>Call Us</h5>
+            <p><strong><%= info[0].phone_main %></strong></p>
+            <p>Emergency: <span style="color:orange"><%= info[0].phone_emergency %></span></p>
+        </div>
+    </div>
+    <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="contact-card">
+            <i class="bi bi-envelope-fill"></i>
+            <h5>Email Us</h5>
+            <p><strong><%= info[0].email_general %></strong></p>
+            <p><%= info[0].email_support %></p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-5 h-100" data-aos="fade-up" data-aos-delay="400">
+        <div class="contact-card">
+            <i class="bi bi-alarm-fill"></i>
+            <h5>Business Hours</h5>
+            <p>Mon - Sat: <%= info[0].hours_weekdays %></p>
+            <p>Sun: <%= info[0].hours_sunday %></p>
+            <p style="color:orange">
+            <% if (info[0].open_holidays === 'yes') { %>
+                 Open on public holidays
+            <% } else { %>
+                 Closed on public holidays
+            <% } %>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+
+    <!-- Form & Map -->
+    <div class="row g-4">
+        <div class="col-md-6">
+           <div class="contact-form">
+    <h5 class="mb-4">Send Your Message</h5>
+    <form action="/user/sendmessage" method="post">
+        <div class="mb-3">
+            <input type="text" class="form-control" name="name" placeholder="Name" required>
+        </div>
+        <div class="mb-3">
+            <input type="email" class="form-control" name="email" placeholder="Email" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="phone" placeholder="Phone" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="subject" placeholder="Subject" required>
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" name="message" rows="4" placeholder="Your Message..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-warning w-100 text-white">Send Message</button>
+    </form>
+</div>
+
+        </div>
+        <div class="col-md-6 map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.7868961258093!2d74.7421420749271!3d19.095340350390078!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bdcb104a5296c63%3A0xa92c35b9da2e4dab!2sAhmednagar%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1690000000000!5m2!1sen!2sin"
+                allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
+</body>
+</html>
