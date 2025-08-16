@@ -1,0 +1,103 @@
+<%- include('navbar') %>
+
+<div class="container my-5">
+    <h3 class="mb-4 text-primary">Edit Company Information</h3>
+    
+    <form action="/admin/update_company_info/<%= records[0].id %>" method="POST" class="row g-3">
+        
+        <!-- Shop Name -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Shop Name</label>
+            <input type="text" name="shop_name" class="form-control" value="<%= records[0].shop_name %>" required>
+        </div>
+
+        <!-- Address Line 1 -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Address Line 1</label>
+            <input type="text" name="shop_address_line1" class="form-control" value="<%= records[0].shop_address_line1 %>" required>
+        </div>
+
+        <!-- Address Line 2 -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Address Line 2</label>
+            <input type="text" name="shop_address_line2" class="form-control" value="<%= records[0].shop_address_line2 %>">
+        </div>
+
+        <!-- City -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">City</label>
+            <input type="text" name="city" class="form-control" value="<%= records[0].city %>" required>
+        </div>
+
+        <!-- State -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">State</label>
+            <input type="text" name="state" class="form-control" value="<%= records[0].state %>" required>
+        </div>
+
+        <!-- Country -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Country</label>
+            <input type="text" name="country" class="form-control" value="<%= records[0].country %>" required>
+        </div>
+
+        <!-- Pincode -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Pincode</label>
+            <input type="text" name="pincode" class="form-control" value="<%= records[0].pincode %>">
+        </div>
+
+        <!-- Main Phone -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Main Phone</label>
+            <input type="text" name="phone_main" class="form-control" value="<%= records[0].phone_main %>">
+        </div>
+
+        <!-- Emergency Phone -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Emergency Phone</label>
+            <input type="text" name="phone_emergency" class="form-control" value="<%= records[0].phone_emergency %>">
+        </div>
+
+        <!-- General Email -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">General Email</label>
+            <input type="email" name="email_general" class="form-control" value="<%= records[0].email_general %>">
+        </div>
+
+        <!-- Support Email -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Support Email</label>
+            <input type="email" name="email_support" class="form-control" value="<%= records[0].email_support %>">
+        </div>
+
+        <!-- Hours Weekdays -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Hours (Weekdays)</label>
+            <input type="text" name="hours_weekdays" class="form-control" value="<%= records[0].hours_weekdays %>">
+        </div>
+
+        <!-- Hours Sunday -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Hours (Sunday)</label>
+            <input type="text" name="hours_sunday" class="form-control" value="<%= records[0].hours_sunday %>">
+        </div>
+
+        <!-- Open Holidays -->
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Open on Holidays</label>
+            <select name="open_holidays" class="form-select">
+                <option value="Yes" <%= records[0].open_holidays === 'Yes' ? 'selected' : '' %>>Yes</option>
+                <option value="No" <%= records[0].open_holidays === 'No' ? 'selected' : '' %>>No</option>
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12">
+            <button type="submit" class="btn btn-success px-4">💾 Save Changes</button>
+            <a href="/admin/company_info" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<%- include('footer') %>

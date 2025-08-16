@@ -1,0 +1,77 @@
+<%- include("navbar") %>
+
+<div class="container my-4">
+    <div class="card shadow border-0">
+        <!-- Header -->
+        <div class="card-header text-white d-flex justify-content-between align-items-center"
+            style="background: linear-gradient(135deg, #28a745, #20c997); font-weight: bold;">
+            <h4 class="mb-0">
+                <i class="fas fa-seedling"></i> Crop List
+            </h4>
+            <a href="/admin/add_crops" class="btn btn-light btn-sm shadow-sm">
+                <i class="fas fa-plus"></i> Add Crop
+            </a>
+        </div>
+
+        <!-- Table -->
+        <div class="card-body table-responsive">
+            <table id="cropTable" class="table table-bordered table-hover align-middle text-center">
+                <thead style="background: linear-gradient(135deg, #343a40, #495057); color: white;">
+                    <tr>
+                        <th>#</th>
+                        <th>Crop Name (EN)</th>
+                        <th>Crop Name (HI)</th>
+                        <th>Crop Name (MR)</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (crops.length > 0) { %>
+                        <% crops.forEach(function(crop, index) { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td class="fw-semibold"><%= crop.crop_name_en %></td>
+                                <td><%= crop.crop_name_hi %></td>
+                                <td><%= crop.crop_name_mr %></td>
+                                <td>
+                                    <img src="/uploads/<%= crop.crop_image %>"
+                                        alt="<%= crop.crop_name_en %>"
+                                        class="img-thumbnail border-0 shadow-sm"
+                                        style="width:80px; height:auto; border-radius:8px;">
+                                </td>
+                                <td>
+                                    
+                                    <a href="/admin/delete_crop/<%= crop.crop_id %>" 
+                                       class="btn btn-danger btn-sm shadow-sm"
+                                       onclick="return confirm('Are you sure you want to delete this crop?')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-muted">No crops found</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<%- include("footer") %>
+
+<!-- DataTables JS -->
+<script>
+    $(document).ready(function () {
+        $('#cropTable').DataTable({
+            "pageLength": 5,
+            "lengthMenu": [5, 10, 25, 50],
+            "language": {
+                "search": "🔍 Search Crops:"
+            }
+        });
+    });
+</script>

@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
 <body>
@@ -38,8 +39,79 @@
                     <span class="menu-text">Dashboard</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="#brands" class="nav-link" data-bs-toggle="collapse" data-title="Brands">
+                    <i class="bi bi-hdd-stack"></i>
+                    <span class="menu-text">Brands</span>
+                    <i class="bi bi-chevron-down dropdown-indicator"></i>
+                </a>
+                <div class="collapse submenu" id="brands">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/admin/Add_product_Brand" class="nav-link" data-title="All Brands">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Add Brands</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/brand_list" class="nav-link" data-title="Add Device">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Brands List</span>
+                            </a>
+                        </li>
+  
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a href="#category" class="nav-link" data-bs-toggle="collapse" data-title="category">
+                    <i class="bi bi-hdd-stack"></i>
+                    <span class="menu-text">Category</span>
+                    <i class="bi bi-chevron-down dropdown-indicator"></i>
+                </a>
+                <div class="collapse submenu" id="category">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/admin/add_category" class="nav-link" data-title="All Category">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Add Category</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/category_list" class="nav-link" data-title="Category List">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Category List</span>
+                            </a>
+                        </li>
+  
+                    </ul>
+                </div>
+            </li>
 
-           
+            <li class="nav-item">
+                <a href="#crops" class="nav-link" data-bs-toggle="collapse" data-title="crops">
+                    <i class="bi bi-hdd-stack"></i>
+                    <span class="menu-text">Crops</span>
+                    <i class="bi bi-chevron-down dropdown-indicator"></i>
+                </a>
+                <div class="collapse submenu" id="crops">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/admin/add_crops" class="nav-link" data-title="All Category">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Add Crops</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/crops_list" class="nav-link" data-title="Category List">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Crops List</span>
+                            </a>
+                        </li>
+  
+                    </ul>
+                </div>
+            </li>
 
 
             <li class="nav-item">
@@ -51,24 +123,44 @@
                 <div class="collapse submenu" id="devicesSubmenu">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="/add_product" class="nav-link" data-title="All Devices">
+                            <a href="/admin/add_product" class="nav-link" data-title="All Devices">
                                 <i class="bi bi-circle"></i>
                                 <span class="menu-text">Add Product</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="product_list" class="nav-link" data-title="Add Device">
+                            <a href="/admin/product_list" class="nav-link" data-title="Add Device">
                                 <i class="bi bi-circle"></i>
                                 <span class="menu-text">Product List</span>
                             </a>
                         </li>
 
+                       
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a href="#recomendation" class="nav-link" data-bs-toggle="collapse" data-title="Recomendation">
+                    <i class="bi bi-hdd-stack"></i>
+                    <span class="menu-text">Recomendation</span>
+                    <i class="bi bi-chevron-down dropdown-indicator"></i>
+                </a>
+                <div class="collapse submenu" id="recomendation">
+                    <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="/admin/Add_product_Brand" class="nav-link" data-title="Add Device">
+                            <a href="/admin/recomendation" class="nav-link" data-title="All Recomendation">
                                 <i class="bi bi-circle"></i>
-                                <span class="menu-text">Add product Brand</span>
+                                <span class="menu-text">Add Recomendation</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/admin/recomendation_list" class="nav-link" data-title="Add Recomendation">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Recomendation List</span>
+                            </a>
+                        </li>
+
                        
                     </ul>
                 </div>

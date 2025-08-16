@@ -1,0 +1,151 @@
+<%-include("navbar")%>
+<style>
+.full-page-body {
+  background: #f4f7f9;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Wrapper full width */
+.full-page-container {
+  max-width: 100%;
+  padding: 20px;
+}
+
+/* Form Card */
+.booking-card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(20, 40, 60, 0.06);
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Card header */
+.booking-card-header {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* Form inputs */
+.booking-input, .booking-select {
+  border-radius: 8px;
+  border: 1px solid #d6dce0;
+  padding: 10px 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.booking-input:focus, .booking-select:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.15rem rgba(25,135,84,0.12);
+  outline: none;
+}
+
+/* Labels */
+.booking-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Buttons */
+.booking-btn {
+  background:  #F4A300 ;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 600;
+  width: 100%;
+}
+.booking-btn:hover {
+  color:#8B5E3C;
+}
+</style>
+
+<body class="full-page-body">
+
+<div class="full-page-container">
+
+  <!-- Booking Form -->
+  <div class="booking-card">
+    <div class="booking-card-header bg-secondary text-white p-3">
+      Book a Soil Test
+    </div>
+    <div class="p-3">
+      <form id="bookingForm">
+        <div class="mb-2">
+          <label class="booking-label">Name</label>
+          <input type="text" class="booking-input form-control" id="name" placeholder="Name" required>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Mobile Number</label>
+          <input type="tel" class="booking-input form-control" id="phone" pattern="[0-9]{10}" placeholder="+91 XXXXXXXXXX" required>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Email (optional)</label>
+          <input type="email" class="booking-input form-control" id="email" placeholder="abc@gmail.com">
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Address</label>
+          <textarea class="booking-input form-control" id="address" required></textarea>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Pincode</label>
+          <input type="number" class="booking-input form-control" id="pincode" placeholder="Pincode" required>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Preferred Date</label>
+          <input type="date" class="booking-input form-control" id="date" required>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Preferred Time</label>
+          <input type="time" class="booking-input form-control" id="time" required>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Soil Type</label>
+          <select class="booking-select form-select" id="soilType" required>
+            <option value="">Select</option>
+            <option>Black Soil</option>
+            <option>Red Soil</option>
+            <option>Sandy Soil</option>
+            <option>Loamy Soil</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Crop Type</label>
+          <input type="text" class="booking-input form-control" id="cropType" placeholder="Crop Type" required>
+        </div>
+        <div class="mb-2">
+          <label class="booking-label">Additional Notes</label>
+          <textarea class="booking-input form-control" id="notes"></textarea>
+        </div>
+        <button type="submit" class="booking-btn">Submit Booking</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const date = document.getElementById("date").value;
+  const soilType = document.getElementById("soilType").value;
+  const cropType = document.getElementById("cropType").value;
+
+  const bookingId = "BK" + Math.floor(Math.random() * 1000).toString().padStart(3, "0");
+
+  alert("Booking submitted successfully!\nBooking ID: " + bookingId);
+  document.getElementById("bookingForm").reset();
+});
+</script>
+<%-include("footer")%>

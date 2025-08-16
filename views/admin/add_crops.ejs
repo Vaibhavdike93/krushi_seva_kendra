@@ -1,0 +1,72 @@
+<%- include("navbar") %>
+
+<div class="container my-4">
+    <div class="card shadow-lg border-0">
+        <!-- Card Header -->
+        <div class="card-header text-white" style="
+            background: linear-gradient(135deg, #28a745, #85d67f);
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        ">
+            <i class="fas fa-plus-circle"></i> Add Crop (Multi-Language)
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-4">
+            <form action="/admin/add_crop" method="POST" enctype="multipart/form-data">
+                <div class="row g-3">
+                    <!-- English Name -->
+                    <div class="col-md-4">
+                        <label for="cropNameEn" class="form-label fw-semibold">
+                            <i class="fas fa-language"></i> Crop Name (English)
+                        </label>
+                        <input type="text" class="form-control shadow-sm" id="cropNameEn" 
+                               name="crop_name_en" placeholder="Enter crop name in English" required>
+                    </div>
+
+                    <!-- Hindi Name -->
+                    <div class="col-md-4">
+                        <label for="cropNameHi" class="form-label fw-semibold">
+                            <i class="fas fa-language"></i> Crop Name (Hindi)
+                        </label>
+                        <input type="text" class="form-control shadow-sm" id="cropNameHi" 
+                               name="crop_name_hi" placeholder="हिंदी में फसल का नाम दर्ज करें" required>
+                    </div>
+
+                    <!-- Marathi Name -->
+                    <div class="col-md-4">
+                        <label for="cropNameMr" class="form-label fw-semibold">
+                            <i class="fas fa-language"></i> Crop Name (Marathi)
+                        </label>
+                        <input type="text" class="form-control shadow-sm" id="cropNameMr" 
+                               name="crop_name_mr" placeholder="मराठीत पिकाचे नाव टाका" required>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <!-- Crop Image -->
+                    <div class="col-md-6">
+                        <label for="cropImage" class="form-label fw-semibold">
+                            <i class="fas fa-image"></i> Crop Image
+                        </label>
+                        <input type="file" class="form-control shadow-sm" id="cropImage" 
+                               name="crop_image" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success shadow-sm">
+                        <i class="fas fa-save"></i> Save Crop
+                    </button>
+                    <a href="/admin/crop_list" class="btn btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include("footer") %>

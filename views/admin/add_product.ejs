@@ -1,0 +1,192 @@
+<%- include("navbar") %>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12">
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0"><i class="fas fa-box-open"></i> Add New Product</h4>
+        </div>
+        <div class="card-body">
+          <form action="/admin/add_product" method="POST" enctype="multipart/form-data">
+
+            <!-- Language Selector -->
+            <div class="mb-4">
+              <label for="language" class="form-label fw-semibold">Select Language</label>
+              <select class="form-select" id="language" name="language" required onchange="changeLanguage(this.value)">
+                <option value="" disabled <%= !lang ? "selected" : "" %>>Choose Language</option>
+                <option value="en" <%= lang === "en" ? "selected" : "" %>>English</option>
+                <option value="hi" <%= lang === "hi" ? "selected" : "" %>>Hindi</option>
+                <option value="mr" <%= lang === "mr" ? "selected" : "" %>>Marathi</option>
+              </select>
+            </div>
+
+            <div class="row g-3">
+              <!-- Product Name -->
+              <div class="col-md-6">
+                <label for="productName" class="form-label fw-semibold" id="nameLabel">Product Name</label>
+                <input type="text" class="form-control" id="productName" name="productName" placeholder="Enter product name" required>
+              </div>
+
+              <!-- Category -->
+              <div class="col-md-6">
+                <label for="category" class="form-label fw-semibold">Select Category</label>
+                <select name="category_id" class="form-select" id="category" required>
+                  <option value="" selected disabled>Select Category</option>
+                  <% category.forEach(cat => { %>
+                    <option value="<%= cat.category_id %>"><%= cat.category_name %></option>
+                  <% }) %>
+                </select>
+              </div>
+
+              <!-- Brand -->
+              <div class="col-md-6">
+                <label for="brand" class="form-label fw-semibold">Select Brand</label>
+                <select name="brand_id" class="form-select" id="brand" required>
+                  <option value="" selected disabled>Select Brand</option>
+                  <% brands.forEach(b => { %>
+                    <option value="<%= b.brand_id %>"><%= b.brand_name %></option>
+                  <% }) %>
+                </select>
+              </div>
+
+              <!-- Description -->
+              <div class="col-md-6">
+                <label for="description" class="form-label fw-semibold" id="descLabel">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter product description"></textarea>
+              </div>
+
+              <!-- Discount -->
+              <div class="col-md-6">
+                <label for="discount" class="form-label fw-semibold">Discount (%)</label>
+                <input type="number" min="0" max="100" step="1" class="form-control" id="discount" name="discount" placeholder="Enter discount percentage">
+              </div>
+              
+<div class="col-md-6">
+  <label for="stock_qty" class="form-label fw-semibold">Stock Quantity</label>
+  <input type="number" min="0" step="1" class="form-control" id="stock_qty" name="stock_qty" placeholder="Enter stock quantity" required>
+</div>
+              <!-- Dosage -->
+              <div class="col-md-6">
+                <label for="dosage" class="form-label fw-semibold" id="dosageLabel">Dosage</label>
+                <textarea class="form-control" id="dosage" name="dosage" rows="2" placeholder="Enter dosage details"></textarea>
+              </div>
+
+              <!-- Features -->
+              <div class="col-md-6">
+                <label for="features" class="form-label fw-semibold" id="featuresLabel">Features & Benefits</label>
+                <textarea class="form-control" id="features" name="features" rows="3" placeholder="Enter features and benefits"></textarea>
+              </div>
+
+              <!-- Season -->
+              <div class="col-md-6">
+                <label for="season" class="form-label fw-semibold" id="seasonLabel">Season</label>
+                <select class="form-select" id="season" name="season" required>
+                  <option value="" disabled selected>Select season</option>
+                  <option value="summer">Summer</option>
+                  <option value="rainy">Rainy</option>
+                  <option value="winter">Winter</option>
+                </select>
+              </div>
+
+              <!-- Crops -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Suitable Crops</label>
+                <% crops.forEach(crop => { %>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="<%= crop.crop_id %>" id="crop_<%= crop.crop_id %>" name="crops[]">
+                    <label class="form-check-label" for="crop_<%= crop.crop_id %>"><%= crop.crop_name %></label>
+                  </div>
+                <% }) %>
+              </div>
+
+              <!-- Product Image -->
+              <div class="col-md-6">
+                <label for="productImage" class="form-label fw-semibold">Product Image</label>
+                <input class="form-control" type="file" id="productImage" name="productImage" accept="image/*" required onchange="previewProductImage(event)">
+              </div>
+
+              <!-- Image Preview -->
+              <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <img id="productPreview" src="https://via.placeholder.com/200" alt="Preview" class="img-thumbnail shadow-sm" style="width:200px; display:none;">
+              </div>
+
+            <!-- Weight-Price Variants -->
+<div class="col-12">
+  <label class="form-label fw-semibold">Weight & Price Variants</label>
+  <div id="variantsContainer">
+    <div class="row g-3 variant-row mb-2 align-items-center">
+      <div class="col-md-5">
+        <input type="text" name="weight[]"... class="form-control" placeholder="Weight (e.g., 250 ml)" required>
+      </div>
+      <div class="col-md-5">
+        <input type="number" name="variant_price[]"... class="form-control" placeholder="Price" step="0.01" min="0" required>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow(this)">Remove</button>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-sm btn-primary mt-2" onclick="addVariantRow()">Add More Variant</button>
+</div>
+
+
+            </div>
+
+            <div class="mt-4">
+              <button type="submit" class="btn btn-success w-100">
+                <i class="fas fa-save"></i> Save Product
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function changeLanguage(lang) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.location.href = url.toString();
+  }
+
+  function previewProductImage(event) {
+    const preview = document.getElementById('productPreview');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+    preview.style.display = 'block';
+  }
+
+  function addVariantRow() {
+  const container = document.getElementById('variantsContainer');
+  const div = document.createElement('div');
+  div.className = 'row g-3 variant-row mb-2 align-items-center';
+  div.innerHTML = `
+    <div class="col-md-5">
+      <input type="text" name="weight[]"... class="form-control" placeholder="Weight (e.g., 500 ml)" required>
+    </div>
+    <div class="col-md-5">
+      <input type="number" name="variant_price[]"... class="form-control" placeholder="Price" step="0.01" min="0" required>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow(this)">Remove</button>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function removeVariantRow(btn) {
+  const row = btn.closest('.variant-row');
+  if (row) {
+    row.remove();
+  }
+}
+
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<%- include("footer") %>
