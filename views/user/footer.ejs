@@ -4,6 +4,118 @@
     }
 </style>
 
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- AOS JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
+
+<script>
+const track = document.getElementById('carouselTrack');
+const previousBtn = document.getElementById('previousBtn'); // ✅ corrected
+const nextBtn = document.getElementById('nextBtn');         // ✅ corrected
+
+const itemWidth = 220;
+
+// Button scroll
+nextBtn.addEventListener('click', () => {
+  track.scrollBy({ left: itemWidth, behavior: 'smooth' });
+});
+
+previousBtn.addEventListener('click', () => {
+  track.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+});
+
+// Unique variables for first slider drag
+let isDownMain = false;
+let startXMain;
+let scrollLeftMain;
+
+track.addEventListener('mousedown', e => {
+  isDownMain = true;
+  startXMain = e.pageX - track.offsetLeft;
+  scrollLeftMain = track.scrollLeft;
+});
+
+track.addEventListener('mouseleave', () => {
+  isDownMain = false;
+});
+
+track.addEventListener('mouseup', () => {
+  isDownMain = false;
+});
+
+track.addEventListener('mousemove', e => {
+  if (!isDownMain) return;
+  e.preventDefault();
+  const x = e.pageX - track.offsetLeft;
+  const walk = x - startXMain;
+  track.scrollLeft = scrollLeftMain - walk;
+});
+</script>
+<!--offer product cards script-->
+<script>
+  const offerTrackWrapper = document.querySelector('.offer-track-wrapper');
+  const btnPrev = document.querySelector('.offer-btn-prev');
+  const btnNext = document.querySelector('.offer-btn-next');
+
+  // Step size: 90% of visible area (responsive)
+  function getStep() {
+    return Math.max(200, Math.round(offerTrackWrapper.clientWidth * 0.9));
+  }
+
+  // Buttons
+  btnNext.addEventListener('click', () => {
+    offerTrackWrapper.scrollBy({ left: getStep(), behavior: 'smooth' });
+  });
+  btnPrev.addEventListener('click', () => {
+    offerTrackWrapper.scrollBy({ left: -getStep(), behavior: 'smooth' });
+  });
+
+  // Mouse drag / Touch drag with Pointer Events (works everywhere)
+  let isDragging = false;
+  let startX = 0;
+  let startScrollLeft = 0;
+
+  offerTrackWrapper.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    offerTrackWrapper.classList.add('is-dragging');
+    startX = e.clientX;
+    startScrollLeft = offerTrackWrapper.scrollLeft;
+    offerTrackWrapper.setPointerCapture(e.pointerId);
+  });
+
+  offerTrackWrapper.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    offerTrackWrapper.scrollLeft = startScrollLeft - dx;
+  });
+
+  function endDrag(e) {
+    isDragging = false;
+    offerTrackWrapper.classList.remove('is-dragging');
+    try { offerTrackWrapper.releasePointerCapture(e.pointerId); } catch (_) {}
+  }
+  offerTrackWrapper.addEventListener('pointerup', endDrag);
+  offerTrackWrapper.addEventListener('pointercancel', endDrag);
+  offerTrackWrapper.addEventListener('pointerleave', endDrag);
+
+  // Wheel support (shift vertical wheel to horizontal)
+  offerTrackWrapper.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      e.preventDefault(); // allow smooth horizontal on wheel
+      offerTrackWrapper.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
+</script>
+
 <!-- Footer -->
 <footer class="footer_background text-white pt-3">
     <div class="container">

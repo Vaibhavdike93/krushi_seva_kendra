@@ -1,6 +1,536 @@
-
-
 <%- include("navbar.ejs") %>
-<h1>Welcome User</h1>
 
-<%- include("footer.ejs") %>
+    <style>
+        :root {
+            --navbar-bg: #FAFAF5;
+            /* Navbar Background color */
+            --page-bg: #FAF8F0;
+            /* All Pages Background color */
+            --button-color: #F4A300;
+            /* All Button background color */
+            --button-hover-color: #8B5E3C;
+            /* All Button Hover background color */
+            --footer-bg: #854717;
+            /* Footer Section Background color */
+        }
+
+
+        /* category carousal  */
+        .category_title {
+            color: #291507c8;
+
+        }
+
+        .carousel-bg {
+            background: var(--page-bg);
+            padding: 30px;
+        }
+
+        .category-item {
+            text-align: center;
+            padding: 15px;
+            flex: 0 0 auto;
+            width: 200px;
+
+        }
+
+        .category-item img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            background: #f5f5f5;
+            padding: 10px;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .category-item:hover img {
+            transform: scale(1.08) translateY(-5px);
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .carousel-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        /*  offer product cards */
+        .offer_header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .offer_header h1::after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 4px;
+            background-color: #c7956f;
+            margin: 8px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+            .offer-card {
+                flex: 0 0 200px;
+            }
+        }
+
+        /* Mobile - Show 1 card */
+        @media (max-width: 480px) {
+            .offer-track {
+                flex-wrap: nowrap;
+            }
+
+            .offer-card {
+                flex: 0 0 100%;
+                margin: 0 5px;
+            }
+        }
+
+        .offer-carousel {
+            position: relative;
+        }
+
+        .offer-track-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            padding: 4px 0;
+            -ms-overflow-style: none;
+            /* IE/Edge */
+            scrollbar-width: none;
+            /* Firefox */
+            cursor: grab;
+        }
+
+        .offer-track-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Chrome */
+
+        .offer-track {
+            display: flex;
+            gap: 16px;
+        }
+
+        .offer-card {
+            flex: 0 0 260px;
+            /* card width */
+            max-width: 260px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+            overflow: hidden;
+        }
+
+        .offer-img-box {
+            position: relative;
+        }
+
+        .offer-img-box img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+            /* prevents image from stealing drag */
+        }
+
+        .offer-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff6f00;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+        }
+
+        .offer-fav {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+        }
+
+        .offer-content {
+            padding: 12px;
+        }
+
+        .offer-title {
+            font-size: 16px;
+            margin: 0 0 4px;
+        }
+
+        .offer-price small {
+            text-decoration: line-through;
+            color: #888;
+            margin-left: 6px;
+        }
+
+        .offer-save {
+            color: #2e7d32;
+            margin-left: 6px;
+            font-size: 12px;
+        }
+
+        .offer-add-btn {
+            width: 100%;
+            margin-top: 8px;
+            background: #ff6f00;
+        }
+
+        .offer-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+        }
+
+        .offer-btn-prev {
+            left: -50px;
+        }
+
+        .offer-btn-next {
+            right: -50px;
+        }
+
+        .offer-track-wrapper.is-dragging {
+            cursor: grabbing;
+        }
+
+        .slider_btn_orange {
+            height: 50px;
+            width: 50px;
+            border: none;
+            padding: 0 14px;
+            color: white;
+            background-color: #f38020;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .slider_btn_orange:hover {
+            background-color: #e06e12;
+        }
+
+        .banner {
+            background: url("https://media.bighaat.com/wsfbanners/a7e2ca07-7cf9-4fd3-bc16-74926a8b7d98.webp?w=1920&q=80") no-repeat center center/cover;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .banner h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .banner p {
+            font-size: 1.2rem;
+        }
+
+        .btn-orange {
+            background-color: #f38020;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .btn-orange:hover {
+            background-color: #e06e12;
+        }
+    </style>
+
+
+    <!-- Banner -->
+    <section class="container-fluid mt-4">
+        <div class="banner">
+            <div class="banner-content">
+                <h1>Welcome to Krushi Seva Kendra</h1>
+                <p>Your trusted partner for modern farming solutions.</p>
+                <a href="#services" class="btn btn-orange mt-3">Explore More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Carousel -->
+    <div class="container-fluid carousel-bg" data-aos="zoom-in-up">
+        <div class="offer_header">
+            <h1 class="text-center mb-4 category_title" data-aos="fade-up-left"><b>Categories</b></h1>
+        </div>
+
+        <div class="d-flex align-items-center" data-aos="fade-up-left">
+            <button id="previousBtn" class="slider_btn_orange align-items-center">
+                <span class="me-1">&#10094;</span>
+            </button>
+
+            <div class="carousel-track" id="carouselTrack">
+                <div class="category-item" data-aos="flip-left"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Offers</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="100"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Herbicides</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="200"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Growth Promoters</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="300"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Fungicides</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="400"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Veg & Fruit Seeds</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="500"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Farm Machinery</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="600"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Nutrients</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="700"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Flower Seeds</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="800"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Insecticides</div>
+                </div>
+                <div class="category-item" data-aos="flip-left" data-aos-delay="900"><img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg">
+                    <div class="category-title">Organic Farming</div>
+                </div>
+            </div>
+            <button id="nextBtn" class="slider_btn_orange align-items-center">
+                <span class="me-1">&#10095;</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Today's Offers -->
+    <div class="container mt-5">
+        <div class="offer_header">
+            <h1 class="text-center mb-4 category_title"><b>Today's Offers</b></h1>
+        </div>
+
+        <div class="offer-carousel">
+            <button class="offer-btn offer-btn-prev" aria-label="Previous">&#10094;</button>
+
+            <div class="offer-track-wrapper">
+                <div class="offer-track">
+                    <!-- Card 1 -->
+                    <div class="offer-card">
+                        <div class="offer-img-box">
+                            <span class="offer-badge">25% OFF</span>
+                            <span class="offer-fav">&#10084;</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
+                                alt="Apple Seeds">
+                        </div>
+                        <div class="offer-content">
+                            <h3 class="offer-title">Apple Seeds</h3>
+                            <p class="offer-brand">Syngenta</p>
+                            <p class="offer-price">₹349 <small>₹465</small> <span class="offer-save">Save ₹116</span>
+                            </p>
+                            <select class="offer-select">
+                                <option>50g Pack</option>
+                                <option>100g Pack</option>
+                            </select>
+                            <button class="offer-add-btn">Add to Cart</button>
+                            <div class="offer-rating">⭐ 4.8 (42)</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="offer-card">
+                        <div class="offer-img-box">
+                            <span class="offer-badge">25% OFF</span>
+                            <span class="offer-fav">&#10084;</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
+                                alt="Sunflower Seeds">
+                        </div>
+                        <div class="offer-content">
+                            <h3 class="offer-title">Sunflower Seeds</h3>
+                            <p class="offer-brand">Syngenta</p>
+                            <p class="offer-price">₹249 <small>₹465</small> <span class="offer-save">Save ₹116</span>
+                            </p>
+                            <select class="offer-select">
+                                <option>50g Pack</option>
+                                <option>100g Pack</option>
+                            </select>
+                            <button class="offer-add-btn">Add to Cart</button>
+                            <div class="offer-rating">⭐ 4.3 (42)</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="offer-card">
+                        <div class="offer-img-box">
+                            <span class="offer-badge">25% OFF</span>
+                            <span class="offer-fav">&#10084;</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
+                                alt="Topper 77 Herbicides">
+                        </div>
+                        <div class="offer-content">
+                            <h3 class="offer-title">Topper 77 Herbicides</h3>
+                            <p class="offer-brand">Syngenta</p>
+                            <p class="offer-price">₹249 <small>₹465</small> <span class="offer-save">Save ₹116</span>
+                            </p>
+                            <select class="offer-select">
+                                <option>50g Pack</option>
+                                <option>100g Pack</option>
+                            </select>
+                            <button class="offer-add-btn">Add to Cart</button>
+                            <div class="offer-rating">⭐ 4.3 (42)</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="offer-card">
+                        <div class="offer-img-box">
+                            <span class="offer-badge">25% OFF</span>
+                            <span class="offer-fav">&#10084;</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
+                                alt="Mera 71 Herbicides">
+                        </div>
+                        <div class="offer-content">
+                            <h3 class="offer-title">Mera 71 Herbicides</h3>
+                            <p class="offer-brand">Syngenta</p>
+                            <p class="offer-price">₹249 <small>₹465</small> <span class="offer-save">Save ₹116</span>
+                            </p>
+                            <select class="offer-select">
+                                <option>50g Pack</option>
+                                <option>100g Pack</option>
+                            </select>
+                            <button class="offer-add-btn">Add to Cart</button>
+                            <div class="offer-rating">⭐ 4.3 (42)</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="offer-card">
+                        <div class="offer-img-box">
+                            <span class="offer-badge">25% OFF</span>
+                            <span class="offer-fav">&#10084;</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
+                                alt="Jump Insecticides">
+                        </div>
+                        <div class="offer-content">
+                            <h3 class="offer-title">Jump Insecticides</h3>
+                            <p class="offer-brand">Syngenta</p>
+                            <p class="offer-price">₹249 <small>₹465</small> <span class="offer-save">Save ₹116</span>
+                            </p>
+                            <select class="offer-select">
+                                <option>1kg Pack</option>
+                                <option>3kg Pack</option>
+                            </select>
+                            <button class="offer-add-btn">Add to Cart</button>
+                            <div class="offer-rating">⭐ 4.3 (42)</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="offer-card">
+                        <div class="offer-img-box">
+                            <span class="offer-badge">25% OFF</span>
+                            <span class="offer-fav">&#10084;</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
+                                alt="Nativo Fungicides">
+                        </div>
+                        <div class="offer-content">
+                            <h3 class="offer-title">Nativo Fungicides</h3>
+                            <p class="offer-brand">Syngenta</p>
+                            <p class="offer-price">₹249 <small>₹465</small> <span class="offer-save">Save ₹116</span>
+                            </p>
+                            <select class="offer-select">
+                                <option>50g Pack</option>
+                                <option>100g Pack</option>
+                            </select>
+                            <button class="offer-add-btn">Add to Cart</button>
+                            <div class="offer-rating">⭐ 4.3 (42)</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 7 -->
+                    <div class="offer-card">
+                        <div class="offer-img-box">
+                            <span class="offer-badge">25% OFF</span>
+                            <span class="offer-fav">&#10084;</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
+                                alt="Rose Flower Seeds">
+                        </div>
+                        <div class="offer-content">
+                            <h3 class="offer-title">Rose Flower Seeds</h3>
+                            <p class="offer-brand">Syngenta</p>
+                            <p class="offer-price">₹249 <small>₹465</small> <span class="offer-save">Save ₹116</span>
+                            </p>
+                            <select class="offer-select">
+                                <option>50g Pack</option>
+                                <option>100g Pack</option>
+                            </select>
+                            <button class="offer-add-btn">Add to Cart</button>
+                            <div class="offer-rating">⭐ 4.3 (42)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="offer-btn offer-btn-next" aria-label="Next">&#10095;</button>
+        </div>
+    </div>
+
+    <%- include("footer.ejs") %>
