@@ -6,6 +6,10 @@ router.get('/', function(req, res) {
   res.render('user/index');
 });
 
+router.get('/product', function(req, res) {
+  res.render('user/product');
+});
+
 router.get('/login', function(req, res) {
   res.render('user/signin.ejs');
 });
