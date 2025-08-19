@@ -6,19 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Krushi Seva Kendra</title>
     <script src="https://kit.fontawesome.com/3841ba2abd.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/user/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- AOS CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         .bg-topbar {
@@ -171,7 +173,7 @@
             <span>|</span>
             <a href="#" class="topbar-link"><i class="fa-brands fa-youtube"></i></a>
             <div class="px-3 py-1 rounded text-white fw-semibold small bg-call-btn">
-               <%= translations.buttons.Call_To_Order %>: 1800-0000-0000
+                <%= translations.buttons.Call_To_Order %>: 1800-0000-0000
             </div>
         </div>
     </div>
@@ -187,28 +189,32 @@
             <!-- Right Links -->
             <ul class="navbar-nav flex-row gap-3 order-lg-3">
                 <li class="nav-item dropdown">
-  <form method="get" action="/" class="d-inline">
-  <select name="lang" onchange="this.form.submit()">
-    <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
-    <option value="hi" <%= lang === 'hi' ? 'selected' : '' %>>Hindi</option>
-    <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>Marathi</option>
-  </select>
-</form>
+                    <form method="get" action="/" class="d-inline">
+                        <select name="lang" onchange="this.form.submit()">
+                            <option value="en" <%=lang==='en' ? 'selected' : '' %>>English</option>
+                            <option value="hi" <%=lang==='hi' ? 'selected' : '' %>>Hindi</option>
+                            <option value="mr" <%=lang==='mr' ? 'selected' : '' %>>Marathi</option>
+                        </select>
+                    </form>
 
 
                 </li>
                 <% if (!user) { %>
-  <!-- Guest / Not logged in -->
-  <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-regular fa-heart"></i></a></li>
-  <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-solid fa-cart-shopping"></i></a></li>
-  <li><a class="nav-link" href="/registration"><i class="fa-regular fa-user"></i> <%= translations.buttons.Register %></a></li>
-<% } else { %>
-  <!-- Logged in user -->
-  <li><a class="nav-link" href="/profile"><i class="fa-regular fa-user"></i> My Profile</a></li>
-  <li><a class="nav-link" href="/wishlist"><i class="fa-regular fa-heart"></i></a></li>
-  <li><a class="nav-link" href="/cart"><i class="fa-solid fa-cart-shopping"></i></a></li>
-  <li><a class="nav-link" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-<% } %>
+                    <!-- Guest / Not logged in -->
+                    <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-regular fa-heart"></i></a></li>
+                    <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                    </li>
+                    <li><a class="nav-link" href="/registration"><i class="fa-regular fa-user"></i>
+                            <%= translations.buttons.Register %>
+                        </a></li>
+                    <% } else { %>
+                        <!-- Logged in user -->
+                        <li><a class="nav-link" href="/profile"><i class="fa-regular fa-user"></i> My Profile</a></li>
+                        <li><a class="nav-link" href="/wishlist"><i class="fa-regular fa-heart"></i></a></li>
+                        <li><a class="nav-link" href="/cart"><i class="fa-solid fa-cart-shopping"></i></a></li>
+                        <li><a class="nav-link" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                        </li>
+                        <% } %>
 
 
             </ul>
@@ -235,19 +241,45 @@
                 <div class="category-menu mt-2 d-lg-none text-center fw-semibold small">
                     <a href="/">Home</a>
 
-                   <a href="#"> <%= translations.pages_name.BRANDS %> </a>
-   <a href="#"> <%= translations.pages_name.SEEDS %> </a>
-   <a href="#"> <%= translations.pages_name.CROP_PROTECTION %> </a>
-   <a href="#"> <%= translations.pages_name.FERTILIZERS %> </a>
-   <a href="#"> <%= translations.pages_name.TOOLS %> </a>
-   <a href="#"> <%= translations.pages_name.EQUIPMENTS %> </a>
-   <a href="#"> <%= translations.pages_name.CROPS %> </a>
-   <a href="#"> <%= translations.pages_name.CROP_MANAGEMENT %> </a>
-   <a href="#"> <%= translations.pages_name.SOIL_HEALTH %> </a>
-   <a href="#"> <%= translations.pages_name.WEATHER %> </a>
-   <a href="#"> <%= translations.pages_name.GALLERY %> </a>
-   <a href="#"> <%= translations.pages_name.CONTACT_US %> </a>
-   <a href="#"> <%= translations.pages_name.ABOUT_US %> </a>
+                    <a href="#">
+                        <%= translations.pages_name.BRANDS %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.SEEDS %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.CROP_PROTECTION %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.FERTILIZERS %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.TOOLS %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.EQUIPMENTS %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.CROPS %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.CROP_MANAGEMENT %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.SOIL_HEALTH %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.WEATHER %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.GALLERY %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.CONTACT_US %>
+                    </a>
+                    <a href="#">
+                        <%= translations.pages_name.ABOUT_US %>
+                    </a>
 
                     <a href="#">Home</a>
                     <a href="#">About us</a>
@@ -264,21 +296,45 @@
 
     <!-- Category Menu (Desktop Sticky) -->
 
-   <div class="category-menu sticky-desktop d-none d-lg-block text-center fw-semibold small">
-   <a href="#"> <%= translations.pages_name.BRANDS %> </a>
-   <a href="#"> <%= translations.pages_name.SEEDS %> </a>
-   <a href="#"> <%= translations.pages_name.CROP_PROTECTION %> </a>
-   <a href="#"> <%= translations.pages_name.FERTILIZERS %> </a>
-   <a href="#"> <%= translations.pages_name.TOOLS %> </a>
-   <a href="#"> <%= translations.pages_name.EQUIPMENTS %> </a>
-   <a href="#"> <%= translations.pages_name.CROPS %> </a>
-   <a href="#"> <%= translations.pages_name.CROP_MANAGEMENT %> </a>
-   <a href="#"> <%= translations.pages_name.SOIL_HEALTH %> </a>
-   <a href="#"> <%= translations.pages_name.WEATHER %> </a>
-   <a href="#"> <%= translations.pages_name.GALLERY %> </a>
-   <a href="#"> <%= translations.pages_name.CONTACT_US %> </a>
-   <!-- <a href="#"> <%= translations.pages_name.ABOUT_US %> </a> -->
-</div>
+    <div class="category-menu sticky-desktop d-none d-lg-block text-center fw-semibold small">
+        <a href="#">
+            <%= translations.pages_name.BRANDS %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.SEEDS %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.CROP_PROTECTION %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.FERTILIZERS %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.TOOLS %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.EQUIPMENTS %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.CROPS %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.CROP_MANAGEMENT %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.SOIL_HEALTH %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.WEATHER %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.GALLERY %>
+        </a>
+        <a href="#">
+            <%= translations.pages_name.CONTACT_US %>
+        </a>
+        <!-- <a href="#"> <%= translations.pages_name.ABOUT_US %> </a> -->
+    </div>
 
 
 
