@@ -87,6 +87,11 @@ router.get('/', function(req, res) {
 });
 
 
+router.get("/add_to_cart",function(req,res){
+  res.render("user/add_to_cart.ejs")
+})
+
+
 router.get("/conatct",async function(req,res){
   var info = await exe("select * from company_info")
   var paket = {info}
