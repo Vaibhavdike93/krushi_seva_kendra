@@ -1,0 +1,93 @@
+<%- include("navbar") %>
+
+<div class="container py-5">
+  <!-- Heading with gradient -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="p-3 text-white rounded" style="background: linear-gradient(90deg, #007BFF, #00CFC8);">
+      Recommendation List
+    </h3>
+    <div class="d-flex align-items-center mt-2 mt-md-0">
+      <select id="langFilter" class="form-select me-2" style="width:160px;">
+        <option value="">All Languages</option>
+        <option value="en" <%= selectedLang=='en' ? 'selected' : '' %>>English</option>
+        <option value="mr" <%= selectedLang=='mr' ? 'selected' : '' %>>Marathi</option>
+        <option value="hi" <%= selectedLang=='hi' ? 'selected' : '' %>>Hindi</option>
+      </select>
+      <a href="/admin/recomendation" class="btn btn-primary"><i class="fas fa-plus"></i> Add New</a>
+    </div>
+  </div>
+
+  <!-- Table with horizontal scroll -->
+  <div class="table-responsive shadow-sm rounded" style="overflow-x:auto;">
+    <table id="recommendationTable" class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Crop</th>
+          <th>Season</th>
+          <th>Soil Type</th>
+          <th>Stage</th>
+          <th>Usage</th>
+          <th>Language</th>
+          <th>Image</th>
+          <th>Created At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% recommendations.forEach((rec,index) => { %>
+          <tr>
+            <td><%= index +1 %></td>
+            <td><%= rec.name %></td>
+            <td><%= rec.type %></td>
+            <td><%= rec.crop_name %></td>
+            <td><%= rec.season %></td>
+            <td><%= rec.soil_type %></td>
+            <td><%= rec.stage %></td>
+            <td><%= rec.product_usage %></td>
+            <td><%= rec.language %></td>
+            <td>
+              <% if(rec.image) { %>
+                <img src="/uploads/<%= rec.image %>" alt="Image" class="img-thumbnail" style="width:60px; height:60px; object-fit:cover;">
+              <% } else { %>
+                N/A
+              <% } %>
+            </td>
+            <td><%= rec.created_at ? rec.created_at.toLocaleString() : '' %></td>
+            <td>
+              <a href="/admin/recommendations_edit/<%= rec.rec_id %>" class="btn btn-sm btn-warning me-1" title="Edit">
+                <i class="fa-solid fa-pen"></i>
+              </a>
+              <a href="/admin/recommendations_delete/<%= rec.rec_id %>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#recommendationTable').DataTable({
+      "order": [[0, "desc"]],
+      "pageLength": 10,
+      "lengthMenu": [5, 10, 25, 50],
+      "columnDefs": [
+        { "orderable": false, "targets": [9,11] } 
+      ]
+    });
+
+    // Language filter
+    $('#langFilter').on('change', function() {
+      const lang = $(this).val();
+      window.location.href = `/admin/recomendation_list${lang ? '?language=' + lang : ''}`;
+    });
+  });
+</script>
+
+<%- include("footer") %>
