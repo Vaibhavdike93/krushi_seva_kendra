@@ -76,15 +76,19 @@ router.post('/registration', async (req, res) => {
 
 
 router.get('/', function(req, res) {
-  const lang = res.locals.lang;
-  console.log("Lang in route:", lang);
-
-  if (!translations[lang]) {
-    console.log("❌ Missing translation for:", lang);
-  }
-
-  res.render('user/index', { translations: translations[lang], lang });
+  
+  res.render('user/index');
 });
+
+router.get("/product", async function (req, res) {
+  res.render("user/product.ejs"); // no need to pass translations anymore
+});
+
+router.get("/add_tocart",async function(req, res) {
+  res.render("user/add_tocart.ejs");
+})
+
+
 
 
 router.get("/add_to_cart",function(req,res){
@@ -97,18 +101,7 @@ router.get("/conatct",async function(req,res){
   var paket = {info}
   res.render("user/contact.ejs",paket)
 })
-router.get('/registration', function(req, res) {
-  let lang = req.session.lang || 'en';  
-  const sql = 'SELECT crop_id, crop_name_en, crop_name_hi, crop_name_mr FROM crops';
-  exe(sql, (err, results) => {
-    if (err) throw err;
 
-    res.render('user/registration', {
-      crops: results,
-      lang: lang   
-    });
-  });
-});
 
 
 
