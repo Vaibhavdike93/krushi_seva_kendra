@@ -63,22 +63,42 @@
             <h4>Welcome Farmer</h4>
             <p class="text-muted small">Sign in to continue to Krushi Seva Kendra</p>
         </div>
-        <form>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <div class="password-wrapper">
-                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
-                    <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-orange w-100">Sign In</button>
-        </form>
+      <form action="/login" method="post">
+  <div class="mb-3">
+    <label for="email" class="form-label">Email Address</label>
+    <input 
+      type="email" 
+      id="email" 
+      name="email" 
+      class="form-control" 
+      placeholder="Enter your email" 
+      value="<%= email || '' %>" 
+      required>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <div class="password-wrapper">
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        class="form-control <%= error ? 'is-invalid' : '' %>" 
+        placeholder="Enter your password" 
+        required>
+      <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+
+      <% if (error) { %>
+        <div class="invalid-feedback"><%= error %></div>
+      <% } %>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-orange w-100">Sign In</button>
+</form>
+
         <div class="text-center mt-3">
-            <a href="#" class="small text-decoration-none">Forgot Password?</a>
+            <a href="/forgot/forgot_password" class="small text-decoration-none">Forgot Password?</a>
         </div>
         <div class="text-center mt-2">
             <span class="small">Don't have an account? <a href="/registration" class="text-decoration-none">Sign Up</a></span>

@@ -85,26 +85,26 @@
             <p class="text-muted small">Join Krushi Seva Kendra in just 2 easy steps</p>
         </div>
 
-        <form id="registerForm">
+        <form id="registerForm" action="/registration" method="POST">
             <!-- Step 1 -->
             <div class="step active" id="step1">
                 <div class="mb-3">
                     <label for="fullname" class="form-label">Full Name</label>
-                    <input type="text" id="fullname" class="form-control" placeholder="Enter your name" required>
+                    <input type="text" id="fullname" name="name" class="form-control" placeholder="Enter your name" required>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
-                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
                 </div>
                 <div class="mb-3">
                     <label for="mobile" class="form-label">Mobile Number</label>
-                    <input type="tel" id="mobile" class="form-control" placeholder="10-digit mobile number" required
+                    <input type="tel" id="mobile" class="form-control" name="mobile" placeholder="10-digit mobile number" required
                         pattern="[0-9]{10}">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label" >Password</label>
                     <div class="password-wrapper">
-                        <input type="password" id="password" class="form-control" placeholder="Create a password"
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Create a password"
                             required>
                         <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
                     </div>
@@ -114,45 +114,24 @@
 
             <!-- Step 2 -->
             <div class="step" id="step2">
-                <div class="mb-3">
-                    <label class="form-label">Select Crops</label><br>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Wheat" id="cropWheat">
-                        <label class="form-check-label" for="cropWheat">Wheat</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Rice" id="cropRice">
-                        <label class="form-check-label" for="cropRice">Rice</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Sugarcane" id="cropSugarcane">
-                        <label class="form-check-label" for="cropSugarcane">Sugarcane</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Cotton" id="cropCotton">
-                        <label class="form-check-label" for="cropCotton">Cotton</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Cotton" id="cropCotton">
-                        <label class="form-check-label" for="cropCotton">Cotton</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Cotton" id="cropCotton">
-                        <label class="form-check-label" for="cropCotton">Cotton</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Cotton" id="cropCotton">
-                        <label class="form-check-label" for="cropCotton">Cotton</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="Cotton" id="cropCotton">
-                        <label class="form-check-label" for="cropCotton">Cotton</label>
-                    </div>
-                </div>
+              <div class="mb-3">
+  <label class="form-label">Select Crops</label><br>
+  
+ <% crops.forEach(crop => { %>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="checkbox" name="crops[]" value="<%= crop.crop_id %>" id="crop<%= crop.crop_id %>">
+    <label class="form-check-label" for="crop<%= crop.crop_id %>">
+      <%= locals.lang === 'en' ? crop.crop_name_en : (locals.lang === 'hi' ? crop.crop_name_hi : crop.crop_name_mr) %>
+    </label>
+  </div>
+<% }) %>
+
+
+</div>
 
                 <div class="mb-3">
                     <label for="address" class="form-label">Address</label>
-                    <textarea id="address" class="form-control" rows="3" placeholder="Enter your address"
+                    <textarea id="address" class="form-control" rows="3" name="address" placeholder="Enter your address"
                         required></textarea>
                 </div>
                 <div class="d-flex gap-2">
