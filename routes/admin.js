@@ -61,7 +61,7 @@ router.get("/delete_brand/:id",async function(req,res){
    res.redirect("/admin/Add_product_Brand")
 });
 
-<<<<<<< Updated upstream
+
 router.get("/add_category",function(req,res){
   res.render("admin/add_category.ejs")
 });
@@ -566,10 +566,9 @@ router.get("/company_info",async function(req,res){
   var sql = `SELECT * FROM company_info`;
   var records = await exe(sql);
   res.render("admin/company_info.ejs",{records})
-=======
+})
 router.get("/soil_testing_report",function(req,res){
   res.render("admin/soil_testing.ejs")
->>>>>>> Stashed changes
 })
 
 
@@ -713,33 +712,49 @@ router.get('/recommendations_delete/:id', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 router.get("/soil_testing_report",function(req,res){
   res.render("admin/soil_testing.ejs")
 })
 
+router.post("/sendmessage",async function(req,res){
+  var d = req.body;
+  var sql = `INSERT INTO user_message(name, email, phone, subject, message) VALUES (?,?,?,?,?)`;
+  var result = await exe(sql,[d.name,d.email,d.phone,d.subject,d.message]);
+    res.redirect("/conatct");  
+});
+
+
+router.get("/offer_banner",async function(req,res){
+  var sql = `SELECT * FROM offer_banner`;
+  var offer = await exe(sql);
+  res.render("admin/offer_banner.ejs",{offer})
+})
+
+router.get("/edit_banner/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM offer_banner WHERE id = ?`;
+  var offer = await exe(sql,[id]);
+  res.render("admin/edit_banner.ejs",{offer})
+})
+
+router.post("/update_banner/:id", async function(req, res) {
+  var id = req.params.id;
+
+  if (req.files && req.files.newImage) {
+    var file_name = new Date().getTime() + req.files.newImage.name;
+    req.files.newImage.mv("public/uploads/" + file_name);
+  } else {
+    var old_image = await exe(`SELECT * FROM offer_banner WHERE id=${id}`);
+    var file_name = old_image[0].banner_image;
+  }
+  var sql = `UPDATE offer_banner SET banner_image=? WHERE id=?`;
+  var result = await exe(sql, [file_name, id]);
+  res.redirect("/admin/offer_banner")
+});
 
 
 
-module.exports = router;
+
+
+
+ module.exports = router;
