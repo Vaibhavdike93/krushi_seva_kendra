@@ -166,6 +166,35 @@ document.querySelectorAll('.variant-select').forEach(function(select){
     });
 });
 </script>
+<script>
+// Variant select change
+document.querySelectorAll('.variant-select').forEach(function(select){
+    select.addEventListener('change', function(){
+        const productInfo = this.closest('.product-info');
+        const selectedOption = this.options[this.selectedIndex];
+
+        // Update main price
+        const priceEl = productInfo.querySelector('.price');
+        priceEl.textContent = selectedOption.value;
+
+        // Update current price
+        const currentPriceEl = productInfo.querySelector('.current-price');
+        if(currentPriceEl) currentPriceEl.textContent = "₹" + selectedOption.value;
+
+        // Update old price
+        const oldPriceEl = productInfo.querySelector('.old-price');
+        if(oldPriceEl) oldPriceEl.textContent = selectedOption.dataset.old;
+
+        // Update savings
+        const savingsEl = productInfo.querySelector('.savings');
+        if(savingsEl){
+            const oldPrice = parseFloat(selectedOption.dataset.old) || 0;
+            const newPrice = parseFloat(selectedOption.value);
+            savingsEl.textContent = "Save ₹" + (oldPrice - newPrice);
+        }
+    });
+});
+</script>
 
 <%- include("footer") %>
 </body>
