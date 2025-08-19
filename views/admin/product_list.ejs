@@ -1,152 +1,66 @@
 <%- include('navbar', { current: 'products', lang: lang }) %>
 
-<!-- Font Awesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-  /* Card look around table */
-  .table-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 18px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-  }
-
-  .product-img {
-    width: 64px;
-    height: 64px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
-  }
-
-  .lang-btns .btn {
-    margin-right: 6px;
-  }
-
-  .small-muted {
-    font-size: 0.85rem;
-    color: #6c757d;
-  }
-
-  td {
-    white-space: normal !important;
-    word-break: break-word;
-  }
-
-  .table td {
-    vertical-align: middle;
-  }
-
-  /* Gradient heading for table */
-  thead.table-light {
-    background: linear-gradient(90deg, #4CAF50, #2E7D32);
-    color: white;
-  }
-
-  thead.table-light th {
-    color: white !important;
-  }
-
-  /* Gradient background for top heading */
-  .page-heading {
-    background: linear-gradient(90deg, #4CAF50, #2E7D32);
-    color: white;
-    padding: 12px 18px;
-    border-radius: 8px;
-    display: inline-block;
-  } 
-
-  /* Action buttons */
-  .action-btns .btn {
-    padding: 4px 8px;
-    font-size: 0.85rem;
-  }
-</style>
-
 <div class="container py-4">
-  <div class="d-flex align-items-center justify-content-between mb-3">
-    <h3 class="mb-0 page-heading">
-      Product List <small class="text-light"> (Language: <%= lang.toUpperCase() %>)</small>
-    </h3>
-
-    <div class="lang-btns">
-  <a href="/admin/product_list?lang=all" class="btn btn-outline-secondary btn-sm <%= lang === 'all' ? 'active' : '' %>">All</a>
-  <a href="/admin/product_list?lang=en" class="btn btn-outline-primary btn-sm <%= lang === 'en' ? 'active' : '' %>">English</a>
-  <a href="/admin/product_list?lang=mr" class="btn btn-outline-success btn-sm <%= lang === 'mr' ? 'active' : '' %>">Marathi</a>
-  <a href="/admin/product_list?lang=hi" class="btn btn-outline-warning btn-sm <%= lang === 'hi' ? 'active' : '' %>">Hindi</a>
-  <a href="/admin/product_add" class="btn btn-primary btn-sm ms-2">+ Add Product</a>
-</div>
-
+  <!-- Heading with Gradient Background -->
+  <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded" style="background: linear-gradient(90deg, #007BFF, #00CFC8); color: white;">
+    <h3 class="mb-0">Products List</h3>
+    <form method="GET" action="/admin/product_list">
+      <select name="lang" class="form-select" onchange="this.form.submit()" style="width:200px">
+        <option value="all" <%= lang==='all' ? 'selected' : '' %>>All Languages</option>
+        <option value="en" <%= lang==='en' ? 'selected' : '' %>>English</option>
+        <option value="hi" <%= lang==='hi' ? 'selected' : '' %>>Hindi</option>
+        <option value="mr" <%= lang==='mr' ? 'selected' : '' %>>Marathi</option>
+      </select>
+    </form>
   </div>
 
-  <div class="table-card">
-    <table id="productTable" class="table table-hover table-bordered dt-responsive nowrap" style="width:100%">
+  <!-- Scrollable Table -->
+  <div style="overflow-x:auto;">
+    <table id="productsTable" class="table table-bordered table-striped table-hover">
       <thead class="table-dark">
         <tr>
-          <th>ID</th>
-          <th>Product</th>
+          <th>#</th>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Dosage</th>
+          <th>Features</th>
           <th>Category</th>
           <th>Brand</th>
-          <th>Discount</th>
-          <th>Stock Qty</th>
           <th>Season</th>
-          <th>Crops</th>
-          <th>Variants (Weight - Price)</th>
-          <th>Image</th>
+          <th>Stock</th>
+          <th>Discount</th>
+          <th>Variants</th>
+          <th>Language</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <% products.forEach((product,index) => { %>
+        <% products.forEach((p, index) => { %>
           <tr>
-            <td><%= index +1 %></td>
+            <td><%= index+1 %></td>
             <td>
-              <div><strong><%= product.product_name || product.product_name_en %></strong></div>
-              <% if (product.short_description) { %>
-                <div class="small-muted">
-                  <%= product.short_description.length > 80 ? product.short_description.substring(0,80) + '...' : product.short_description %>
-                </div>
+              <% if (p.main_image) { %>
+                <img src="/uploads/<%= p.main_image %>" width="60" height="60" style="object-fit:cover; border-radius:4px;">
               <% } %>
             </td>
-            <td><%= product.category_name || '—' %></td>
-            <td><%= product.brand_name || '—' %></td>
-            <td>
-              <% if (product.discount && product.discount > 0) { %>
-                <span class="badge bg-success"><%= product.discount %>%</span>
-              <% } else { %>
-                <span class="small-muted">No</span>
-              <% } %>
-            </td>
-            <td><%= product.stock_qty %></td>
-            <td><%= product.season || '—' %></td>
-            <td><%= product.crops || '—' %></td>
-            <td>
-              <% if (variantsByProduct[product.product_id]) { %>
-                <% variantsByProduct[product.product_id].forEach(variant => { %>
-                  <div class="mb-1"><strong><%= variant.weight %></strong> — ₹<%= variant.price %>
-                    <% if (variant.stock != null) { %>
-                      <small class="text-muted"> (stk: <%= variant.stock %>)</small>
-                    <% } %>
-                  </div>
-                <% }) %>
-              <% } else { %>
-                <em class="small-muted">No variants</em>
-              <% } %>
-            </td>
-            <td>
-              <% if (product.product_image) { %>
-                <img src="/uploads/<%= product.product_image %>" alt="img" class="product-img" />
-              <% } else { %>
-                <div class="small-muted">No image</div>
-              <% } %>
-            </td>
-            <td class="action-btns">
-              <a href="/admin/product_edit/<%= product.product_id %>" class="btn btn-sm btn-warning">
-                <i class="fa-solid fa-pen"></i>
+            <td><%= p.product_name %></td>
+            <td><%= p.description %></td>
+            <td><%= p.dosage %></td>
+            <td><%= p.features %></td>
+            <td><%= p.category_name %></td>
+            <td><%= p.brand_name %></td>
+            <td><%= p.season %></td>
+            <td><%= p.stock_quantity %></td>
+            <td><%= p.discount %> %</td>
+            <td><%= p.variants || 'N/A' %></td>
+            <td><%= p.language %></td>
+            <td class="d-flex gap-1">
+              <a href="/admin/product_edit/<%= p.product_id %>" class="btn btn-sm btn-primary" title="Edit">
+                <i class="fas fa-edit"></i>
               </a>
-              <a href="/admin/product_delete/<%= product.product_id %>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">
-                <i class="fa-solid fa-trash"></i>
+              <a href="/admin/product_delete/<%= p.product_id %>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                <i class="fas fa-trash-alt"></i>
               </a>
             </td>
           </tr>
@@ -156,19 +70,19 @@
   </div>
 </div>
 
+<!-- DataTables CSS/JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <script>
-  $(document).ready(function () {
-    $('#productTable').DataTable({
-      responsive: true,
-      pageLength: 12,
-      lengthChange: false,
-      ordering: true,
-      scrollX: true,
-      columnDefs: [
-        { orderable: false, targets: [8, 9] } // image & actions column not orderable
-      ]
+  $(document).ready(function(){
+    $('#productsTable').DataTable({
+      "order": [[0, "asc"]],
+      "scrollX": true
     });
   });
 </script>
-
-<%- include('footer') %>
