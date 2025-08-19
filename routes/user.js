@@ -18,6 +18,11 @@ router.get("/conatct",async function(req,res){
   var paket = {info}
   res.render("user/contact.ejs",paket)
 })
+
+router.get("/products",function(req,res){
+  res.render("user/products.ejs")
+})
+
 router.post("/sendmessage",async function(req,res){
   var d = req.body;
   var sql = `INSERT INTO user_message(name, email, phone, subject, message,)VALUSE(?,?,?,?,?)`;
