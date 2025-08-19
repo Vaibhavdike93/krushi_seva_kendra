@@ -1,0 +1,166 @@
+<%-include("navbar")%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - Krushi Seva Kendra</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <style>
+    body { background-color: #f8f9fa; }
+  </style>
+</head>
+<body>
+
+<div class="container my-4">
+  <div class="cart-header d-flex justify-content-between align-items-center">
+    <span><i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">3</span> Items)</span>
+    <i class="fas fa-times"></i>
+  </div>
+
+  <div class="row mt-3">
+    <!-- LEFT: Cart Items -->
+    <div class="col-md-8" id="cart-items">
+
+      <!-- ITEM 1 -->
+      <div class="cart-item d-flex align-items-center justify-content-between" data-price="460">
+        <div class="d-flex align-items-center">
+          <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/glycel-herbicide-1-file-5004.png?v=1737432184&width=1920" class="me-3 rounded" alt="Product">
+          <div>
+            <h6 class="mb-1">Glycel Herbicide</h6>
+            <small class="text-muted">Sumitomo | Size: 1 ltr</small><br>
+            <span class="price">₹460</span> <span class="old-price">₹815</span>
+            <div class="mt-2 qty-controls">
+              <button class="btn btn-sm btn-success qty-minus">-</button>
+              <span class="mx-2 qty">1</span>
+              <button class="btn btn-sm btn-success qty-plus">+</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-trash"></i></button>
+      </div>
+
+      <!-- ITEM 2 -->
+      <div class="cart-item d-flex align-items-center justify-content-between" data-price="294">
+        <div class="d-flex align-items-center">
+          <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/roundup-herbicide-file-2203.jpg?v=1737425966&width=1920" class="me-3 rounded" alt="Product">
+          <div>
+            <h6 class="mb-1">Bayer Roundup Herbicide</h6>
+            <small class="text-muted">Bayer | Size: 500 ml</small><br>
+            <span class="price">₹294</span> <span class="old-price">₹425</span>
+            <div class="mt-2 qty-controls">
+              <button class="btn btn-sm btn-success qty-minus">-</button>
+              <span class="mx-2 qty">1</span>
+              <button class="btn btn-sm btn-success qty-plus">+</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-trash"></i></button>
+      </div>
+
+      <!-- ITEM 3 -->
+      <div class="cart-item d-flex align-items-center justify-content-between" data-price="89">
+        <div class="d-flex align-items-center">
+          <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/upl-saaf-fungicide-file-2147.jpg?v=1737483195&width=1920" class="me-3 rounded" alt="Product">
+          <div>
+            <h6 class="mb-1">Saaf Fungicide</h6>
+            <small class="text-muted">UPL | Size: 100 gms</small><br>
+            <span class="price">₹89</span> <span class="old-price">₹111</span>
+            <div class="mt-2 qty-controls">
+              <button class="btn btn-sm btn-success qty-minus">-</button>
+              <span class="mx-2 qty">1</span>
+              <button class="btn btn-sm btn-success qty-plus">+</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-trash"></i></button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Billing Box -->
+    <div class="col-md-4">
+      <div class="billing-box">
+        <div class="alert alert-success p-2">
+          <i class="fas fa-tags"></i> Pay Online & Save 3% or More Instantly!
+        </div>
+        <h6>Billing Details</h6>
+        <div class="d-flex justify-content-between">
+          <span>Total Price</span>
+          <span id="total-price">₹0</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Shipping Charges</span>
+          <span><span class="text-success" id="shipping">Free</span></span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span>Discount</span>
+          <span class="text-success" id="discount">₹0</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="net-price" id="net-price">₹0</span>
+          <button class="proceed-btn">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+function updateCart() {
+  let items = document.querySelectorAll(".cart-item");
+  let total = 0;
+  items.forEach(item => {
+    let price = parseFloat(item.dataset.price);
+    let qty = parseInt(item.querySelector(".qty").innerText);
+    total += price * qty;
+  });
+
+  let discount = (total * 0.03).toFixed(2); 
+  let shipping = total > 500 ? 0 : 70;     
+  let net = total - discount + shipping;
+
+  document.getElementById("cart-count").innerText = items.length;
+  document.getElementById("total-price").innerText = "₹" + total.toFixed(2);
+  document.getElementById("discount").innerText = "₹" + discount;
+  document.getElementById("shipping").innerText = shipping === 0 ? "Free" : "₹" + shipping;
+  document.getElementById("net-price").innerText = "₹" + net.toFixed(2);
+}
+
+// Event Listeners
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("qty-plus")) {
+    let qtyElem = e.target.parentElement.querySelector(".qty");
+    qtyElem.innerText = parseInt(qtyElem.innerText) + 1;
+    updateCart();
+  }
+  if (e.target.classList.contains("qty-minus")) {
+    let qtyElem = e.target.parentElement.querySelector(".qty");
+    let current = parseInt(qtyElem.innerText);
+    if (current > 1) {
+      qtyElem.innerText = current - 1;
+      updateCart();
+    }
+  }
+  if (e.target.classList.contains("remove-item") || e.target.closest(".remove-item")) {
+    e.target.closest(".cart-item").remove();
+    updateCart();
+  }
+});
+
+// Initialize
+updateCart();
+</script>
+
+</body>
+</html>
+
+<%-include("footer")%>

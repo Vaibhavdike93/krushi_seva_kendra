@@ -91,7 +91,25 @@ router.post('/registration', async (req, res) => {
 });
 
 
+router.get('/', function(req, res) {
+  
+  res.render('user/index');
+});
 
+
+
+
+
+router.get("/add_tocart",async function(req, res) {
+  res.render("user/add_tocart.ejs");
+})
+
+
+
+
+router.get("/add_to_cart",function(req,res){
+  res.render("user/add_to_cart.ejs")
+})
 
 
 router.get("/conatct",async function(req,res){
@@ -99,18 +117,8 @@ router.get("/conatct",async function(req,res){
   var paket = {info}
   res.render("user/contact.ejs",paket)
 })
-router.get('/registration', function(req, res) {
-  let lang = req.session.lang || 'en';  
-  const sql = 'SELECT crop_id, crop_name_en, crop_name_hi, crop_name_mr FROM crops';
-  exe(sql, (err, results) => {
-    if (err) throw err;
-
-    res.render('user/registration', {
-      crops: results,
-      lang: lang   
-    });
-  });
-});
+   
+ 
 router.get("/category", async function(req, res) {
     var cat = req.query.category_id;
     if(req.query.lang){
@@ -148,6 +156,7 @@ router.get("/category", async function(req, res) {
         cat: cat || "all"
     });
 });
+
 
 
 
