@@ -4,10 +4,26 @@ var router = express.Router();
 var translations = require("../translation");
 
 
-
 router.get('/product', function(req, res) {
   res.render('user/product');
+})
+router.get('/', async function(req, res) {
+    
+   
+    if(req.query.lang){
+        req.session.language = req.query.lang; 
+    }
+    
+    var lang = req.session.language || "en";
+    var categories = await exe("SELECT * FROM categories ")
+    
+    res.render('user/index', {
+        categories: categories,
+        lang: lang,
+        translations: translations[lang]
+    });
 });
+
 
 router.get('/login', function(req, res) {
   res.render('user/signin.ejs',{error: null, email: ''});
@@ -80,9 +96,9 @@ router.get('/', function(req, res) {
   res.render('user/index');
 });
 
-router.get("/product", async function (req, res) {
-  res.render("user/product.ejs"); // no need to pass translations anymore
-});
+
+
+
 
 router.get("/add_tocart",async function(req, res) {
   res.render("user/add_tocart.ejs");
@@ -91,11 +107,57 @@ router.get("/add_tocart",async function(req, res) {
 
 
 
+router.get("/add_to_cart",function(req,res){
+  res.render("user/add_to_cart.ejs")
+})
+
+
 router.get("/conatct",async function(req,res){
   var info = await exe("select * from company_info")
   var paket = {info}
   res.render("user/contact.ejs",paket)
 })
+   
+ 
+router.get("/category", async function(req, res) {
+    var cat = req.query.category_id;
+    if(req.query.lang){
+        req.session.language = req.query.lang; 
+    }
+    var lang = req.session.language || "en";
+
+    var categories = await exe("SELECT * FROM categories");
+
+    var sql = "";
+    var products = [];
+
+    if(cat && cat != "all"){
+        sql = `SELECT p.*, c.category_name_en, c.category_name_mr
+               FROM product p
+               JOIN categories c ON p.category_id = c.category_id
+               WHERE p.category_id=?`;
+        products = await exe(sql, [cat]);
+    } else {
+        sql = `SELECT p.*, c.category_name_en, c.category_name_mr
+               FROM product p
+               JOIN categories c ON p.category_id = c.category_id`;
+        products = await exe(sql);
+    }
+
+    // प्रत्येक product साठी variants fetch करा
+    for(let i = 0; i < products.length; i++){
+        var variants = await exe("SELECT * FROM product_variants WHERE product_id=?", [products[i].product_id]);
+        products[i].variants = variants;  // attach variants to product
+    }
+
+    res.render("user/category", {
+        translations: translations[lang],
+        products: products,
+        cat: cat || "all"
+    });
+});
+
+
 
 
 

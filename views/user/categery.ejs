@@ -1,0 +1,16 @@
+<%-include("navbar")%>
+<div class="mb-3">
+  <label class="form-label">Select Crops</label><br>
+  
+ <% crops.forEach(crop => { %>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="checkbox" name="crops[]" value="<%= crop.crop_id %>" id="crop<%= crop.crop_id %>">
+    <label class="form-check-label" for="crop<%= crop.crop_id %>">
+      <%= locals.lang === 'en' ? crop.crop_name_en : (locals.lang === 'hi' ? crop.crop_name_hi : crop.crop_name_mr) %>
+    </label>
+  </div>
+<% }) %>
+
+
+</div>
+<%-include("footer")%>
