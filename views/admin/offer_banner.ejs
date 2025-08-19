@@ -1,0 +1,17 @@
+  <!-- Navbar -->
+  <%- include("navbar") %>
+<br>
+  <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-top:20px;">
+    <% for(var i=0; i<offer.length; i++){ %>
+      <div class="banner" style="text-align:center;">
+        <img src="/uploads/<%=offer[i].banner_image %>" 
+             alt="Offer Banner" 
+             style="width:400px; height:500px; object-fit:cover; border:1px solid #ccc; padding:5px;">
+        <br>
+        <a href="/admin/edit_banner/<%= offer[i].id %>" class="btn btn-primary mt-2">Update</a>
+      </div>
+    <% } %>
+  </div>
+  <br><br>
+
+  <%- include("footer") %>
