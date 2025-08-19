@@ -88,12 +88,19 @@ router.get("/conatct",async function(req,res){
   var paket = {info}
   res.render("user/contact.ejs",paket)
 })
-router.post("/sendmessage",async function(req,res){
-  var d = req.body;
-  var sql = `INSERT INTO user_message(name, email, phone, subject, message,)VALUSE(?,?,?,?,?)`;
-  var result = await exe(sql,[d.name,d.email,d.phone,d.subject,d.message]);
-  res.send(result);
-})
+router.get('/registration', function(req, res) {
+  let lang = req.session.lang || 'en';  
+  const sql = 'SELECT crop_id, crop_name_en, crop_name_hi, crop_name_mr FROM crops';
+  exe(sql, (err, results) => {
+    if (err) throw err;
+
+    res.render('user/registration', {
+      crops: results,
+      lang: lang   
+    });
+  });
+});
+
 
 
 
