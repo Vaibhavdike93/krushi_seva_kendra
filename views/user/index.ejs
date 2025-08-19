@@ -127,102 +127,7 @@
             gap: 16px;
         }
 
-        .offer-card {
-            flex: 0 0 260px;
-            /* card width */
-            max-width: 260px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
-            overflow: hidden;
-        }
-
-        .offer-img-box {
-            position: relative;
-        }
-
-        .offer-img-box img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            user-select: none;
-            -webkit-user-drag: none;
-            pointer-events: none;
-            /* prevents image from stealing drag */
-        }
-
-        .offer-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #ff6f00;
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-size: 12px;
-        }
-
-        .offer-fav {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #fff;
-        }
-
-        .offer-content {
-            padding: 12px;
-        }
-
-        .offer-title {
-            font-size: 16px;
-            margin: 0 0 4px;
-        }
-
-        .offer-price small {
-            text-decoration: line-through;
-            color: #888;
-            margin-left: 6px;
-        }
-
-        .offer-save {
-            color: #2e7d32;
-            margin-left: 6px;
-            font-size: 12px;
-        }
-
-        .offer-add-btn {
-            width: 100%;
-            margin-top: 8px;
-            background: #ff6f00;
-        }
-
-        .offer-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 38px;
-            height: 38px;
-            border: none;
-            border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
-            cursor: pointer;
-            display: grid;
-            place-items: center;
-            font-size: 18px;
-        }
-
-        .offer-btn-prev {
-            left: -50px;
-        }
-
-        .offer-btn-next {
-            right: -50px;
-        }
-
-        .offer-track-wrapper.is-dragging {
-            cursor: grabbing;
-        }
+        //////
 
         .slider_btn_orange {
             height: 50px;
@@ -332,26 +237,42 @@
             <div class="offer-track-wrapper">
                 <div class="offer-track">
                     <!-- Card 1 -->
-                    <div class="offer-card">
-                        <div class="offer-img-box">
-                            <span class="offer-badge">25% OFF</span>
-                            <span class="offer-fav">&#10084;</span>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/1200px-Altja_j%C3%B5gi_Lahemaal.jpg"
-                                alt="Apple Seeds">
+                    <div class="product-card">
+                    <div class="discount-badge">30% OFF</div>
+                    <div class="wishlist-icon">
+                        <i class="far fa-heart"></i>
+                    </div>
+                    <div class="image-container">
+                        <img src="https://m.media-amazon.com/images/I/415wgk6yCxL.SY445_SX342_QL70_ML2.jpg" alt="NPK Fertilizer" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">NPK 20:20:20 Water Soluble Fertilizer</h3>
+                        <div class="product-brand">Bayer</div>
+                        <div class="pricing">
+                            <div class="current-price">₹899</div>
+                            <div class="old-price">₹1285</div>
+                            <div class="savings">Save ₹386</div>
                         </div>
-                        <div class="offer-content">
-                            <h3 class="offer-title">Apple Seeds</h3>
-                            <p class="offer-brand">Syngenta</p>
-                            <p class="offer-price">₹349 <small>₹465</small> <span class="offer-save">Save ₹116</span>
-                            </p>
-                            <select class="offer-select">
-                                <option>50g Pack</option>
-                                <option>100g Pack</option>
+                        <div class="size-selector">
+                            <select>
+                                <option>1kg Bag</option>
+                                <option>5kg Bag</option>
+                                <option>10kg Bag</option>
                             </select>
-                            <button class="offer-add-btn">Add to Cart</button>
-                            <div class="offer-rating">⭐ 4.8 (42)</div>
+                        </div>
+                        <button class="add-to-cart-btn">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>(28)</span>
                         </div>
                     </div>
+                </div>
 
                     <!-- Card 2 -->
                     <div class="offer-card">
