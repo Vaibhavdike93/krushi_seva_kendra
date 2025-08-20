@@ -35,6 +35,14 @@ const translations = {
       register:"Register",
         Profile:"My Profile",
         logout:"Logout",
+        in_stock:"In Stock",
+        low_stock:"Low Stock",
+        add_to_cart: "Add to Cart",
+        save :"Save",
+        Categories: "Categories",
+        brands: "Brands",
+        price_range: "Price Range",
+        customer_rating: "Customer Rating",
 
     },
     footer: {about_company:"Krushi Seva Kendra is your trusted partner for agricultural products, seeds, fertilizers, and expert farming guidance to boost your productivity.",
@@ -101,7 +109,18 @@ Goverment_Schemes: "शासकीय योजना",
      previous: "मागील",
   register: "नोंदणी करा",
     Profile: "माझे प्रोफाइल",
-  logout: "लॉगआऊट"
+  logout: "लॉगआऊट",
+  in_stock: "स्टॉकमध्ये आहे",
+low_stock: "कमी स्टॉक",
+add_to_cart: "कार्टमध्ये जोडा",
+save: "जतन करा",
+Categories: "वर्गीकरण",
+brands: "ब्रँड",
+price_range: "किंमत श्रेणी",
+customer_rating: "ग्राहक रेटिंग"
+
+
+
     },
     footer: {about_company:"कृषी सेवा केंद्र हे कृषी उत्पादने, बियाणे, खते आणि तुमची उत्पादकता वाढवण्यासाठी तज्ञ शेती मार्गदर्शनासाठी तुमचा विश्वासू भागीदार आहे.",
        quick_links: "जलद दुवे",
@@ -167,7 +186,18 @@ Goverment_Schemes: "सरकारी योजनाएँ",
      previous: "पिछला",
   register: "पंजीकरण करें",
   Profile: "मेरा प्रोफाइल",
-  logout: "लॉगआउट"
+  logout: "लॉगआउट",
+  in_stock: "स्टॉक में है",
+low_stock: "कम स्टॉक",
+add_to_cart: "कार्ट में जोड़ें",
+save: "सहेजें",
+Categories: "श्रेणियाँ",
+brands: "ब्रांड",
+price_range: "कीमत सीमा",
+customer_rating: "ग्राहक रेटिंग"
+
+
+
         },
     footer: {about_company:"कृषि सेवा केंद्र आपकी उत्पादकता बढ़ाने के लिए कृषि उत्पादों, बीजों, उर्वरकों और विशेषज्ञ कृषि मार्गदर्शन के लिए आपका विश्वसनीय भागीदार है।",
       quick_links: "त्वरित लिंक",
