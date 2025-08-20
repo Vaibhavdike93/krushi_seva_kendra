@@ -23,7 +23,7 @@
         <div class="carousel-track" id="carouselTrack">
   <% for(var i = 0; i < categories.length; i++){ %>
     <div class="category-item">
-      <a href="/category?category_id=<%= categories[i].category_id %>">
+      <a href="/category/<%= categories[i].category_id %>" class="text-decoration-none">
         <img src="/uploads/<%= categories[i].category_image %>" alt="<%= 
              lang === 'mr' ? categories[i].category_name_mr : 
              lang === 'hi' ? categories[i].category_name_hi : 

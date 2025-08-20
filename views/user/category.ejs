@@ -70,7 +70,6 @@ body { background-color: var(--page-bg); color: var(--text-primary); line-height
             <% if(products.length > 0){ %>
                 <% products.forEach(function(product, index){ %>
                     <% 
-                        // Default variant
                         let defaultVariant = (product.variants && product.variants.length > 0) 
                                                 ? product.variants.find(v => v.weight === "100gm") 
                                                 : null;
@@ -102,26 +101,35 @@ body { background-color: var(--page-bg); color: var(--text-primary); line-height
                             </div>
 
                             <!-- Variant select -->
-                            <div class="variant-selector">
-                                <select class="variant-select" data-index="<%= index %>">
-                                    <% product.variants.forEach(function(variant){ %>
-                                        <option 
-                                            value="<%= variant.price %>" 
-                                            data-old="<%= variant.old_price || 0 %>"
-                                            <%= defaultVariant && variant.weight === defaultVariant.weight ? "selected" : "" %>
-                                        >
-                                            <%= variant.weight %> - ₹<%= variant.price %>
-                                        </option>
-                                    <% }) %>
-                                </select>
-                            </div>
+<div class="variant-selector">
+  <% if (product.variants && product.variants.length > 0) { %>
+    <select class="variant-select" data-index="<%= index %>">
+      <% product.variants.forEach(function(variant){ %>
+        <option 
+          value="<%= variant.basePrice %>" 
+          data-discount="<%= variant.discountedPrice %>">
+          <%= variant.weight %> - ₹<%= variant.basePrice %>
+        </option>
+      <% }) %>
+    </select>
+  <% } else { %>
+    <p class="text-muted">No variants available</p>
+  <% } %>
+</div>
 
-                            <p>Price: ₹<span class="price"><%= defaultVariant ? defaultVariant.price : 0 %></span></p>
-                            <div class="pricing">
-                                <div class="current-price">₹<%= product.price %></div>
-                                <div class="old-price">₹<%= product.old_price || '' %></div>
-                                <div class="savings">Save ₹<%= product.old_price ? product.old_price - product.price : 0 %></div>
-                            </div>
+
+<!-- ✅ Use defaultVariant for initial display -->
+<div class="pricing">
+    <div class="current-price">₹<%= defaultVariant ? defaultVariant.discountedPrice : 0 %></div>
+    <% if(defaultVariant && defaultVariant.discountPercent > 0){ %>
+        <div class="old-price">₹<%= defaultVariant.basePrice %></div>
+        <div class="savings">Save ₹<%= defaultVariant.basePrice - defaultVariant.discountedPrice %></div>
+    <% } %>
+</div>
+
+
+
+
 
                             <button class="add-to-cart-btn">
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
@@ -167,34 +175,31 @@ document.querySelectorAll('.variant-select').forEach(function(select){
 });
 </script>
 <script>
-// Variant select change
 document.querySelectorAll('.variant-select').forEach(function(select){
     select.addEventListener('change', function(){
         const productInfo = this.closest('.product-info');
         const selectedOption = this.options[this.selectedIndex];
 
-        // Update main price
-        const priceEl = productInfo.querySelector('.price');
-        priceEl.textContent = selectedOption.value;
+        const basePrice = parseFloat(selectedOption.value);
+        const discountedPrice = parseFloat(selectedOption.dataset.discount);
 
-        // Update current price
-        const currentPriceEl = productInfo.querySelector('.current-price');
-        if(currentPriceEl) currentPriceEl.textContent = "₹" + selectedOption.value;
+        // Update price box
+        productInfo.querySelector('.current-price').textContent = "₹" + discountedPrice;
 
-        // Update old price
         const oldPriceEl = productInfo.querySelector('.old-price');
-        if(oldPriceEl) oldPriceEl.textContent = selectedOption.dataset.old;
-
-        // Update savings
         const savingsEl = productInfo.querySelector('.savings');
-        if(savingsEl){
-            const oldPrice = parseFloat(selectedOption.dataset.old) || 0;
-            const newPrice = parseFloat(selectedOption.value);
-            savingsEl.textContent = "Save ₹" + (oldPrice - newPrice);
+
+        if (basePrice > discountedPrice) {
+            if(oldPriceEl) oldPriceEl.textContent = "₹" + basePrice;
+            if(savingsEl) savingsEl.textContent = "Save ₹" + (basePrice - discountedPrice);
+        } else {
+            if(oldPriceEl) oldPriceEl.textContent = "";
+            if(savingsEl) savingsEl.textContent = "";
         }
     });
 });
 </script>
+
 
 <%- include("footer") %>
 </body>
