@@ -19,104 +19,7 @@
   });
 </script>
 
-<script>
-const track = document.getElementById('carouselTrack');
-const previousBtn = document.getElementById('previousBtn'); // ✅ corrected
-const nextBtn = document.getElementById('nextBtn');         // ✅ corrected
 
-const itemWidth = 220;
-
-// Button scroll
-nextBtn.addEventListener('click', () => {
-  track.scrollBy({ left: itemWidth, behavior: 'smooth' });
-});
-
-previousBtn.addEventListener('click', () => {
-  track.scrollBy({ left: -itemWidth, behavior: 'smooth' });
-});
-
-// Unique variables for first slider drag
-let isDownMain = false;
-let startXMain;
-let scrollLeftMain;
-
-track.addEventListener('mousedown', e => {
-  isDownMain = true;
-  startXMain = e.pageX - track.offsetLeft;
-  scrollLeftMain = track.scrollLeft;
-});
-
-track.addEventListener('mouseleave', () => {
-  isDownMain = false;
-});
-
-track.addEventListener('mouseup', () => {
-  isDownMain = false;
-});
-
-track.addEventListener('mousemove', e => {
-  if (!isDownMain) return;
-  e.preventDefault();
-  const x = e.pageX - track.offsetLeft;
-  const walk = x - startXMain;
-  track.scrollLeft = scrollLeftMain - walk;
-});
-</script>
-<!--offer product cards script-->
-<script>
-  const offerTrackWrapper = document.querySelector('.offer-track-wrapper');
-  const btnPrev = document.querySelector('.offer-btn-prev');
-  const btnNext = document.querySelector('.offer-btn-next');
-
-  // Step size: 90% of visible area (responsive)
-  function getStep() {
-    return Math.max(200, Math.round(offerTrackWrapper.clientWidth * 0.9));
-  }
-
-  // Buttons
-  btnNext.addEventListener('click', () => {
-    offerTrackWrapper.scrollBy({ left: getStep(), behavior: 'smooth' });
-  });
-  btnPrev.addEventListener('click', () => {
-    offerTrackWrapper.scrollBy({ left: -getStep(), behavior: 'smooth' });
-  });
-
-  // Mouse drag / Touch drag with Pointer Events (works everywhere)
-  let isDragging = false;
-  let startX = 0;
-  let startScrollLeft = 0;
-
-  offerTrackWrapper.addEventListener('pointerdown', (e) => {
-    isDragging = true;
-    offerTrackWrapper.classList.add('is-dragging');
-    startX = e.clientX;
-    startScrollLeft = offerTrackWrapper.scrollLeft;
-    offerTrackWrapper.setPointerCapture(e.pointerId);
-  });
-
-  offerTrackWrapper.addEventListener('pointermove', (e) => {
-    if (!isDragging) return;
-    const dx = e.clientX - startX;
-    offerTrackWrapper.scrollLeft = startScrollLeft - dx;
-  });
-
-  function endDrag(e) {
-    isDragging = false;
-    offerTrackWrapper.classList.remove('is-dragging');
-    try { offerTrackWrapper.releasePointerCapture(e.pointerId); } catch (_) {}
-  }
-  offerTrackWrapper.addEventListener('pointerup', endDrag);
-  offerTrackWrapper.addEventListener('pointercancel', endDrag);
-  offerTrackWrapper.addEventListener('pointerleave', endDrag);
-
-  // Wheel support (shift vertical wheel to horizontal)
-  offerTrackWrapper.addEventListener('wheel', (e) => {
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      e.preventDefault(); // allow smooth horizontal on wheel
-      offerTrackWrapper.scrollLeft += e.deltaY;
-    }
-  }, { passive: false });
-</script>
 
 <!-- Footer -->
 <footer class="footer_background text-white pt-3">
@@ -145,37 +48,34 @@ track.addEventListener('mousemove', e => {
             <div class="col-md-3">
                 <h6 class="fw-bold">Customer Support</h6>
                 <ul class="list-unstyled small">
-                    <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Shipping & Delivery</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Returns Policy</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Terms & Conditions</a></li>
+                    <li><a href="#" class="text-white text-decoration-none"><%= translations.footer.Faq %></a></li>
+                    <li><a href="#" class="text-white text-decoration-none"><%= translations.footer.Shipping_Delivery %></a></li>
+                    <li><a href="#" class="text-white text-decoration-none"><%= translations.footer.Return_Policy %></a></li>
+                    <li><a href="#" class="text-white text-decoration-none"><%= translations.footer.Terms_condtion %></a></li>
                 </ul>
             </div>
 
             <!-- Social Media -->
             <div class="col-md-3">
-                <h6 class="fw-bold">Follow Us</h6>
+                <h6 class="fw-bold"><%= translations.buttons.Follow_us %></h6>
                 <div class="d-flex gap-3">
                     <a href="#" class="text-white fs-5"><i class="fa-brands fa-facebook"></i></a>
                     <a href="#" class="text-white fs-5"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" class="text-white fs-5"><i class="fa-brands fa-youtube"></i></a>
                     <a href="#" class="text-white fs-5"><i class="fa-brands fa-whatsapp"></i></a>
                 </div>
-                <p class="small mt-3 mb-0 text-white">Call Us: <strong>1800-0000-0000</strong></p>
+                <p class="small mt-3 mb-0 text-white"><%= translations.buttons.Call_us %>: <strong>1800-0000-0000</strong></p>
             </div>
         </div>
     </div>
 
     <!-- Bottom Bar -->
     <div class="bg-dark text-center py-2 mt-1">
-        <small class="mb-0">&copy; 2025 Krushi Seva Kendra. All Rights Reserved.</small>
+        <small class="mb-0">&copy; 2025 <%= translations.footer.copyright %></small>
     </div>
 </footer>
 
 
 
 
-<script src="/user/script.js"></script>
-</body>
-
-</html>
+<script src="/user/script.js"><script/>

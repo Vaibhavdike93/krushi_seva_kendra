@@ -1,0 +1,205 @@
+<%- include("navbar") %>
+
+<style>
+:root {
+    --page-bg: #FAF8F0;
+    --button-color: #F4A300;
+    --button-hover-color: #8B5E3C;
+    --text-primary: #2D2D2D;
+    --text-secondary: #5C5C5C;
+    --green-accent: #4CAF50;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --box-shadow-hover: 0 8px 20px rgba(0,0,0,0.12);
+    --transition: all 0.3s ease;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: var(--page-bg); color: var(--text-primary); line-height: 1.6; }
+
+.container { display:flex; max-width:1400px; margin:2rem auto; gap:2rem; flex-wrap:wrap; }
+.main-content { flex-grow:1; }
+
+.products-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:1.8rem; }
+
+.product-card {
+    background:white; border-radius:var(--border-radius); overflow:hidden;
+    box-shadow:var(--box-shadow); position:relative; transition:var(--transition);
+}
+.product-card:hover { transform:translateY(-8px); box-shadow:var(--box-shadow-hover); }
+
+.image-container { position:relative; height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden; background-color:#f9f9f9; }
+.product-image { max-width:80%; max-height:80%; object-fit:contain; transition:var(--transition); }
+.product-card:hover .product-image { transform:scale(1.05); }
+
+.discount-badge { position:absolute; top:15px; left:15px; background:var(--button-color); color:white; font-weight:700; padding:0.4rem 0.8rem; border-radius:20px; font-size:0.85rem; z-index:2; }
+
+.wishlist-icon { position:absolute; top:15px; right:15px; background:white; width:36px; height:36px; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:var(--transition); color:#666; }
+.wishlist-icon:hover { color:var(--button-color); transform:scale(1.1); }
+.wishlist-icon.active { color:#e53935; }
+
+.product-info { padding:1.5rem; }
+.product-title { font-size:1.1rem; font-weight:600; margin-bottom:0.5rem; color:var(--text-primary); line-height:1.45; min-height:3.19rem; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-clamp:2; }
+.product-brand { color:var(--text-secondary); font-size:0.9rem; margin-bottom:0.8rem; }
+
+.pricing { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem; }
+.current-price { font-size:1.3rem; font-weight:700; color:var(--text-primary); }
+.old-price { font-size:1rem; color:#9E9E9E; text-decoration:line-through; }
+.savings { color:var(--green-accent); font-weight:600; font-size:0.9rem; }
+
+.variant-selector select { width:100%; padding:0.6rem; border-radius:8px; border:1px solid #e0e0e0; font-size:0.95rem; cursor:pointer; transition:var(--transition); margin-bottom:1rem; }
+.variant-selector select:focus { outline:none; border-color:var(--button-color); }
+
+.add-to-cart-btn {
+    width:100%; padding:0.8rem; background:var(--button-color); color:white; border:none; border-radius:8px; font-weight:600; font-size:1rem; cursor:pointer; transition:var(--transition); display:flex; justify-content:center; align-items:center; gap:0.5rem;
+}
+.add-to-cart-btn:hover { background:var(--button-hover-color); }
+.add-to-cart-btn.added { background:var(--green-accent); }
+
+.rating { display:flex; align-items:center; gap:0.3rem; margin-top:0.8rem; color:#FF9800; }
+
+.product-extra p { font-size:0.85rem; color:#444; margin-bottom:0.4rem; }
+
+@media (max-width:768px){ .products-grid { grid-template-columns: repeat(auto-fill, minmax(100%,1fr)); } }
+</style>
+
+<body>
+<div class="container">
+    <main class="main-content">
+        <div class="products-grid">
+            <% if(products.length > 0){ %>
+                <% products.forEach(function(product, index){ %>
+                    <% 
+                        let defaultVariant = (product.variants && product.variants.length > 0) 
+                                                ? product.variants.find(v => v.weight === "100gm") 
+                                                : null;
+                        if(!defaultVariant && product.variants && product.variants.length > 0) {
+                            defaultVariant = product.variants[0];
+                        }
+                    %>
+
+                    <div class="product-card position-relative">
+                        <% if(product.discount && product.discount > 0){ %>
+                            <div class="discount-badge"><%= product.discount %>% OFF</div>
+                        <% } %>
+
+                        <div class="wishlist-icon">
+                            <i class="far fa-heart"></i>
+                        </div>
+
+                        <div class="image-container">
+                            <img src="/uploads/<%= product.main_image %>" alt="<%= product.product_name %>" class="product-image">
+                        </div>
+
+                        <div class="product-info">
+                            <h3 class="product-title"><%= product.product_name %></h3>
+
+                            <div class="product-extra">
+                                <% if(product.description){ %>
+                                    <p><strong>Description:</strong> <%= product.description %></p>
+                                <% } %>
+                            </div>
+
+                            <!-- Variant select -->
+<div class="variant-selector">
+  <% if (product.variants && product.variants.length > 0) { %>
+    <select class="variant-select" data-index="<%= index %>">
+      <% product.variants.forEach(function(variant){ %>
+        <option 
+          value="<%= variant.basePrice %>" 
+          data-discount="<%= variant.discountedPrice %>">
+          <%= variant.weight %> - ₹<%= variant.basePrice %>
+        </option>
+      <% }) %>
+    </select>
+  <% } else { %>
+    <p class="text-muted">No variants available</p>
+  <% } %>
+</div>
+
+
+<!-- ✅ Use defaultVariant for initial display -->
+<div class="pricing">
+    <div class="current-price">₹<%= defaultVariant ? defaultVariant.discountedPrice : 0 %></div>
+    <% if(defaultVariant && defaultVariant.discountPercent > 0){ %>
+        <div class="old-price">₹<%= defaultVariant.basePrice %></div>
+        <div class="savings">Save ₹<%= defaultVariant.basePrice - defaultVariant.discountedPrice %></div>
+    <% } %>
+</div>
+
+
+
+
+
+                            <button class="add-to-cart-btn">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+
+                            <% if(product.rating){ %>
+                                <div class="rating">
+                                    <% for(var i=1; i<=5; i++){ %>
+                                        <% if(i <= Math.floor(product.rating)){ %>
+                                            <i class="fas fa-star"></i>
+                                        <% } else if(i - product.rating < 1){ %>
+                                            <i class="fas fa-star-half-alt"></i>
+                                        <% } else { %>
+                                            <i class="far fa-star"></i>
+                                        <% } %>
+                                    <% } %>
+                                    <span>(<%= product.rating_count || 0 %>)</span>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No products found.</p>
+            <% } %>
+        </div>
+    </main>
+</div>
+
+<script>
+// Update price dynamically for each product variant select
+document.querySelectorAll('.variant-select').forEach(function(select){
+    select.addEventListener('change', function(){
+        const productInfo = this.closest('.product-info');
+        const selectedOption = this.options[this.selectedIndex];
+
+        const priceEl = productInfo.querySelector('.price');
+        const oldPriceEl = productInfo.querySelector('.oldPrice');
+
+        priceEl.textContent = selectedOption.value;
+        oldPriceEl.textContent = selectedOption.dataset.old;
+    });
+});
+</script>
+<script>
+document.querySelectorAll('.variant-select').forEach(function(select){
+    select.addEventListener('change', function(){
+        const productInfo = this.closest('.product-info');
+        const selectedOption = this.options[this.selectedIndex];
+
+        const basePrice = parseFloat(selectedOption.value);
+        const discountedPrice = parseFloat(selectedOption.dataset.discount);
+
+        // Update price box
+        productInfo.querySelector('.current-price').textContent = "₹" + discountedPrice;
+
+        const oldPriceEl = productInfo.querySelector('.old-price');
+        const savingsEl = productInfo.querySelector('.savings');
+
+        if (basePrice > discountedPrice) {
+            if(oldPriceEl) oldPriceEl.textContent = "₹" + basePrice;
+            if(savingsEl) savingsEl.textContent = "Save ₹" + (basePrice - discountedPrice);
+        } else {
+            if(oldPriceEl) oldPriceEl.textContent = "";
+            if(savingsEl) savingsEl.textContent = "";
+        }
+    });
+});
+</script>
+
+
+<%- include("footer") %>
+</body>

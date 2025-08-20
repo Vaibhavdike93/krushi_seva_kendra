@@ -1,3 +1,5 @@
+const { sign } = require("jsonwebtoken");
+
 const translations = {
   en: {
     season: { Rabi: "Rabi", Kharif: "Kharif", Summer: "Summer" },
@@ -24,13 +26,45 @@ const translations = {
       GALLERY: "GALLERY",
       CONTACT_US: "CONTACT US",
     },
-    buttons: {Register:"Register",Call_To_Order:"Call to Order"},
+    buttons: {Register:"Register",Call_To_Order:"Call to Order",
+      Call_us:"Call Us",
+      Follow_us:"Follow Us",
+      next:"Next",
+      forgot:"Forgot Password?",
+      previous:"Previous",
+      register:"Register",
+        Profile:"My Profile",
+        logout:"Logout",
+
+    },
     footer: {about_company:"Krushi Seva Kendra is your trusted partner for agricultural products, seeds, fertilizers, and expert farming guidance to boost your productivity.",
        quick_links: "Quick Links",
       home: "Home",  
       about: "About Us",
       products: "Products",
       contact: "Contact Us",
+      Customer_support: "Customer Support",
+      Faq:"FAQ",
+      Shipping_Delivery: "Shipping & Delivery",
+      Returns_Policy: "Returns Policy",
+      Terms_condtion: "Terms & Conditions",
+      copyright:"Krushi Seva Kendra. All Rights Reserved."
+    },
+    account:{your_account:"Create Your Account",
+      join_us:"Join Krushi Seva Kendra in just 2 easy steps",
+      name:"Full Name",
+      email:"Email Address",
+      mobile:"Mobile Number",
+      password:"Password",
+      already_account:"Already have an account?",
+      sign_in:"Sign In",
+      address:"Address",
+      crops:"Selected Crops",
+      welcome:"Welcome Farmer",
+      signin:"Sign in to continue to Krushi Seva Kendra",
+      dont_account:"Don't have an account?",
+      signup:"Sign Up",
+
     }
 
   },
@@ -59,15 +93,47 @@ Goverment_Schemes: "शासकीय योजना",
       ABOUT_US: "आमच्याबद्दल"
     },
 
-    buttons: {Register:"नोंदणी करा",Call_To_Order:"ऑर्डर करण्यासाठी कॉल करा"},
+    buttons: {Register:"नोंदणी करा",Call_To_Order:"ऑर्डर करण्यासाठी कॉल करा",
+       Call_us: "आम्हाला कॉल करा",
+  Follow_us: "आमचे अनुसरण करा",
+   next: "पुढे",
+    forgot: "संकेतशब्द विसरलात?",
+     previous: "मागील",
+  register: "नोंदणी करा",
+    Profile: "माझे प्रोफाइल",
+  logout: "लॉगआऊट"
+    },
     footer: {about_company:"कृषी सेवा केंद्र हे कृषी उत्पादने, बियाणे, खते आणि तुमची उत्पादकता वाढवण्यासाठी तज्ञ शेती मार्गदर्शनासाठी तुमचा विश्वासू भागीदार आहे.",
        quick_links: "जलद दुवे",
       home: "मुख्यपृष्ठ",  
       about: "आमच्याबद्दल",
       products: "उत्पादने",
       contact: "संपर्क",
+ Customer_support: "ग्राहक समर्थन",
+  Faq: "सामान्य प्रश्न",
+  Shipping_Delivery: "शिपिंग आणि वितरण",
+  Returns_Policy: "परतावा धोरण",
+  Terms_condtion: "नियम आणि अटी",
+  copyright: "कृषी सेवा केंद्र. सर्व हक्क राखीव आहेत."
 
-    }
+    },
+     account : {
+  your_account: "आपले खाते तयार करा",
+  join_us: "फक्त 2 सोप्या टप्प्यात कृषी सेवा केंद्रात सामील व्हा",
+  name: "पूर्ण नाव",
+  email: "ईमेल पत्ता",
+  mobile: "मोबाईल क्रमांक",
+  password: "संकेतशब्द",
+  already_account: "आधीच खाते आहे का?",
+  sign_in: "साइन इन करा",
+   address: "पत्ता",
+  crops: "निवडलेले पीक",
+    welcome: "स्वागत आहे शेतकरी",
+  signin: "कृषी सेवा केंद्रात पुढे जाण्यासाठी साइन इन करा",
+  dont_account: "अजून खाते नाही का?",
+  signup: "साइन अप करा"
+}
+
 
   },
   hi: {
@@ -93,16 +159,47 @@ Goverment_Schemes: "सरकारी योजनाएँ",
       CONTACT_US: "संपर्क करें",
       ABOUT_US: "हमारे बारे में"
     },
-        buttons: {Register:"पंजीकरण करवाना",Call_To_Order:"आदेश करने के लिए फोन करें"},
+        buttons: {Register:"पंजीकरण करवाना",Call_To_Order:"आदेश करने के लिए फोन करें",
+           Call_us: "हमें कॉल करें",
+  Follow_us: "हमें फॉलो करें",
+   next: "अगला",
+    forgot: "पासवर्ड भूल गए?",
+     previous: "पिछला",
+  register: "पंजीकरण करें",
+  Profile: "मेरा प्रोफाइल",
+  logout: "लॉगआउट"
+        },
     footer: {about_company:"कृषि सेवा केंद्र आपकी उत्पादकता बढ़ाने के लिए कृषि उत्पादों, बीजों, उर्वरकों और विशेषज्ञ कृषि मार्गदर्शन के लिए आपका विश्वसनीय भागीदार है।",
       quick_links: "त्वरित लिंक",
       home: "होम",  
       about: "हमारे बारे में",
       products: "उत्पाद",
       contact: "संपर्क",
+ Customer_support: "ग्राहक समर्थन",
+  Faq: "सामान्य प्रश्न",
+  Shipping_Delivery: "शिपिंग और डिलीवरी",
+  Returns_Policy: "वापसी नीति",
+  Terms_condtion: "नियम और शर्तें",
+  copyright: "कृषि सेवा केंद्र. सर्वाधिकार सुरक्षित।"
 
+    },
+     account : {
+  your_account: "अपना खाता बनाएं",
+  join_us: "सिर्फ 2 आसान चरणों में कृषि सेवा केंद्र से जुड़ें",
+  name: "पूरा नाम",
+  email: "ईमेल पता",
+  mobile: "मोबाइल नंबर",
+  password: "पासवर्ड",
+  already_account: "क्या पहले से खाता है?",
+  sign_in: "साइन इन करें",
+   address: "पता",
+  crops: "चुने हुए फ़सल",
+   welcome: "स्वागत है किसान",
+  signin: "कृषि सेवा केंद्र में आगे बढ़ने के लिए साइन इन करें",
+  dont_account: "खाता नहीं है?",
+  signup: "साइन अप करें"
+}
 
-    }
 
 
   }
