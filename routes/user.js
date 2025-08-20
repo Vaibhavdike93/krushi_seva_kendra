@@ -153,53 +153,50 @@ router.get("/category/:categoryId", (req, res) => {
     JOIN brands b ON p.brand_id = b.brand_id
     JOIN categories c ON p.category_id = c.category_id
     LEFT JOIN product_variants v ON p.product_id = v.product_id
-    WHERE p.category_id = ?;
+    WHERE p.category_id = ? AND p.language = ?
+    ORDER BY category_name ASC, brand_name ASC, p.product_name ASC;
   `;
 
-exe(query, [lang, lang, lang, lang, categoryId, lang], (err, results) => {
-  if (err) {
-    console.error("SQL Error:", err.sqlMessage);
-    return res.status(500).send("Database error");
-  }
-
-  const productsMap = {};
-  results.forEach(row => {
-    if (!productsMap[row.product_id]) {
-      productsMap[row.product_id] = {
-        product_id: row.product_id,
-        product_name: row.product_name,
-        description: row.description,
-        main_image: row.main_image,
-        discount: row.discount || 0,
-        brand_name: row.brand_name,
-        category_name: row.category_name,
-        variants: []
-      };
+  exe(query, [lang, lang, lang, lang, categoryId, lang], (err, results) => {
+    if (err) {
+      console.error("SQL Error:", err.sqlMessage);
+      return res.status(500).send("Database error");
     }
 
-    if (row.variant_id) {
-      let discountedPrice = row.price;
-      if (row.discount && row.discount > 0) {
-        discountedPrice = Math.round(row.price - (row.price * row.discount / 100));
+    const productsMap = {};
+    results.forEach(row => {
+      if (!productsMap[row.product_id]) {
+        productsMap[row.product_id] = {
+          product_id: row.product_id,
+          product_name: row.product_name,
+          description: row.description,
+          main_image: row.main_image,
+          discount: row.discount || 0,
+          brand_name: row.brand_name,
+          category_name: row.category_name,
+          variants: []
+        };
       }
 
-     productsMap[row.product_id].variants.push({
-  variant_id: row.variant_id,
-  weight: row.weight,
-  basePrice: row.price,
-  discountPercent: row.discount || 0,
-  discountedPrice: row.discount && row.discount > 0 
-                    ? Math.round(row.price - (row.price * row.discount / 100))
-                    : row.price
+      if (row.variant_id) {
+        productsMap[row.product_id].variants.push({
+          variant_id: row.variant_id,
+          weight: row.weight,
+          basePrice: row.price,
+          discountPercent: row.discount || 0,
+          discountedPrice: row.discount && row.discount > 0 
+                            ? Math.round(row.price - (row.price * row.discount / 100))
+                            : row.price
+        });
+      }
+    });
+
+    const finalProducts = Object.values(productsMap);
+
+    res.render("user/category", { products: finalProducts, lang });
+  });
 });
 
-    }
-  });
-
-  const finalProducts = Object.values(productsMap);
-
-  res.render("user/category", { products: finalProducts, lang });
-});  });
 
 
 
