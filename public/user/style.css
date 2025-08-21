@@ -923,3 +923,40 @@
   
       
         /* add to car page end */
+
+
+        /* Default - Desktop */
+.category-item {
+    flex: 0 0 auto;
+    width: 200px; /* किती categories दिसतील ते यावर control */
+    margin: 0 10px;
+    text-align: center;
+}
+
+/* Tablet view (max-width: 991px) */
+@media (max-width: 991px) {
+    .category-item {
+        width: 100%; /* Full width ekach item */
+        margin: 0 auto;
+    }
+
+    .carousel-track {
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+}
+
+/* Mobile view (max-width: 576px) */
+@media (max-width: 576px) {
+    .category-item {
+        width: 100%; /* Ekach category */
+        margin: 0 auto;
+    }
+
+    .carousel-track {
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+}
