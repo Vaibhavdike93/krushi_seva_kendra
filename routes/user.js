@@ -287,19 +287,53 @@ exe(query, params, (err, results) => {
 
 });
 
-router.get("/product_details/:id",async function(req,res){
-  var id = req.params.id;
-var product = await exe(`SELECT * FROM product 
-  LEFT JOIN categories ON product.category_id = categories.category_id 
-  LEFT JOIN brands ON product.brand_id = brands.brand_id
-  LEFT JOIN product_variants ON product.product_id = product_variants.product_id
-  WHERE product.product_id = ? AND product.language = ?`, [id,req.session.lang || 'en']);
-  console.log(product);
-  res.render("user/product_details.ejs",{
-    search: req.query.search || '',
-    product:product[0]
-  });
-})
+router.get("/product_details/:id", async (req, res) => {
+  try {
+    const lang = req.session.lang || 'en';
+    const id = req.params.id;
+
+    const productQuery = `
+      SELECT p.*, 
+             c.category_name_en, c.category_name_hi, c.category_name_mr,
+             b.brand_name_en, b.brand_name_hi, b.brand_name_mr,
+             v.variant_id, v.weight, v.price AS original_price
+      FROM product p
+      LEFT JOIN categories c ON p.category_id = c.category_id
+      LEFT JOIN brands b ON p.brand_id = b.brand_id
+      LEFT JOIN product_variants v ON p.product_id = v.product_id
+      WHERE p.product_id = ? AND p.language = ?
+      ORDER BY v.variant_id ASC
+    `;
+    const rows = await exe(productQuery, [id, lang]);
+
+    if (!rows || rows.length === 0) return res.status(404).send("Product not found");
+
+    // Variants अलग करा
+    const product = {
+      ...rows[0],
+      variants: rows.map(v => ({
+        variant_id: v.variant_id,
+        weight: v.weight,
+        original_price: v.original_price,
+        final_price: v.original_price - (v.original_price * rows[0].discount / 100),
+        discount_amount: (v.original_price * rows[0].discount / 100)
+      }))
+    };
+
+    product.selectedVariant = product.variants[0];
+
+    // Dosage & Features direct table मधून
+    product.dosage = product.dosage.split('|');      // DB मधे pipe separated असल्यास
+    product.features = product.features.split('|');  // DB मधे pipe separated असल्यास
+
+    res.render("user/product_details", { product, lang, search: req.query.search || '' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading product details");
+  }
+});
+
+
 
 
 
