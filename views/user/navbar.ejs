@@ -230,14 +230,16 @@
             <!-- Collapsible Search + Category -->
             <div class="collapse navbar-collapse order-lg-1" id="mainNavbar">
                 <!-- Search -->
-                <form class="search-form mx-lg-auto my-2 my-lg-0">
-                    <div class="search-container">
-                        <input type="search" class="search-input" placeholder="Search products..." aria-label="Search">
-                        <button class="search-button" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+               <form class="search-form mx-lg-auto my-2 my-lg-0" method="GET" action="/product">
+    <div class="search-container">
+        <input type="hidden" name="lang" value="<%= lang %>">
+       <input type="search" name="search" class="search-input" value="<%= search || '' %>" placeholder="Search products...">
+        <button class="search-button" type="submit">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</form>
+
 
                 <!-- Category Menu (Mobile) -->
                 <div class="category-menu mt-2 d-lg-none text-center fw-semibold small">

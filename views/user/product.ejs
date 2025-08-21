@@ -1,95 +1,103 @@
 <%- include("navbar.ejs") %>
 
+<style>
+    .pagination {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination a {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.pagination a.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination a:hover {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+</style>
 
     <!-- Main Content -->
     <div class="container">
         <!-- Sidebar Filters -->
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <h3><%= translations.buttons.Categories %></h3>
-                <% for(category of category)
-                {%>
-                    <div class="filter-option">
-                        <label>
-                            <input type="checkbox" >
-                            <%= lang === 'mr' ? category.category_name_mr : 
-                                lang === 'hi' ? category.category_name_hi : 
-                                category.category_name_en %>
-                        </label>
-                    </div>
-
-                <%}%>
-                
+      <aside class="sidebar">
+    <!-- Categories -->
+    <div class="sidebar-section">
+        <h3><%= translations.buttons.Categories %></h3>
+        <% for(category of category) { %>
+            <div class="filter-option">
+                <label>
+                    <input type="checkbox" name="category" value="<%= category.category_id %>">
+                    <%= lang === 'mr' ? category.category_name_mr : 
+                        lang === 'hi' ? category.category_name_hi : 
+                        category.category_name_en %>
+                </label>
             </div>
+        <% } %>
+    </div>
 
-            <div class="sidebar-section">
-                <h3><%= translations.buttons.brands %></h3>
-                <% for(brand of brands)
-                {%>
-                    <div class="filter-option">
-                        <label>
-                            <input type="checkbox">
-                            <%= lang === 'mr' ? brand.brand_name_mr : 
-                                lang === 'hi' ? brand.brand_name_hi : 
-                                brand.brand_name_en %>
-                        </label>
-                    </div>
-                <%}%>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        Syngenta
-                    </label>
-                </div>
-              
+    <!-- Brands -->
+    <div class="sidebar-section">
+        <h3><%= translations.buttons.brands %></h3>
+        <% for(brand of brands) { %>
+            <div class="filter-option">
+                <label>
+                    <input type="checkbox" name="brand" value="<%= brand.brand_id %>">
+                    <%= lang === 'mr' ? brand.brand_name_mr : 
+                        lang === 'hi' ? brand.brand_name_hi : 
+                        brand.brand_name_en %>
+                </label>
             </div>
+        <% } %>
+    </div>
 
-            <div class="sidebar-section">
-                <h3><%= translations.buttons.price_range %></h3>
-                <input type="range" min="0" max="5000" value="2500" class="price-slider">
-                <div class="price-range">
-                    <span>₹0</span>
-                    <span>₹5000</span>
-                </div>
-            </div>
+    <!-- Price Range -->
+    <div class="sidebar-section">
+        <h3><%= translations.buttons.price_range %></h3>
+        <input type="range" min="0" max="5000" value="2500" class="price-slider" id="priceRange">
+        <div class="price-range">
+            <span>₹0</span>
+            <span>₹5000</span>
+        </div>
+    </div>
 
-            <div class="sidebar-section">
-                <h3><%= translations.buttons.customer_rating %></h3>
-                <div class="rating-filter">
-                    <i class="fas fa-star rating-star active"></i>
-                    <i class="fas fa-star rating-star active"></i>
-                    <i class="fas fa-star rating-star active"></i>
-                    <i class="fas fa-star rating-star active"></i>
-                    <i class="fas fa-star rating-star"></i>
-                    <span>&amp; Up</span>
-                </div>
-            </div>
-        </aside>
+  
+
+    <!-- Apply / Clear Buttons -->
+    <div class="sidebar-section">
+        <button id="applyFilters" class="btn btn-primary btn-sm">Apply Filters</button>
+        <button id="clearFilters" class="btn btn-secondary btn-sm">Clear Filters</button>
+    </div>
+</aside>
+
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <div class="toolbar">
-                <div class="results-count">Showing 12 of 48 products</div>
-                <div class="sorting">
-                    <label for="sort">Sort By:</label>
-                    <select id="sort">
-                        <option value="best">Best Selling</option>
-                        <option value="price_asc">Price: Low to High</option>
-                        <option value="price_desc">Price: High to Low</option>
-                        <option value="discount">Discount</option>
-                        <option value="rating">Customer Rating</option>
-                    </select>
-                </div>
-            </div>
+           <div class="toolbar">
+    <div class="results-count">
+        Showing <%= startCount %> - <%= endCount %> of <%= totalProducts %> products
+    </div>
+</div>
+
 
             <!-- Product Grid -->
-            <div class="products-grid">
+            <div class="products-grid" id="productList">
                 <!-- Product Card 1 -->
                  <% if(products && products.length > 0){ %>
                     <% products.forEach(function(product, index){ 
                         var defaultVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null; %>   
             <div class="product-card">
-    <div class="discount-badge"><%=product.discount%> OFF</div>
+    <div class="discount-badge"><%=product.discount%>% OFF</div>
     <div class="wishlist-icon">
         <i class="far fa-heart"></i>
     </div>
@@ -115,7 +123,7 @@
 
        
 
-        <a href="/add_tocart" class="add-to-cart-btn text-decoration-none">
+        <a href="/product_details/<%=product.product_id%>" class="add-to-cart-btn text-decoration-none">
             <i class="fas fa-shopping-cart"></i><%= translations.buttons.add_to_cart %>
         </a>
 
@@ -182,9 +190,120 @@
             <div class="plant-leaf leaf-1"></div>
             <div class="plant-leaf leaf-2"></div>
         </div>
+        <!-- Pagination -->
+<div class="pagination mt-4">
+  <% if (totalPages > 1) { %>
+    <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>&search=<%= search %>">&laquo; Previous</a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a href="?page=<%= i %>&search=<%= search %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>&search=<%= search %>">Next &raquo;</a>
+    <% } %>
+  <% } %>
+</div>
+
     </div>
 
-   
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const applyBtn = document.getElementById("applyFilters");
+    const clearBtn = document.getElementById("clearFilters");
+
+    // Apply Filters
+    applyBtn.addEventListener("click", function () {
+        let selectedCategories = [];
+        let selectedBrands = [];
+        let price = document.getElementById("priceRange").value;
+
+        document.querySelectorAll("input[name='category']:checked").forEach(cb => {
+            selectedCategories.push(cb.value);
+        });
+
+        document.querySelectorAll("input[name='brand']:checked").forEach(cb => {
+            selectedBrands.push(cb.value);
+        });
+
+        fetch("/filter-products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ categories: selectedCategories, brands: selectedBrands, price })
+        })
+        .then(res => res.json())
+        .then(data => {
+            let productContainer = document.getElementById("productList");
+            productContainer.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                productContainer.innerHTML = "<div class='no-products'>No products found</div>";
+                return;
+            }
+
+           data.forEach(product => {
+    let variants = product.variants?.length
+        ? product.variants.map(v =>
+            `<option value="${v.variant_id}">${v.weight} - ₹${v.original_price}</option>`
+          ).join("")
+        : `<option disabled>No variants</option>`;
+
+    productContainer.innerHTML += `
+    <div class="product-card">
+        <div class="discount-badge">${product.discount}% OFF</div>
+        <div class="wishlist-icon"><i class="far fa-heart"></i></div>
+        <div class="image-container">
+          <img src="/uploads/${product.main_image}" alt="${product.product_name}" class="product-image">
+
+        </div>
+        <div class="product-info">
+            <h3 class="product-title m-0">${product.product_name}</h3>
+            <div class="product-brand m-0">${product.brand_name}</div>
+
+            <div class="stock-status text-center">
+                ${product.stock_quantity <= 10 
+                    ? `<span class="text-danger">Low Stock</span>` 
+                    : `<span class="text-success">In Stock</span>`}
+            </div>
+
+            <div class="pricing">
+                <div class="current-price">₹${product.final_price}</div>
+                <div class="old-price">₹${product.original_price}</div>
+                <div class="savings">Save ₹${product.discount_amount}</div>
+            </div>
+
+            <a href="/add_tocart" class="add-to-cart-btn text-decoration-none mt-2">
+                <i class="fas fa-shopping-cart"></i> Add to Cart
+            </a>
+        </div>
+    </div>`;
+});
+ })
+        .catch(err => console.error("Error:", err));
+    });
+
+    clearBtn.addEventListener("click", function () {
+        window.location.href = "/product?lang=<%= lang %>";  
+    });
+let pagination = document.querySelector(".pagination");
+pagination.innerHTML = "";
+for (let i = 1; i <= data.totalPages; i++) {
+    pagination.innerHTML += `<a href="#" class="${data.currentPage===i?'active':''}" onclick="goToPage(${i})">${i}</a>`;
+}
+function goToPage(page) {
+}
+
+});
+</script>
+
+
+
+
+
+
+
 
 
 <%-include('footer') %>

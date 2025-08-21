@@ -1,0 +1,234 @@
+<!-- <%-include("navbar")%> -->
+  <style>
+       /* product_details page start */
+   
+   .product-img {
+      border-radius: 10px ;
+      cursor: pointer;
+      transition: 0.3s;
+      height:300px;
+      width: 300px;
+      align-items: center;
+      
+    }
+    .product-card-img{
+      float: left;
+      height: 100px;
+      width:15%;
+    }
+    .product-card-img :hover{
+      border:1px solid black;
+    }
+    .product-img:hover {
+      transform: scale(1.05);
+    }
+    .stars {
+      color: #ffc107;
+      font-size: 20px;
+    }
+    .review-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .usage-list li {
+      margin-bottom: 8px;
+    }
+    .product-badge {
+    position: absolute; 
+    top: 10px; 
+    left: 10px;
+    background: #ff6f00;
+    color: #fff; 
+    padding:11px 15px;
+    border-radius: 999px;
+    font-size: 15px;
+  }
+    /* ratings css */
+    .star-rating {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: center;
+      gap: 8px;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .star {
+      color: lightgray;
+      transition: color 0.3s;
+    }
+    .star.active {
+      color: gold;
+    }
+    .reviews {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #444;
+    }
+    
+  
+      
+        /* product_details page end */
+  </style>
+</head>
+<body>
+
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- Product Images -->
+    <div class="col-md-5">
+      <div class="card shadow-sm p-3">
+        <span class="product-badge">25% OFF</span>
+        <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/coragen-dupont-file-1135.jpg?v=1737429360&width=1920" 
+             class=" product-img ms-5 mt-5" id="mainImage" alt="Product">
+       
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-md-7">
+      <h3 class="fw-bold">Coragen Insecticide – Chlorantraniliprole 18.5% SC by FMC</h3>
+      <h4 class="text-warning fw-bold mt-3 "><span class="fs-4 text-dark me-2">Price:</span>₹153</h4>
+      <p><strong>Availability:</strong> In Stock</p>
+      <button class="btn btn-warning btn-lg">Add to Cart</button>
+      <button class="btn btn-outline-success btn-lg">Buy Now</button>
+
+      <hr>
+      <h5>Description</h5>
+      <p>This organic fertilizer is made from natural ingredients that improve soil health, enhance root development, and increase productivity. Suitable for all types of crops.</p>
+
+      <h5>Usage Instructions</h5>
+      <ul class="usage-list">
+        <li>Mix 1kg of fertilizer with 10 liters of water.</li>
+        <li>Apply around the root zone of the plant.</li>
+        <li>Use once every 15 days for best results.</li>
+      </ul>
+      <h5>Dosage</h5>
+      <ul  class="usage-list">
+        <li>Dosage - 5 ML /Pump        </li>
+      </ul>
+      <h5>Features & Benefits</h5>
+        <h6>Features</h6>
+        <ul>
+          <li>Highly effective against lepidopteran pests such as stem borers, fruit borers, and pod borers; Systemic and translaminar activity for complete pest control</li>
+        </ul>
+         <h6>Benefits</h6>
+        <ul>
+        <li>Ensures healthier crops by effectively controlling major pests; Reduces pest-related crop losses and improves yield; Environmentally friendly with minimal non-target effects</li>
+        </ul>
+    </div>
+  </div>
+
+  <hr class="my-5">
+      <!-- Review Box -->
+      <div class="review-box">
+        <div class="d-flex justify-content-between">
+           <div class="d-flex align-items-center mb-2">
+      <img src="https://i.pravatar.cc/40?img=1" alt="Rahul Sharma" class="rounded-circle me-2" width="40" height="40">
+      <h6 class="mb-0 fw-bold">Rahul Sharma</h6>
+    </div>
+          <span>
+            <i class="stars">&#9733;</i>
+            <i class="stars">&#9733;</i>
+            <i class="stars">&#9733;</i>
+            <i class="stars">&#9733;</i>
+            <i class="stars">&#9734;</i>
+          </span>
+        </div>
+        <p class="mt-2">Very effective fertilizer! My tomato plants grew healthier and faster.</p>
+      </div>
+
+      <div class="review-box">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center mb-2">
+      <img src="https://i.pravatar.cc/40?img=2" alt="Sneha Patil" class="rounded-circle me-2" width="40" height="40">
+      <h6 class="mb-0 fw-bold">Sneha Patil</h6>
+    </div>
+          <span>
+            <i class="stars">&#9733;</i>
+            <i class="stars">&#9733;</i>
+            <i class="stars">&#9733;</i>
+            <i class="stars">&#9734;</i>
+            <i class="stars">&#9734;</i>
+          </span>
+        </div>
+        <p class="mt-2">Good product, but delivery was a bit late. Overall, happy with the results.</p>
+      </div>
+
+      <!-- Add Review -->
+      <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal">Write a Review</button>
+    </div>
+  </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Write a Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-control" required>
+        </div>
+        <div class="mb-3">
+  <label class="form-label">Rating</label>
+  <div class="star-rating" id="stars">
+    <span class="star" data-value="5">&#9733;</span>
+    <span class="star" data-value="4">&#9733;</span>
+    <span class="star" data-value="3">&#9733;</span>
+    <span class="star" data-value="2">&#9733;</span>
+    <span class="star" data-value="1">&#9733;</span>
+  </div>
+  <div class="reviews" id="reviews">No reviews yet</div>
+</div>
+        <div class="mb-3">
+          <label class="form-label">Review</label>
+          <textarea class="form-control" rows="3" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit Review</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function changeImage(img) {
+    document.getElementById("mainImage").src = img.src;
+  }
+</script>
+<!--reviews-->
+<script>
+  const stars = document.querySelectorAll(".star");
+  const reviewText = document.getElementById("reviews");
+  let rating = 0;
+
+  stars.forEach(star => {
+    star.addEventListener("click", () => {
+      rating = star.getAttribute("data-value");
+      updateStars(rating);
+      reviewText.textContent = You rated ${rating} star${rating > 1 ? "s" : ""};
+    });
+  });
+
+  function updateStars(rating) {
+    stars.forEach(star => {
+      if (star.getAttribute("data-value") <= rating) {
+        star.classList.add("active");
+      } else {
+        star.classList.remove("active");
+      }
+    });
+  }
+</script>
+<%-include("footer")%>

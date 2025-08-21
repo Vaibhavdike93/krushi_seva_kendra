@@ -82,20 +82,22 @@ router.get('/', async function(req, res) {
     
     var lang = req.session.language || "en";
     var categories = await exe("SELECT * FROM categories ")
-    
+     const search = req.query.search || "";
     res.render('user/index', {
         categories: categories,
         lang: lang,
-        translations: translations[lang]
+        translations: translations[lang],
+        search
     });
 });
-
-
 router.get("/product", async (req, res) => {
   try {
     const lang = req.query.lang || "en";
+    const search = req.query.search ? req.query.search.trim() : "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 12;
+    const offset = (page - 1) * limit;
 
-    // Category आणि Brand columns language नुसार ठरवतो
     let categoryCol = "c.category_name_en";
     let brandCol = "b.brand_name_en";
 
@@ -107,7 +109,22 @@ router.get("/product", async (req, res) => {
       brandCol = "b.brand_name_mr";
     }
 
-    const sql = `
+    let countSql = `
+      SELECT COUNT(*) as total
+      FROM product p
+      JOIN product_variants v ON p.product_id = v.product_id
+      WHERE p.language = ?
+    `;
+    const countParams = [lang];
+    if (search) {
+      countSql += " AND p.product_name LIKE ?";
+      countParams.push(`%${search}%`);
+    }
+    const totalResult = await exe(countSql, countParams);
+    const totalProducts = totalResult[0].total;
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    let sql = `
       SELECT 
           p.product_id,
           p.product_name,
@@ -116,26 +133,52 @@ router.get("/product", async (req, res) => {
           v.weight,
           v.price AS original_price,
           p.discount,
-           p.stock_quantity,
+          p.stock_quantity,
           (v.price * p.discount / 100) AS discount_amount,
           (v.price - (v.price * p.discount / 100)) AS final_price
       FROM product p
       JOIN categories c ON p.category_id = c.category_id
       JOIN brands b ON p.brand_id = b.brand_id
       JOIN product_variants v ON p.product_id = v.product_id
-      WHERE p.language = ? 
+      WHERE p.language = ?
+    `;
+    const params = [lang];
+
+    if (search) {
+      sql += " AND p.product_name LIKE ?";
+      params.push(`%${search}%`);
+    }
+
+    sql += `
       AND v.price = (
           SELECT MIN(v2.price)
           FROM product_variants v2
           WHERE v2.product_id = p.product_id
-      );
+      )
+      LIMIT ? OFFSET ?
     `;
+    params.push(limit, offset);
 
-    const products = await exe(sql, [lang]);
+    const products = await exe(sql, params);
+
+    const startCount = totalProducts === 0 ? 0 : offset + 1;
+    const endCount = offset + products.length;
+
     const category = await exe("SELECT * FROM categories");
     const brands = await exe("SELECT * FROM brands");
 
-    res.render("user/product", { products, lang, category, brands });
+    res.render("user/product", {
+      products,
+      lang,
+      category,
+      brands,
+      search,
+      currentPage: page,
+      totalPages,
+      startCount,
+      endCount,
+      totalProducts
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading products");
@@ -145,11 +188,141 @@ router.get("/product", async (req, res) => {
 
 
 
+router.post("/filter-products", (req, res) => {
+    const { categories, brands, price } = req.body;
+    const lang = req.session.lang || "en";
+
+    const categoryCol = lang === 'mr' ? 'c.category_name_mr' : lang === 'hi' ? 'c.category_name_hi' : 'c.category_name_en';
+    const brandCol = lang === 'mr' ? 'b.brand_name_mr' : lang === 'hi' ? 'b.brand_name_hi' : 'b.brand_name_en';
+
+   let query = `
+    SELECT 
+        p.product_id, p.product_name, p.stock_quantity, p.main_image, p.discount,
+        ${categoryCol} AS category_name,
+        ${brandCol} AS brand_name,
+        v.variant_id, v.weight, v.price
+    FROM product p
+    LEFT JOIN categories c ON p.category_id = c.category_id
+    LEFT JOIN brands b ON p.brand_id = b.brand_id
+    LEFT JOIN product_variants v ON p.product_id = v.product_id
+    WHERE 1=1 AND p.language = ?
+`;
+
+let params = [lang];
+
+if (categories && categories.length) {
+    const placeholders = categories.map(() => '?').join(',');
+    query += ` AND p.category_id IN (${placeholders})`;
+    params.push(...categories);
+}
+
+if (brands && brands.length) {
+    const placeholders = brands.map(() => '?').join(',');
+    query += ` AND p.brand_id IN (${placeholders})`;
+    params.push(...brands);
+}
+
+if (price) {
+    query += ` AND v.price <= ?`;
+    params.push(price);
+}
+
+
+exe(query, params, (err, results) => {
+    if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Database error" });
+    }
+
+    let products = {};
+    results.forEach(r => {
+       if (!products[r.product_id]) {
+    products[r.product_id] = {
+        product_id: r.product_id,
+        product_name: r.product_name,
+        stock_quantity: r.stock_quantity,
+        category_name: r.category_name,   
+        brand_name: r.brand_name,         
+        main_image: r.main_image,
+        discount: r.discount || 0,
+        variants: []
+    };
+}
+
+
+        if (r.variant_id) {
+            let discountedPrice = r.price;
+            let savings = 0;
+
+            if (r.discount && r.discount > 0) {
+                discountedPrice = r.price - (r.price * r.discount / 100);
+                savings = r.price - discountedPrice;
+            }
+
+            products[r.product_id].variants.push({
+                variant_id: r.variant_id,
+                weight: r.weight,
+                original_price: r.price,
+                discount: r.discount || 0,
+                discounted_price: Math.round(discountedPrice),
+                you_save: Math.round(savings)
+            });
+        }
+    });
+
+    Object.values(products).forEach(p => {
+        if (p.variants.length > 0) {
+            p.original_price = p.variants[0].original_price;
+            p.final_price = p.variants[0].discounted_price;
+            p.discount_amount = p.variants[0].you_save;
+        } else {
+            p.original_price = 0;
+            p.final_price = 0;
+            p.discount_amount = 0;
+        }
+    });
+
+    res.json(Object.values(products));
+});
+
+});
+
+router.get("/product_details/:id",async function(req,res){
+  var id = req.params.id;
+var product = await exe(`SELECT * FROM product 
+  LEFT JOIN categories ON product.category_id = categories.category_id 
+  LEFT JOIN brands ON product.brand_id = brands.brand_id
+  LEFT JOIN product_variants ON product.product_id = product_variants.product_id
+  WHERE product.product_id = ? AND product.language = ?`, [id,req.session.lang || 'en']);
+  console.log(product);
+  res.render("user/product_details.ejs",{
+    search: req.query.search || '',
+    product:product[0]
+  });
+})
 
 
 
-router.get("/add_tocart",async function(req, res) {
-  res.render("user/add_tocart.ejs");
+
+
+
+
+
+
+
+router.get("/add_tocart/:id",async function(req, res) {
+var id = req.params.id;
+var product = await exe(`SELECT * FROM product 
+  LEFT JOIN categories ON product.category_id = categories.category_id 
+  LEFT JOIN brands ON product.brand_id = brands.brand_id
+  LEFT JOIN product_variants ON product.product_id = product_variants.product_id
+  WHERE product.product_id = ? AND product.language = ?`, [id,req.session.lang || 'en']);
+  console.log(product);
+  res.render("user/add_tocart.ejs",
+    { search: req.query.search || '',
+      product:product[0] || null
+     }
+  );
 })
 
 
