@@ -1,0 +1,53 @@
+<%- include("navbar") %>
+
+<div class="container my-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white text-center">
+      <h2><i class="fas fa-landmark"></i> Add Government Scheme</h2>
+      <p class="mb-0">Submit new schemes to help citizens access benefits</p>
+    </div>
+    
+    <div class="card-body">
+      <form action="/admin/add_Government_Schemes" method="post" enctype="multipart/form-data">
+
+        <!-- Image -->
+        <div class="mb-3">
+          <label class="form-label">Scheme Image</label>
+          <input type="file" name="image" class="form-control" required>
+        </div>
+
+        <!-- Heading -->
+        <div class="mb-3">
+          <label class="form-label">Scheme Title</label>
+          <input type="text" name="heading" class="form-control" placeholder="Enter scheme title" required>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label class="form-label">Scheme Description</label>
+          <textarea name="description" class="form-control" rows="4" placeholder="Enter detailed description"></textarea>
+        </div>
+
+        <!-- Link -->
+        <div class="mb-3">
+          <label class="form-label">Official Link</label>
+          <input type="text" name="link" class="form-control" placeholder="Enter official scheme URL">
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Add Scheme
+          </button>
+        </div>
+
+      </form>
+    </div>
+    
+    <div class="card-footer text-muted text-center">
+      <small>All submitted schemes will be reviewed before publishing</small>
+    </div>
+  </div>
+</div>
+
+<%- include("footer") %>
