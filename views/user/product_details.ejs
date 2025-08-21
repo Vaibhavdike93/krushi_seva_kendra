@@ -77,50 +77,86 @@
 <body>
 
 <div class="container py-5">
+ <div class="container py-5">
   <div class="row g-4">
     <!-- Product Images -->
     <div class="col-md-5">
-      <div class="card shadow-sm p-3">
-        <span class="product-badge">25% OFF</span>
-        <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/coragen-dupont-file-1135.jpg?v=1737429360&width=1920" 
-             class=" product-img ms-5 mt-5" id="mainImage" alt="Product">
-       
+      <div class="card shadow-sm p-3 position-relative">
+        <span class="product-badge"><%= product.discount %>% OFF</span>
+        <img src="/uploads/<%= product.main_image %>" class="product-img ms-5 mt-5" id="mainImage" alt="<%= product.product_name %>">
       </div>
     </div>
 
     <!-- Product Details -->
     <div class="col-md-7">
-      <h3 class="fw-bold">Coragen Insecticide – Chlorantraniliprole 18.5% SC by FMC</h3>
-      <h4 class="text-warning fw-bold mt-3 "><span class="fs-4 text-dark me-2">Price:</span>₹153</h4>
-      <p><strong>Availability:</strong> In Stock</p>
+      <h3 class="fw-bold"><%= product.product_name %></h3>
+      <h5 class="text-muted">
+        Category: <%= lang === 'mr' ? product.category_name_mr : lang === 'hi' ? product.category_name_hi : product.category_name_en %>
+      </h5>
+      <h5 class="text-muted">
+        Brand: <%= lang === 'mr' ? product.brand_name_mr : lang === 'hi' ? product.brand_name_hi : product.brand_name_en %>
+      </h5>
+
+      <!-- Variant Selection -->
+      <div class="mb-3">
+        <label for="variantSelect" class="form-label">Select Weight / Variant:</label>
+        <select id="variantSelect" class="form-select">
+          <% product.variants.forEach(variant => { %>
+            <option value="<%= variant.variant_id %>" 
+                    data-original="<%= variant.original_price %>" 
+                    data-final="<%= variant.final_price %>" 
+                    data-save="<%= variant.discount_amount %>" 
+                    <%= variant.variant_id === product.selectedVariant.variant_id ? 'selected' : '' %>>
+              <%= variant.weight %> - ₹<%= variant.original_price %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <!-- Price -->
+      <h4 class="text-warning fw-bold mt-3">
+        Price: ₹<span id="finalPrice"><%= product.selectedVariant.final_price %></span>
+        <del class="text-muted" id="originalPrice">₹<%= product.selectedVariant.original_price %></del>
+        <small class="text-success" id="savePrice">You save ₹<%= product.selectedVariant.discount_amount %></small>
+      </h4>
+
+      <p><strong>Availability:</strong> <%= product.stock_quantity <= 10 ? 'Low Stock' : 'In Stock' %></p>
       <button class="btn btn-warning btn-lg">Add to Cart</button>
       <button class="btn btn-outline-success btn-lg">Buy Now</button>
 
       <hr>
       <h5>Description</h5>
-      <p>This organic fertilizer is made from natural ingredients that improve soil health, enhance root development, and increase productivity. Suitable for all types of crops.</p>
+      <p><%= product.description %></p>
 
       <h5>Usage Instructions</h5>
       <ul class="usage-list">
-        <li>Mix 1kg of fertilizer with 10 liters of water.</li>
-        <li>Apply around the root zone of the plant.</li>
-        <li>Use once every 15 days for best results.</li>
+        <% if(product.usage && product.usage.length) { %>
+          <% product.usage.split('|').forEach(u => { %>
+            <li><%= u %></li>
+          <% }) %>
+        <% } %>
       </ul>
+
       <h5>Dosage</h5>
-      <ul  class="usage-list">
-        <li>Dosage - 5 ML /Pump        </li>
+      <ul class="usage-list">
+        <% product.dosage.forEach(d => { %>
+          <li><%= d %></li>
+        <% }) %>
       </ul>
+
       <h5>Features & Benefits</h5>
-        <h6>Features</h6>
-        <ul>
-          <li>Highly effective against lepidopteran pests such as stem borers, fruit borers, and pod borers; Systemic and translaminar activity for complete pest control</li>
-        </ul>
-         <h6>Benefits</h6>
-        <ul>
-        <li>Ensures healthier crops by effectively controlling major pests; Reduces pest-related crop losses and improves yield; Environmentally friendly with minimal non-target effects</li>
-        </ul>
+      <h6>Features</h6>
+      <ul>
+        <% product.features.forEach(f => { %>
+          <li><%= f %></li>
+        <% }) %>
+      </ul>
+     
+      </ul>
     </div>
   </div>
+</div>
+
 
   <hr class="my-5">
       <!-- Review Box -->
