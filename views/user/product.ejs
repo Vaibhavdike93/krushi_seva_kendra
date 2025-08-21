@@ -6,75 +6,46 @@
         <!-- Sidebar Filters -->
         <aside class="sidebar">
             <div class="sidebar-section">
-                <h3>Categories</h3>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox" checked>
-                        Seeds
-                    </label>
-                </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        Fertilizers
-                    </label>
-                </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        Crop Protection
-                    </label>
-                </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        Farming Tools
-                    </label>
-                </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        Irrigation
-                    </label>
-                </div>
+                <h3><%= translations.buttons.Categories %></h3>
+                <% for(category of category)
+                {%>
+                    <div class="filter-option">
+                        <label>
+                            <input type="checkbox" >
+                            <%= lang === 'mr' ? category.category_name_mr : 
+                                lang === 'hi' ? category.category_name_hi : 
+                                category.category_name_en %>
+                        </label>
+                    </div>
+
+                <%}%>
+                
             </div>
 
             <div class="sidebar-section">
-                <h3>Brands</h3>
+                <h3><%= translations.buttons.brands %></h3>
+                <% for(brand of brands)
+                {%>
+                    <div class="filter-option">
+                        <label>
+                            <input type="checkbox">
+                            <%= lang === 'mr' ? brand.brand_name_mr : 
+                                lang === 'hi' ? brand.brand_name_hi : 
+                                brand.brand_name_en %>
+                        </label>
+                    </div>
+                <%}%>
                 <div class="filter-option">
                     <label>
                         <input type="checkbox">
                         Syngenta
                     </label>
                 </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox" checked>
-                        FMC
-                    </label>
-                </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        Bayer
-                    </label>
-                </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        UPL
-                    </label>
-                </div>
-                <div class="filter-option">
-                    <label>
-                        <input type="checkbox">
-                        Mahyco
-                    </label>
-                </div>
+              
             </div>
 
             <div class="sidebar-section">
-                <h3>Price Range</h3>
+                <h3><%= translations.buttons.price_range %></h3>
                 <input type="range" min="0" max="5000" value="2500" class="price-slider">
                 <div class="price-range">
                     <span>₹0</span>
@@ -83,7 +54,7 @@
             </div>
 
             <div class="sidebar-section">
-                <h3>Customer Rating</h3>
+                <h3><%= translations.buttons.customer_rating %></h3>
                 <div class="rating-filter">
                     <i class="fas fa-star rating-star active"></i>
                     <i class="fas fa-star rating-star active"></i>
@@ -114,202 +85,57 @@
             <!-- Product Grid -->
             <div class="products-grid">
                 <!-- Product Card 1 -->
-                <div class="product-card">
-                    <div class="discount-badge">25% OFF</div>
-                    <div class="wishlist-icon">
-                        <i class="far fa-heart"></i>
-                    </div>
-                    <div class="image-container">
-                        <img src="https://tse2.mm.bing.net/th/id/OIP.4XsW9jpGHXCHYiOdAJnYvAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Seed Packet" class="product-image">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Premium Hybrid Tomato Seeds</h3>
-                        <div class="product-brand">Syngenta</div>
-                        <div class="pricing">
-                            <div class="current-price">₹349</div>
-                            <div class="old-price">₹465</div>
-                            <div class="savings">Save ₹116</div>
-                        </div>
-                        <div class="size-selector">
-                           
-                        </div>
-   <a href="/add_tocart" class="add-to-cart-btn text-decoration-none"><i class="fas fa-shopping-cart"></i>Add to Cart</a> 
+                 <% if(products && products.length > 0){ %>
+                    <% products.forEach(function(product, index){ 
+                        var defaultVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null; %>   
+            <div class="product-card">
+    <div class="discount-badge"><%=product.discount%> OFF</div>
+    <div class="wishlist-icon">
+        <i class="far fa-heart"></i>
+    </div>
+    <div class="image-container">
+        <img src="https://tse2.mm.bing.net/th/id/OIP.4XsW9jpGHXCHYiOdAJnYvAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Seed Packet" class="product-image">
+    </div>
+    <div class="product-info">
+        <h3 class="product-title m-0"><%=product.product_name%></h3>
+        <div class="product-brand m-0"><%=product.brand_name%></div>
+         <!-- Stock Quantity Status -->
+        <div class="stock-status text-center">
+            <% if(product.stock_quantity <= 10) { %>
+                <span class="text-danger"><%= translations.buttons.low_stock %></span>
+            <% } else { %>
+                <span class="text-success "><%= translations.buttons.in_stock %></span>
+            <% } %>
+        </div>
+        <div class="pricing">
+            <div class="current-price">₹<%=product.final_price%></div>
+            <div class="old-price">₹<%=product.original_price%></div>
+            <div class="savings"><%= translations.buttons.save %> ₹<%=product.discount_amount%></div>
+        </div>
 
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <span>(42)</span>
-                        </div>
-                    </div>
+       
+
+        <a href="/add_tocart" class="add-to-cart-btn text-decoration-none">
+            <i class="fas fa-shopping-cart"></i><%= translations.buttons.add_to_cart %>
+        </a>
+
+        <div class="rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+            <span>(42)</span>
+        </div>
+    </div>
+</div>
+
+                <% }) %>
+                <% } else { %>
+                    <div class="no-products">No products found</div>
+                    <% } %>
+
                 </div>
-
-                <!-- Product Card 2 -->
-                <div class="product-card">
-                    <div class="discount-badge">30% OFF</div>
-                    <div class="wishlist-icon">
-                        <i class="far fa-heart"></i>
-                    </div>
-                    <div class="image-container">
-                        <img src="https://m.media-amazon.com/images/I/415wgk6yCxL.SY445_SX342_QL70_ML2.jpg" alt="NPK Fertilizer" class="product-image">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">NPK 20:20:20 Water Soluble Fertilizer</h3>
-                        <div class="product-brand">Bayer</div>
-                        <div class="pricing">
-                            <div class="current-price">₹899</div>
-                            <div class="old-price">₹1285</div>
-                            <div class="savings">Save ₹386</div>
-                        </div>
-                        <div class="size-selector">
-                           
-                        </div>
- <a href="/add_tocart" class="add-to-cart-btn text-decoration-none"><i class="fas fa-shopping-cart"></i>Add to Cart</a> 
-
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <span>(28)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Card 3 -->
-                <div class="product-card">
-                    <div class="discount-badge">15% OFF</div>
-                    <div class="wishlist-icon">
-                        <i class="far fa-heart"></i>
-                    </div>
-                    <div class="image-container">
-                        <img src="https://tse4.mm.bing.net/th/id/OIP.48cITyUl-JvYdDHlg0ZhqgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Insecticide" class="product-image">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Coragen Insecticide - Chlorantraniliprole</h3>
-                        <div class="product-brand">FMC</div>
-                        <div class="pricing">
-                            <div class="current-price">₹650</div>
-                            <div class="old-price">₹765</div>
-                            <div class="savings">Save ₹115</div>
-                        </div>
-                        <div class="size-selector">
-                          
-                        </div>
-             <a href="/add_tocart" class="add-to-cart-btn text-decoration-none"><i class="fas fa-shopping-cart"></i>Add to Cart</a> 
-
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <span>(36)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Card 4 -->
-                <div class="product-card">
-                    <div class="discount-badge">40% OFF</div>
-                    <div class="wishlist-icon">
-                        <i class="far fa-heart"></i>
-                    </div>
-                    <div class="image-container">
-                        <img src="https://tse2.mm.bing.net/th/id/OIP.pT676bL66UOBAHSz8tnaUgHaKQ?r=0&w=1000&h=1384&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Wheat Seeds" class="product-image">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">High Yield Wheat Seeds - HD 2967</h3>
-                        <div class="product-brand">Mahyco</div>
-                        <div class="pricing">
-                            <div class="current-price">₹1299</div>
-                            <div class="old-price">₹2165</div>
-                            <div class="savings">Save ₹866</div>
-                        </div>
-                        <div class="size-selector">
-                           
-                        </div>
-                <a href="/add_tocart" class="add-to-cart-btn text-decoration-none"><i class="fas fa-shopping-cart"></i>Add to Cart</a> 
-
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <i class="far fa-star"></i>
-                            <span>(19)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Card 5 -->
-                <div class="product-card">
-                    <div class="discount-badge">10% OFF</div>
-                    <div class="wishlist-icon">
-                        <i class="far fa-heart"></i>
-                    </div>
-                    <div class="image-container">
-                        <img src="https://th.bing.com/th/id/OIP.RgbBTsJFuSPPSUMjtBgLvgHaHa?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Sprayer" class="product-image">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Manual Crop Sprayer - 5 Liters</h3>
-                        <div class="product-brand">UPL</div>
-                        <div class="pricing">
-                            <div class="current-price">₹1250</div>
-                            <div class="old-price">₹1390</div>
-                            <div class="savings">Save ₹140</div>
-                        </div>
-                        <div class="size-selector">
-                           
-                        </div>
-           <a href="/add_tocart" class="add-to-cart-btn text-decoration-none"><i class="fas fa-shopping-cart"></i>Add to Cart</a> 
-
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <span>(47)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Card 6 -->
-                <div class="product-card">
-                    <div class="discount-badge">20% OFF</div>
-                    <div class="wishlist-icon">
-                        <i class="far fa-heart"></i>
-                    </div>
-                    <div class="image-container">
-                        <img src="https://images-na.ssl-images-amazon.com/images/I/71iPA5LfB7L.SL1500.jpg" alt="Organic Manure" class="product-image">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Vermicompost Organic Manure</h3>
-                        <div class="product-brand">Organic Farms</div>
-                        <div class="pricing">
-                            <div class="current-price">₹299</div>
-                            <div class="old-price">₹375</div>
-                            <div class="savings">Save ₹76</div>
-                        </div>
-                        <div class="size-selector">
-                            
-                        </div>
-                            <a href="/add_tocart" class="add-to-cart-btn text-decoration-none"><i class="fas fa-shopping-cart"></i>Add to Cart</a> 
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <span>(31)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
 

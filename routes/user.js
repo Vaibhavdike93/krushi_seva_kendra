@@ -4,25 +4,7 @@ var router = express.Router();
 var translations = require("../translation");
 
 
-router.get('/product', function(req, res) {
-  res.render('user/product');
-})
-router.get('/', async function(req, res) {
-    
-   
-    if(req.query.lang){
-        req.session.language = req.query.lang; 
-    }
-    
-    var lang = req.session.language || "en";
-    var categories = await exe("SELECT * FROM categories ")
-    
-    res.render('user/index', {
-        categories: categories,
-        lang: lang,
-        translations: translations[lang]
-    });
-});
+
 
 
 router.get('/login', function(req, res) {
@@ -89,10 +71,78 @@ router.post('/registration', async (req, res) => {
 });
 
 
-router.get('/', function(req, res) {
-  
-  res.render('user/index');
+
+
+router.get('/', async function(req, res) {
+    
+   
+    if(req.query.lang){
+        req.session.language = req.query.lang; 
+    }
+    
+    var lang = req.session.language || "en";
+    var categories = await exe("SELECT * FROM categories ")
+    
+    res.render('user/index', {
+        categories: categories,
+        lang: lang,
+        translations: translations[lang]
+    });
 });
+
+
+router.get("/product", async (req, res) => {
+  try {
+    const lang = req.query.lang || "en";
+
+    // Category आणि Brand columns language नुसार ठरवतो
+    let categoryCol = "c.category_name_en";
+    let brandCol = "b.brand_name_en";
+
+    if (lang === "hi") {
+      categoryCol = "c.category_name_hi";
+      brandCol = "b.brand_name_hi";
+    } else if (lang === "mr") {
+      categoryCol = "c.category_name_mr";
+      brandCol = "b.brand_name_mr";
+    }
+
+    const sql = `
+      SELECT 
+          p.product_id,
+          p.product_name,
+          ${categoryCol} AS category_name,
+          ${brandCol} AS brand_name,
+          v.weight,
+          v.price AS original_price,
+          p.discount,
+           p.stock_quantity,
+          (v.price * p.discount / 100) AS discount_amount,
+          (v.price - (v.price * p.discount / 100)) AS final_price
+      FROM product p
+      JOIN categories c ON p.category_id = c.category_id
+      JOIN brands b ON p.brand_id = b.brand_id
+      JOIN product_variants v ON p.product_id = v.product_id
+      WHERE p.language = ? 
+      AND v.price = (
+          SELECT MIN(v2.price)
+          FROM product_variants v2
+          WHERE v2.product_id = p.product_id
+      );
+    `;
+
+    const products = await exe(sql, [lang]);
+    const category = await exe("SELECT * FROM categories");
+    const brands = await exe("SELECT * FROM brands");
+
+    res.render("user/product", { products, lang, category, brands });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading products");
+  }
+});
+
+
 
 
 

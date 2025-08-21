@@ -652,22 +652,25 @@
         .product-title {
             font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             color: var(--text-primary);
             /* Replaced fixed height with a more robust line-clamp setup */
             line-height: 1.45; /* Controls spacing between lines */
-            min-height: 3.19rem; /* Ensures space for 2 lines (1.1rem * 1.45 * 2) */
+            /* min-height: 3.19rem; Ensures space for 2 lines (1.1rem * 1.45 * 2) */
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            text-align: center;
             -webkit-box-orient: vertical;
             line-clamp: 2; /* Standard property for future-proofing */
         }
 
         .product-brand {
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 1rem;
             margin-bottom: 0.8rem;
+            font-weight: bold;
+            text-align: center;
         }
 
         .pricing {
