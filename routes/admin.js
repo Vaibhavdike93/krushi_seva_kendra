@@ -751,6 +751,70 @@ router.post("/update_banner/:id", async function(req, res) {
   var result = await exe(sql, [file_name, id]);
   res.redirect("/admin/offer_banner")
 });
+router.get("/government_Schemes",function(req,res){
+  res.render("admin/add_Government_Schemes.ejs")
+})
+
+router.post("/add_Government_Schemes", async function (req, res) {
+  var d = req.body;
+
+  if (req.files && req.files.image) {
+    var file_name = new Date().getTime() + req.files.image.name;
+    req.files.image.mv("public/uploads/" + file_name);
+  } else {
+    var file_name = ""; 
+  }
+
+  var sql = `INSERT INTO government_schemes (image, heading, description, button_link) VALUES (?,?,?,?)`;
+  var result = await exe(sql, [file_name, d.heading, d.description, d.link]);
+  res.redirect("/admin/Government_Schemes"); 
+});
+
+
+router.get("/Government_Scheme_list",async function(req,res){
+  var sql = `SELECT * FROM government_schemes`;
+  var info = await exe(sql);
+  res.render("admin/Government_Schemes",{info})
+})
+
+router.get("/edit_Government_Schemes/:id",async function(req,res){
+  var id = req.params.id;
+  var sql =   `SELECT * FROM government_schemes WHERE id = ? `;
+  var info = await exe(sql ,[id]);
+  res.render("admin/edit_Government_Schemes.ejs",{info})
+})
+router.post("/update_Government_Schemes/:id", async function (req, res) {
+  var id = req.params.id;
+  var d = req.body;
+  var file_name;
+
+  if (req.files && req.files.new_image) {
+    file_name = new Date().getTime() + "_" + req.files.new_image.name;
+    await req.files.new_image.mv("public/uploads/" + file_name);
+  } else {
+    var old_img = await exe("SELECT image FROM government_schemes WHERE id=?", [id]);
+    file_name = old_img[0].image;
+  }
+
+  var sql = `UPDATE government_schemes SET 
+    image = ?,
+    heading = ?,
+    description = ?,
+    button_link = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [file_name, d.heading, d.description, d.link, id]);
+    res.redirect("/admin/Government_Scheme_list")
+});
+router.get("/delete_Government_Schemes/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `DELETE FROM Government_Schemes WHERE id = ?`;
+  var result = await exe(sql,[id]);
+  res.redirect("/admin/Government_Scheme_list")
+})
+router.get("/latest_Aaticles",function(req,res){
+  res.render("admin/add_latest_Aaticles.ejs")
+})
 
 
 

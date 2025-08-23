@@ -1,11 +1,31 @@
 <%- include("navbar.ejs") %>
 
     <!-- Banner -->
-    <section class="container-fluid m-0 p-0">
+    <!-- <section class="container-fluid m-0 p-0">
         <div class="banner">
         </div>
-    </section>
+    </section> -->
 
+    <section class="hero-banner">
+        <div class="hero-background"></div>
+        <div class="overlay"></div>
+        
+        <div class="floating-elements">
+            <div class="floating-element"><i class="fas fa-leaf"></i></div>
+            <div class="floating-element"><i class="fas fa-seedling"></i></div>
+            <div class="floating-element"><i class="fas fa-wheat"></i></div>
+            <div class="floating-element"><i class="fas fa-apple-alt"></i></div>
+            <div class="floating-element"><i class="fas fa-tractor"></i></div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-heading">Empowering Farmers, Growing Futures</h1>
+            <div class="accent-line"></div>
+            <p class="hero-subheading">Seeds, fertilizers, and modern agri solutions — all in one place.</p>
+            <a href="#" class="cta-button">Explore Services</a>
+        </div>
+    </section>
+<br><br>
     <!-- Category Carousel -->
     <div class="container-fluid carousel-bg" data-aos="zoom-in-up">
         <div class="offer_header">
@@ -41,6 +61,414 @@
         </div>
     </div>
 
-    <!-- Today's Offers -->
+
+<br><br>
+    <!-- today's offers section  -->
+
+      <h2 class="section-title">Today's Best Offers</h2>
+    
+    <div class="carousel-container" id="agriculturalCarousel">
+        <button class="carousel-btn prev">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <div class="carousel">
+            <!-- Product Card 1 -->
+            <div class="product-card">
+                <div class="offer-badge">25% OFF</div>
+                <div class="wishlist-icon">
+                    <i class="far fa-heart"></i>
+                </div>
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1519098635138-4c6c2a3136d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Hybrid Seeds">
+                </div>
+                <h3 class="product-title">Hybrid Seeds</h3>
+                <p class="product-subtitle">Premium Quality</p>
+                <div class="pricing">
+                    <span class="current-price">₹350</span>
+                    <span class="original-price">₹500</span>
+                    <span class="savings">Save ₹150</span>
+                </div>
+                <select class="variant-select">
+                    <option>50g Pack</option>
+                    <option>100g Pack</option>
+                    <option>200g Pack</option>
+                </select>
+                <button class="add-to-cart">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+                <div class="rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="review-count">(128)</span>
+                </div>
+            </div>
+            
+            <!-- Product Card 2 -->
+            <div class="product-card">
+                <div class="offer-badge">30% OFF</div>
+                <div class="wishlist-icon">
+                    <i class="far fa-heart"></i>
+                </div>
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1596638787647-904b822cee91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Organic Fertilizer">
+                </div>
+                <h3 class="product-title">Organic Fertilizer</h3>
+                <p class="product-subtitle">Eco-Friendly</p>
+                <div class="pricing">
+                    <span class="current-price">₹600</span>
+                    <span class="original-price">₹800</span>
+                    <span class="savings">Save ₹200</span>
+                </div>
+                <select class="variant-select">
+                    <option>1kg Bag</option>
+                    <option>5kg Bag</option>
+                    <option>10kg Bag</option>
+                </select>
+                <button class="add-to-cart">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+                <div class="rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="review-count">(96)</span>
+                </div>
+            </div>
+            
+            <!-- Product Card 3 -->
+            <div class="product-card">
+                <div class="offer-badge">Limited Offer</div>
+                <div class="wishlist-icon">
+                    <i class="far fa-heart"></i>
+                </div>
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1584358148942-86fd46e8140e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Farm Tools Kit">
+                </div>
+                <h3 class="product-title">Farm Tools Kit</h3>
+                <p class="product-subtitle">Professional Grade</p>
+                <div class="pricing">
+                    <span class="current-price">₹900</span>
+                    <span class="original-price">₹1200</span>
+                    <span class="savings">Save ₹300</span>
+                </div>
+                <select class="variant-select">
+                    <option>Basic Set</option>
+                    <option>Standard Set</option>
+                    <option>Premium Set</option>
+                </select>
+                <button class="add-to-cart">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+                <div class="rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="review-count">(215)</span>
+                </div>
+            </div>
+            
+            <!-- Product Card 4 -->
+            <div class="product-card">
+                <div class="offer-badge">20% OFF</div>
+                <div class="wishlist-icon">
+                    <i class="far fa-heart"></i>
+                </div>
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1611293388250-580b08c4a145?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Tractor Oil">
+                </div>
+                <h3 class="product-title">Tractor Oil</h3>
+                <p class="product-subtitle">Premium Lubricant</p>
+                <div class="pricing">
+                    <span class="current-price">₹560</span>
+                    <span class="original-price">₹700</span>
+                    <span class="savings">Save ₹140</span>
+                </div>
+                <select class="variant-select">
+                    <option>1 Liter</option>
+                    <option>5 Liters</option>
+                    <option>10 Liters</option>
+                </select>
+                <button class="add-to-cart">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+                <div class="rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="review-count">(78)</span>
+                </div>
+            </div>
+            
+            <!-- Product Card 5 -->
+            <div class="product-card">
+                <div class="offer-badge">15% OFF</div>
+                <div class="wishlist-icon">
+                    <i class="far fa-heart"></i>
+                </div>
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Gardening Gloves">
+                </div>
+                <h3 class="product-title">Gardening Gloves</h3>
+                <p class="product-subtitle">Durable & Comfortable</p>
+                <div class="pricing">
+                    <span class="current-price">₹255</span>
+                    <span class="original-price">₹300</span>
+                    <span class="savings">Save ₹45</span>
+                </div>
+                <select class="variant-select">
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                </select>
+                <button class="add-to-cart">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+                <div class="rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="review-count">(142)</span>
+                </div>
+            </div>
+        </div>
+        
+        <button class="carousel-btn next">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        
+        <!-- <div class="carousel-nav">
+            <div class="nav-dot active"></div>
+            <div class="nav-dot"></div>
+            <div class="nav-dot"></div>
+        </div> -->
+    </div>
+
+  
+    <!-- today's offers section end  -->
+
+<br><br>
+
+    <!-- why choose us section start -->
+
+     <section class="why-choose-us">
+        <h2 class="section-title">Why Choose Us</h2>
+        
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="icon-container">
+                    <i class="fas fa-shopping-basket feature-icon"></i>
+                </div>
+                <h3 class="feature-title">Wide Range</h3>
+                <p class="feature-description">Choose from thousands of quality products carefully selected for your needs.</p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="icon-container">
+                    <i class="fas fa-shipping-fast feature-icon"></i>
+                </div>
+                <h3 class="feature-title">Fast Delivery</h3>
+                <p class="feature-description">Lightning speed doorstep service. Get your orders delivered when you need them.</p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="icon-container">
+                    <i class="fas fa-shield-alt feature-icon"></i>
+                </div>
+                <h3 class="feature-title">Secure Payments</h3>
+                <p class="feature-description">100% safe and trusted transactions with advanced encryption technology.</p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="feature-card">
+                <div class="icon-container">
+                    <i class="fas fa-leaf feature-icon"></i>
+                </div>
+                <h3 class="feature-title">Fresh & Authentic</h3>
+                <p class="feature-description">Handpicked with guaranteed freshness and authenticity for premium quality.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- why choose us section end  -->
+
+
+
+    <!-- Services Section -->
+    <section class="krushi-section krushi-services">
+        <h2 class="section-title">Our Services</h2>
+        <div class="container position-relative">
+            <!-- <h2 class="section-title2">Our Services</h2> -->
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="krushi-card" data-animation="slideUp">
+                        <div class="service-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h3>Soil Testing</h3>
+                        <p>Comprehensive soil analysis to determine nutrient levels and recommend appropriate fertilizers for optimal crop growth.</p>
+                        <ul class="krushi-features">
+                            <li>Nutrient level analysis</li>
+                            <li>pH balance testing</li>
+                            <li>Custom fertilizer recommendations</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="krushi-card" data-animation="slideUp" data-delay="0.2">
+                        <div class="service-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3>Crop Consultation</h3>
+                        <p>Expert advice on crop selection, planting techniques, and cultivation practices tailored to your specific conditions.</p>
+                        <ul class="krushi-features">
+                            <li>Personalized crop planning</li>
+                            <li>Seasonal guidance</li>
+                            <li>Pest management strategies</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="krushi-card" data-animation="slideUp" data-delay="0.4">
+                        <div class="service-icon">
+                            <i class="fas fa-tractor"></i>
+                        </div>
+                        <h3>Equipment Supply</h3>
+                        <p>Access to modern farming equipment and tools for efficient agricultural operations and increased productivity.</p>
+                        <ul class="krushi-features">
+                            <li>Equipment rental options</li>
+                            <li>Maintenance support</li>
+                            <li>Operator training</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="krushi-card" data-animation="slideUp" data-delay="0.4">
+                        <div class="service-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                        <h3>Irrigation Solutions</h3>
+                        <p>Advanced irrigation systems designed to save water and ensure crops receive the right amount of hydration at the right time.</p>
+                        <ul class="krushi-features">
+                             <li>Drip irrigation setup</li>
+                             <li>Sprinkler systems</li>
+                             <li>Water conservation methods</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="text-center mt-3">
+                <a href="#" class="krushi-btn">Explore All Services</a>
+            </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section class="krushi-section krushi-recommendations">
+        <h2 class="section-title">Farming Recommendations</h2>
+        <div class="container">
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="krushi-card recommendation" data-animation="zoomIn">
+                        <div class="krushi-image">
+                            <img src="https://fazlaninaturesnest.com/wp-content/uploads/2022/10/Exploring-the-Benefits-of-Organic-Farming_Putting-Wellness-and-Sustainability-Ahead_1-1.jpg" alt="Organic Farming">
+                        </div>
+                        <div class="krushi-content">
+                            <h3>Organic Farming Techniques</h3>
+                            <p>Learn how to implement sustainable organic farming practices that improve soil health and yield chemical-free produce.</p>
+                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.2">
+                        <div class="krushi-image">
+                            <img src="https://www.rainyfilters.com/static/images/blogs/highlighting_sustainable_practices_water_conservation_agriculture_inner2.png" alt="Water Management">
+                        </div>
+                        <div class="krushi-content">
+                            <h3>Efficient Water Management</h3>
+                            <p>Discover modern irrigation techniques that can help conserve water while ensuring optimal crop hydration.</p>
+                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.4">
+                        <div class="krushi-image">
+                            <img src="https://tse4.mm.bing.net/th/id/OIP.QiL3CFcagXNJvkIE5JIilwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Crop Rotation">
+                        </div>
+                        <div class="krushi-content">
+                            <h3>Smart Crop Rotation</h3>
+                            <p>Understand the benefits of strategic crop rotation for maintaining soil fertility and preventing pest infestations.</p>
+                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+         <div class="text-center mt-5">
+                <a href="#" class="krushi-btn">Explore All Recommendations</a>
+            </div>
+    </section>
+
+
+
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            // Create an intersection observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Add delay based on index for staggered animation
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 200);
+                        
+                        // Stop observing after animation
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            // Observe each feature card
+            featureCards.forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
 
     <%- include("footer.ejs") %>
