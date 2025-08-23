@@ -85,7 +85,7 @@
 <hr>
 <div class="d-flex justify-content-between align-items-center">
   <span class="net-price" id="net-price">₹<%= net %></span>
-  <button class="proceed-btn">Proceed</button>
+  <a href="/checkout" class=" text-decoration-none proceed-btn">Proceed</a> 
 </div>
 
  
@@ -129,26 +129,38 @@ function updateCart() {
   setText("you-saved", "₹" + youSaved.toFixed(2));
 }
 
-document.addEventListener("click", function(e){
+document.addEventListener("click", async function(e){
   const plus = e.target.closest(".qty-plus");
   const minus = e.target.closest(".qty-minus");
-  const removeBtn = e.target.closest(".remove-item");
 
-  if (plus) {
-    const qtyElem = plus.parentElement.querySelector(".qty");
-    qtyElem.textContent = (parseInt(qtyElem.textContent) || 0) + 1;
+  if (plus || minus) {
+    const qtyElem = (plus || minus).parentElement.querySelector(".qty");
+    let current = parseInt(qtyElem.textContent) || 0;
+
+    if (plus) current++;
+    if (minus && current > 1) current--;
+
+    qtyElem.textContent = current;
     updateCart();
+
+    const cartId = (plus || minus).closest(".cart-item").querySelector(".remove-item")
+                     .getAttribute("href").split("/").pop();
+
+    try {
+      await fetch("/update_cart_qty", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart_id: cartId, quantity: current })
+      });
+    } catch (err) {
+      console.error("❌ qty update failed", err);
+    }
   }
-
-  if (minus) {
-    const qtyElem = minus.parentElement.querySelector(".qty");
-    const current = parseInt(qtyElem.textContent) || 0;
-    if (current > 1) qtyElem.textContent = current - 1;
-    updateCart();
-  }
-
-
 });
+
+
+
+
 
 document.addEventListener("DOMContentLoaded", updateCart);
 </script>

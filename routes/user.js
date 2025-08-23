@@ -2,8 +2,15 @@ var express = require('express');
 var exe = require('./conn');
 var router = express.Router();
 var translations = require("../translation");
+var nodemailer = require('nodemailer');
 
-
+ const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "gorakshnathdalavi91@gmail.com",
+        pass: "yydh qpqv vovi fjsm",
+      },
+    });
 
 
 
@@ -128,6 +135,7 @@ router.get("/product", async (req, res) => {
       SELECT 
           p.product_id,
           p.product_name,
+          p.main_image,  
           ${categoryCol} AS category_name,
           ${brandCol} AS brand_name,
           v.weight,
@@ -367,9 +375,7 @@ const userId = req.session.user?.user_id || null;
 router.post("/add_tocart", async (req, res) => {
     try {
         const userId = req.session.user?.user_id;
-        if (!userId) {
-            return res.redirect("/login");
-        }
+        if (!userId) return res.redirect("/login");
 
         const { product_id, variant_id } = req.body;
         const lang = req.session.lang || "en";
@@ -378,33 +384,35 @@ router.post("/add_tocart", async (req, res) => {
             return res.send("Please select a variant");
         }
 
+        // ✅ Variant check
         const variantRows = await exe(
             "SELECT variant_id, price, weight FROM product_variants WHERE variant_id = ? AND product_id = ?",
             [variant_id, product_id]
         );
-        if (!variantRows.length) {
-            return res.send("Variant not found");
-        }
+        if (!variantRows.length) return res.send("Variant not found");
+
         const variant = variantRows[0];
 
+        // ✅ Product check
         const productRows = await exe(
             "SELECT discount, brand_id, product_name FROM product WHERE product_id = ?",
             [product_id]
         );
-        if (!productRows.length) {
-            return res.send("Product not found");
-        }
+        if (!productRows.length) return res.send("Product not found");
 
-        const discount = productRows[0]?.discount || 0;
-        const finalPrice = variant.price - discount;
+        // ✅ Discount calculation
+        const discountPercent = productRows[0]?.discount || 0;
+        const discountAmount = (variant.price * discountPercent) / 100;
+        const finalPrice = variant.price - discountAmount;
 
+        // ✅ Check existing cart item
         const cartRowsCheck = await exe(
             "SELECT * FROM shopping_cart WHERE user_id = ? AND product_id = ? AND variant_id = ?",
             [userId, product_id, variant_id]
         );
 
         if (cartRowsCheck.length > 0) {
-            // 🔄 quantity + price update
+            // 🔄 Update quantity
             const oldQty = cartRowsCheck[0].quantity;
             const newQty = oldQty + 1;
             const totalPrice = newQty * finalPrice;
@@ -414,20 +422,22 @@ router.post("/add_tocart", async (req, res) => {
                 [newQty, finalPrice, totalPrice, cartRowsCheck[0].cart_id]
             );
         } else {
-            const totalPrice = finalPrice * 1; 
+            // ➕ Insert new cart item
+            const totalPrice = finalPrice * 1;
             await exe(
                 "INSERT INTO shopping_cart (user_id, product_id, variant_id, quantity, price, total_price, language) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 [userId, product_id, variant_id, 1, finalPrice, totalPrice, lang]
             );
         }
 
-       res.redirect("/add_tocart?lang=" + lang); 
+        res.redirect("/add_tocart?lang=" + lang);
 
     } catch (err) {
         console.error("❌ Error in add_tocart:", err);
         res.status(500).json({ success: false, message: "Server error" });
     }
 });
+
 
 router.get("/add_tocart", async (req, res) => {
   try {
@@ -454,10 +464,8 @@ router.get("/add_tocart", async (req, res) => {
     cartItems.forEach(item => {
       let qty = item.quantity || 1;
 
-      // मूळ किंमत (variant price)
       let originalPrice = item.price;
 
-      // discount टक्केवारी नुसार calculate केलेली किंमत
       let discountedPrice = item.price;
       if (item.discount && item.discount > 0) {
         discountedPrice = item.price - (item.price * item.discount / 100);
@@ -487,6 +495,25 @@ router.get("/add_tocart", async (req, res) => {
   }
 });
 
+router.post("/update_cart_qty", async (req, res) => {
+  try {
+    const userId = req.session.user?.user_id;
+    if (!userId) return res.status(401).json({ success: false, message: "Login required" });
+
+    const { cart_id, quantity } = req.body;
+    if (!cart_id || !quantity || quantity < 1) {
+      return res.status(400).json({ success: false, message: "Invalid data" });
+    }
+
+    await exe(`UPDATE shopping_cart SET quantity = ? WHERE cart_id = ? AND user_id = ?`,
+              [quantity, cart_id, userId]);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ update_cart_qty error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 
 router.get("/remove_cart/:cartId", async (req, res) => {
@@ -499,6 +526,171 @@ router.get("/remove_cart/:cartId", async (req, res) => {
       res.status(500).json({success:false,message:"Server Error"});
     }
   })
+
+router.get("/checkout", async function(req, res) {
+  var userId = req.session.user?.user_id;
+  if (!userId) {
+      return res.redirect("/login");
+  }
+
+  try {
+    const cartItems = await exe(
+      `SELECT c.cart_id, c.quantity,c.product_id,
+              p.product_name, p.discount, p.main_image,
+              v.weight, v.price AS originalPrice
+       FROM shopping_cart c
+       JOIN product p ON c.product_id = p.product_id
+       JOIN product_variants v ON c.variant_id = v.variant_id
+       WHERE c.user_id = ? AND c.language = ?`, 
+      [userId, req.session.lang || "en"]
+    );
+
+    let total = 0, originalTotal = 0;
+
+    cartItems.forEach(item => {
+      let discountedPrice = item.originalPrice;
+      if (item.discount && item.discount > 0) {
+        discountedPrice = item.originalPrice - (item.originalPrice * item.discount / 100);
+      }
+
+      item.discountedPrice = discountedPrice;
+      item.saved = (item.originalPrice - discountedPrice) * item.quantity;
+
+      total += discountedPrice * item.quantity;
+      originalTotal += item.originalPrice * item.quantity;
+    });
+
+    const youSaved = originalTotal - total;
+res.render("user/checkout", {
+  cartItems,
+  total,        
+  youSaved,
+  net: total,
+  search: req.query.search || ''
+});
+
+  } catch (err) {
+    console.error("❌ Checkout Error:", err);
+    res.redirect("/cart");
+  }
+});
+
+
+
+
+
+router.post("/checkout", async function (req, res) {
+  try {
+    const userId = req.session.user?.user_id;
+    if (!userId) {
+      return res.redirect("/login");
+    }
+
+    const {
+      name,
+      email,
+      phone,
+      pincode,
+      village,
+      taluka,
+      district,
+      state,
+      landmark,
+      payment,
+      products,
+      orderTotal,
+      orderSaved
+    } = req.body;
+
+    const language = req.session.lang || "en";
+
+    const orderResult = await exe(
+      `INSERT INTO orders 
+        (user_id, name, email, phone, pincode, village, taluka, district, state, landmark, payment_mode, language, order_total, order_saved) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        userId, name, email, phone, pincode, village, taluka, district, state,
+        landmark, payment, language, orderTotal, orderSaved
+      ]
+    );
+
+    const orderId = orderResult.insertId;
+
+    for (let product of products) {
+      await exe(
+        `INSERT INTO order_products (order_id, product_id, product_name, weight, quantity, price, saved) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          orderId,
+          product.product_id || null,
+          product.product_name,
+          product.weight,
+          product.quantity,
+          product.price,
+          product.saved
+        ]
+      );
+    }
+
+    await exe(`DELETE FROM shopping_cart WHERE user_id = ?`, [userId]);
+
+    const mailOptions = {
+      from: "yourmail@gmail.com",
+      to: email, 
+      subject: "Order Successful - Your Order #" + orderId,
+      html: `
+        <h2>Thank you for your order, ${name}!</h2>
+        <p>Your order has been placed successfully.</p>
+        <p><strong>Order ID:</strong> ${orderId}</p>
+        <p><strong>Order Total:</strong> ₹${orderTotal}</p>
+        <h3>Products:</h3>
+        <ul>
+          ${products.map(p => `<li>${p.product_name} (${p.weight}) - Qty: ${p.quantity} - ₹${p.price}</li>`).join("")}
+        </ul>
+        <p>We will contact you shortly regarding delivery.</p>
+      `
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.error("Email error:", error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    if (payment === "cod") {
+      return res.redirect("/thankyou");
+    } else if (payment === "netbanking") {
+      return res.redirect("/payment?order_id=" + orderId);
+    } else {
+      return res.status(400).send("Invalid payment method");
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+router.get("/thankyou/", function(req, res) {
+  res.render("user/thankyou", { search: req.query.search || '' });
+  // res.send(req.body);
+  // res.render("user/thankyou", { search: req.query.search || '' });
+  });
+
+
+
 
 
 
@@ -600,7 +792,7 @@ router.get("/category/:categoryId", (req, res) => {
 
     const finalProducts = Object.values(productsMap);
 
-    res.render("user/category", { products: finalProducts, lang });
+    res.render("user/category", { products: finalProducts, lang, search: req.query.search || '' });
   });
 });
 

@@ -1,0 +1,210 @@
+<%-include("navbar")%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Krushi Seva Kendra</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- AOS CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --navbar-bg: #FAFAF5;
+      --page-bg: #FAF8F0;
+      --button-color: #F4A300;
+      --button-hover-color: #8B5E3C;
+      --footer-bg: #8B5E3C;
+    }
+
+    body {
+      background-color: var(--page-bg);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .checkout-container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h4 {
+      color: var(--button-hover-color);
+      border-bottom: 2px solid var(--button-color);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+
+    .btn-checkout {
+      background-color: var(--button-color);
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .btn-checkout:hover {
+      background-color: var(--button-hover-color);
+    }
+
+    .order-summary {
+      background: #FAFAF5;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .order-summary h5 {
+      color: var(--button-hover-color);
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container py-5">
+  <h2 class="text-center mb-4" data-aos="fade-down">Checkout</h2>
+  <div class="row g-4">
+
+    <!-- Billing Details -->
+    <div class="col-lg-6" data-aos="fade-right">
+      <div class="checkout-container">
+        <h4>Billing Details</h4>
+        <form action="/checkout" method="POST">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control" name="name" placeholder="Enter your name" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" name="email" placeholder="example@gmail.com" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input type="text" class="form-control" name="phone" placeholder="+91 9876543210"required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Pincode</label>
+              <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Village / Street / Flat No.</label>
+              <input type="text" class="form-control" name="village" placeholder="Enter Address" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Taluka / City</label>
+              <input type="text" class="form-control" name="taluka" placeholder="Enter Taluka / City"required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">District</label>
+              <input type="text" class="form-control" name="district" placeholder="Enter District"required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">State</label>
+              <input type="text" class="form-control" name="state" placeholder="Enter State"required>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Landmark / Notes (optional)</label>
+              <textarea class="form-control" rows="2" name="landmark" placeholder="Enter Landmark or Notes"></textarea>
+            </div>
+          </div>
+ <br>
+           <div class="checkout-container" data-aos="flip-up">
+        <h4>Payment Method</h4>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="payment" value="cod" id="cod" checked>
+          <label class="form-check-label" for="cod">Cash on Delivery</label>
+        </div>
+        
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="payment" value="net-banking" id="netbanking">
+          <label class="form-check-label" for="netbanking">Net Banking</label>
+        </div>
+        <button class="btn-checkout w-100" data-aos="fade-up">Place Order</button>
+      </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6" data-aos="fade-left">
+      <div class="checkout-container mb-4">
+  <h4>Order Summary</h4>
+ <div class="order-summary" data-aos="zoom-in">
+  <h5>Items</h5>
+
+  <% if(cartItems && cartItems.length > 0) { %>
+    <% cartItems.forEach((item, index) => { %>
+      <p>
+        <%= item.product_name %> ( <%= item.weight %> ) × <%= item.quantity %>
+        <span class="float-end">
+          ₹<%= (item.discountedPrice * item.quantity).toFixed(2) %>
+        </span><br>
+
+        <% if(item.discount > 0) { %>
+          <small class="text-success">
+            Saved ₹<%= item.saved.toFixed(2) %>
+          </small>
+        <% } %>
+      </p>
+
+      <input type="hidden" name="products[<%= index %>][product_id]" value="<%= item.product_id %>">
+      <input type="hidden" name="products[<%= index %>][product_name]" value="<%= item.product_name %>">
+      <input type="hidden" name="products[<%= index %>][weight]" value="<%= item.weight %>">
+      <input type="hidden" name="products[<%= index %>][quantity]" value="<%= item.quantity %>">
+      <input type="hidden" name="products[<%= index %>][price]" value="<%= item.discountedPrice %>">
+      <input type="hidden" name="products[<%= index %>][saved]" value="<%= item.saved %>">
+      <input type="hidden" name="product_id" value="<%=item.product_id%>" id="">
+    <% }) %>
+
+    <hr>
+    <p><strong>Total</strong>
+      <span class="float-end fw-bold">₹<%= total.toFixed(2) %></span>
+    </p>
+    <p class="text-success">You Saved: ₹<%= youSaved.toFixed(2) %></p>
+
+    <!-- ✅ Send Total + Saved to backend also -->
+    <input type="hidden" name="orderTotal" value="<%= total.toFixed(2) %>">
+    <input type="hidden" name="orderSaved" value="<%= youSaved.toFixed(2) %>">
+
+  <% } else { %>
+    <p>Your cart is empty</p>
+  <% } %>
+</div>
+
+</div>
+
+        </form>
+
+     
+    </div>
+
+  </div>
+</div>
+
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 1000,
+    once: true
+  });
+</script>
+
+</body>
+</html>
+
+
+<%-include("footer")%>

@@ -26,10 +26,10 @@ next();
 
 app.use((req, res, next) => {
   if (req.query.lang) {
-    req.session.lang = req.query.lang;   // ✅ store in session
+    req.session.lang = req.query.lang;   
   }
   res.locals.lang = req.session.lang || "en";
-  res.locals.translations = translations[res.locals.lang]; // ✅ globally available
+  res.locals.translations = translations[res.locals.lang]; 
   next();
 });
 

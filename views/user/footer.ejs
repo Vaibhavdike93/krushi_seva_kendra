@@ -80,33 +80,32 @@
                     </div>
                     <h4 class="fw-bold">Krushi Seva Kendra</h4>
                     <p class="small text-light">
-                        Your trusted partner in agriculture. Quality seeds, fertilizers, and farming solutions for
-                        better yields and sustainable practices.
+                       <%= translations.footer.about_company %>
                     </p>
                 </div>
             </div>
 
             <!-- Quick Links -->
             <div class="col-lg-3 col-md-6">
-                <h5 class="fw-semibold">Quick Links</h5>
+                <h5 class="fw-semibold"><%= translations.footer.quick_links %></h5>
                 <ul class="list-unstyled">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Products</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="#"><%= translations.footer.home %></a></li>
+                    <li><a href="#"><%= translations.footer.about %></a></li>
+                    <li><a href="#"><%= translations.footer.product %></a></li>
+                    <li><a href="#"><%= translations.footer.services %></a></li>
+                    <li><a href="#"><%= translations.footer.contact %></a></li>
                 </ul>
             </div>
 
             <!-- Support -->
             <div class="col-lg-3 col-md-6">
-                <h5 class="fw-semibold">Customer Support</h5>
+                <h5 class="fw-semibold"><%= translations.footer.Customer_support %></h5>
                 <ul class="list-unstyled">
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Shipping & Delivery</a></li>
-                    <li><a href="#">Return Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#"><%= translations.footer.Faq %></a></li>
+                    <li><a href="#"><%= translations.footer.Shipping_Delivery %></a></li>
+                    <li><a href="#"><%= translations.footer.Returns_Policy %></a></li>
+                    <li><a href="#"><%= translations.footer.Terms_condtion %></a></li>
+                    <!-- <li><a href="#"><%= translations.footer.about_company %></a></li> -->
                 </ul>
             </div>
 
@@ -131,7 +130,7 @@
     <!-- Bottom Bar -->
     <div class="bottom-bar text-center text-white py-3 mt-2">
         <div class="container d-md-flex justify-content-between align-items-center">
-            <span>&copy; 2025 Krushi Seva Kendra. All rights reserved.</span>
+            <span>&copy; <%= translations.footer.copyright %></span>
             <div class="mt-2 mt-md-0">
                 <a href="#" class="me-3">Privacy Policy</a>
                 <a href="#" class="me-3">Terms of Service</a>
@@ -140,6 +139,7 @@
         </div>
     </div>
 </footer>
+
 
 <script src="/user/script.js"></script>
 

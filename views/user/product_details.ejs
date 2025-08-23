@@ -133,9 +133,9 @@
       </h4>
 
       <p><strong>Availability:</strong> <%= product.stock_quantity <= 10 ? 'Low Stock' : 'In Stock' %></p>
-    <form action="/add_tocart" method="post">
+   <form action="/add_tocart" method="post">
   <input type="hidden" name="product_id" value="<%= product.product_id %>">
-  <input type="hidden" name="variant_id" value="<%= product.selectedVariant.variant_id %>">
+  <input type="hidden" name="variant_id" id="variantInput" value="<%= product.selectedVariant.variant_id %>">
   <input type="hidden" id="finalQty" name="quantity" value="1">
 
   <% if (alreadyInCart) { %>
@@ -144,6 +144,7 @@
     <button type="submit" class="btn btn-warning btn-lg">Add to Cart</button>
   <% } %>
 </form>
+
 
 
       <!-- <a href="/add_tocart/<%=product.product_id%>" class="btn btn-warning btn-lg">Add to Cart</a> -->
@@ -306,12 +307,15 @@
   }
 </script>
 <script>
-  document.getElementById("variantSelect").addEventListener("change", function() {
+document.getElementById("variantSelect").addEventListener("change", function() {
     const selectedOption = this.options[this.selectedIndex];
     document.getElementById("finalPrice").innerText = selectedOption.getAttribute("data-final");
     document.getElementById("originalPrice").innerText = selectedOption.getAttribute("data-original");
     document.getElementById("savePrice").innerText = "You save ₹" + selectedOption.getAttribute("data-save");
-  });
+
+    document.getElementById("variantInput").value = selectedOption.value;
+});
+
     document.getElementById("mainImage").addEventListener("click", function() {
         const images = document.querySelectorAll(".product-card-img img");
         images.forEach(img => {
