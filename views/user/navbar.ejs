@@ -52,7 +52,7 @@
         }
 
         .logo_img {
-            height: 80px;
+            height: 60px;
             width: auto;
         }
 
@@ -222,6 +222,10 @@
                                     class="fa-solid fa-right-from-bracket"></i>
                                 <%= translations.buttons.logout %>
                             </a>
+                        <li><a class="nav-link" href="/profile?lang=<%= lang %>"><i class="fa-regular fa-user"></i> <%= translations.buttons.Profile %></a></li>
+                        <li><a class="nav-link" href="/wishlist?lang=<%= lang %>"><i class="fa-regular fa-heart"></i></a></li>
+                        <li><a class="nav-link" href="/add_tocart?lang=<%= lang %>"><i class="fa-solid fa-cart-shopping"></i></a></li>
+                        <li><a class="nav-link" href="/logout?lang=<%= lang %>"><i class="fa-solid fa-right-from-bracket"></i> <%= translations.buttons.logout %></a>
                         </li>
                         <% } %>
 
