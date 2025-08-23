@@ -81,69 +81,99 @@
     <div class="register-card">
         <div class="text-center mb-3">
             <img src="logo.png" alt="Krushi Seva Kendra" style="height:80px;">
-            <h4 class="mt-2"><%= translations.account.your_account %></h4>
-            <p class="text-muted small"><%= translations.account.join_us %></p>
+            <h4 class="mt-2">
+                <%= translations.account.your_account %>
+            </h4>
+            <p class="text-muted small">
+                <%= translations.account.join_us %>
+            </p>
         </div>
 
         <form id="registerForm" action="/registration" method="POST">
             <!-- Step 1 -->
             <div class="step active" id="step1">
                 <div class="mb-3">
-                    <label for="fullname" class="form-label"><%= translations.account.name %></label>
-                    <input type="text" id="fullname" name="name" class="form-control" placeholder="Enter your name" required>
+                    <label for="fullname" class="form-label">
+                        <%= translations.account.name %>
+                    </label>
+                    <input type="text" id="fullname" name="name" class="form-control" placeholder="Enter your name"
+                        required>
                 </div>
                 <div class="mb-3">
-                    <label for="email" class="form-label"><%= translations.account.email %></label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+                    <label for="email" class="form-label">
+                        <%= translations.account.email %>
+                    </label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email"
+                        required>
                 </div>
                 <div class="mb-3">
-                    <label for="mobile" class="form-label"><%= translations.account.mobile %></label>
-                    <input type="tel" id="mobile" class="form-control" name="mobile" placeholder="10-digit mobile number" required
-                        pattern="[0-9]{10}">
+                    <label for="mobile" class="form-label">
+                        <%= translations.account.mobile %>
+                    </label>
+                    <input type="tel" id="mobile" class="form-control" name="mobile"
+                        placeholder="10-digit mobile number" required pattern="[0-9]{10}">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label" ><%= translations.account.password %></label>
+                    <label for="password" class="form-label">
+                        <%= translations.account.password %>
+                    </label>
                     <div class="password-wrapper">
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Create a password"
-                            required>
+                        <input type="password" id="password" name="password" class="form-control"
+                            placeholder="Create a password" required>
                         <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
                     </div>
                 </div>
-                <button type="button" class="btn btn-orange w-100" id="nextBtn"><%= translations.buttons.next %></button>
+                <button type="button" class="btn btn-orange w-100" id="nextBtn">
+                    <%= translations.buttons.next %>
+                </button>
             </div>
 
             <!-- Step 2 -->
             <div class="step" id="step2">
-              <div class="mb-3">
-  <label class="form-label"><%= translations.account.crops %></label><br>
-  
- <% crops.forEach(crop => { %>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="checkbox" name="crops[]" value="<%= crop.crop_id %>" id="crop<%= crop.crop_id %>">
-    <label class="form-check-label" for="crop<%= crop.crop_id %>">
-      <%= locals.lang === 'en' ? crop.crop_name_en : (locals.lang === 'hi' ? crop.crop_name_hi : crop.crop_name_mr) %>
-    </label>
-  </div>
-<% }) %>
+                <div class="mb-3">
+                    <label class="form-label">
+                        <%= translations.account.crops %>
+                    </label><br>
+
+                    <% crops.forEach(crop=> { %>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="crops[]" value="<%= crop.crop_id %>"
+                                id="crop<%= crop.crop_id %>">
+                            <label class="form-check-label" for="crop<%= crop.crop_id %>">
+                                <%= locals.lang==='en' ? crop.crop_name_en : (locals.lang==='hi' ? crop.crop_name_hi :
+                                    crop.crop_name_mr) %>
+                            </label>
+                        </div>
+                        <% }) %>
 
 
-</div>
+                </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label"><%= translations.account.address %></label>
+                    <label for="address" class="form-label">
+                        <%= translations.account.address %>
+                    </label>
                     <textarea id="address" class="form-control" rows="3" name="address" placeholder="Enter your address"
                         required></textarea>
                 </div>
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-secondary w-50" id="prevBtn"><%= translations.buttons.previous %></button>
-                    <button type="submit" class="btn btn-orange w-50"><%= translations.buttons.register %></button>
+                    <button type="button" class="btn btn-secondary w-50" id="prevBtn">
+                        <%= translations.buttons.previous %>
+                    </button>
+                    <button type="submit" class="btn btn-orange w-50">
+                        <%= translations.buttons.register %>
+                    </button>
                 </div>
             </div>
         </form>
 
         <div class="text-center mt-3">
-            <span class="small"><%= translations.account.already_account %><a href="/login" class="text-decoration-none fw-bold"
-                    style="color:#f38020;"><%= translations.account.sign_in %></a></span>
+            <span class="small">
+                <%= translations.account.already_account %><a href="/login" class="text-decoration-none fw-bold"
+                        style="color:#f38020;">
+                        <%= translations.account.sign_in %>
+                    </a>
+            </span>
         </div>
     </div>
 

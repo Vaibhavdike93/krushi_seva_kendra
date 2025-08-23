@@ -408,8 +408,10 @@
             align-items: center;
         }
 
+        /* Product page css */
+
         /* Main Layout */
-        .container {
+        .productpage_container {
             display: flex;
             max-width: 1400px;
             margin: 0 auto;
@@ -888,7 +890,7 @@
 
         /* Responsive Design */
         @media (max-width: 992px) {
-            .container {
+            .productpage_container {
                 flex-direction: column;
             }
             

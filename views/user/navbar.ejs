@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Krushi Seva Kendra</title>
-    <script src="https://kit.fontawesome.com/3841ba2abd.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/user/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,7 +22,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
 
     <style>
         .bg-topbar {
@@ -165,7 +164,7 @@
     </style>
 </head>
 
-<body class="bg-white">
+<body>
 
     <!-- Top Bar -->
     <div class="bg-topbar text-white px-3 py-1">
@@ -186,7 +185,7 @@
         <div class="container-fluid px-3 px-md-5">
             <!-- Logo -->
             <a class="navbar-brand" href="#">
-                <img src="krushi.png" alt="Krushi Seva Kendra" class="logo_img">
+                <img src="/krushi.png" alt="Krushi Seva Kendra" class="logo_img">
             </a>
 
             <!-- Right Links -->
@@ -212,10 +211,17 @@
                         </a></li>
                     <% } else { %>
                         <!-- Logged in user -->
-                        <li><a class="nav-link" href="/profile?lang=<%= lang %>"><i class="fa-regular fa-user"></i> <%= translations.buttons.Profile %></a></li>
-                        <li><a class="nav-link" href="/wishlist?lang=<%= lang %>"><i class="fa-regular fa-heart"></i></a></li>
-                        <li><a class="nav-link" href="/cart?lang=<%= lang %>"><i class="fa-solid fa-cart-shopping"></i></a></li>
-                        <li><a class="nav-link" href="/logout?lang=<%= lang %>"><i class="fa-solid fa-right-from-bracket"></i> <%= translations.buttons.logout %></a>
+                        <li><a class="nav-link" href="/profile?lang=<%= lang %>"><i class="fa-regular fa-user"></i>
+                                <%= translations.buttons.Profile %>
+                            </a></li>
+                        <li><a class="nav-link" href="/wishlist?lang=<%= lang %>"><i
+                                    class="fa-regular fa-heart"></i></a></li>
+                        <li><a class="nav-link" href="/cart?lang=<%= lang %>"><i
+                                    class="fa-solid fa-cart-shopping"></i></a></li>
+                        <li><a class="nav-link" href="/logout?lang=<%= lang %>"><i
+                                    class="fa-solid fa-right-from-bracket"></i>
+                                <%= translations.buttons.logout %>
+                            </a>
                         </li>
                         <% } %>
 
@@ -231,50 +237,75 @@
             <!-- Collapsible Search + Category -->
             <div class="collapse navbar-collapse order-lg-1" id="mainNavbar">
                 <!-- Search -->
-               <form class="search-form mx-lg-auto my-2 my-lg-0" method="GET" action="/product">
-    <div class="search-container">
-        <input type="hidden" name="lang" value="<%= lang %>">
-       <input type="search" name="search" class="search-input" value="<%= search || '' %>" placeholder="Search products...">
-        <button class="search-button" type="submit">
-            <i class="fas fa-search"></i>
-        </button>
-    </div>
-</form>
+                <form class="search-form mx-lg-auto my-2 my-lg-0" method="GET" action="/product">
+                    <div class="search-container">
+                        <input type="hidden" name="lang" value="<%= lang %>">
+                        <input type="search" name="search" class="search-input" value="<%= search || '' %>"
+                            placeholder="Search products...">
+                        <button class="search-button" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
 
 
                 <!-- Category Menu (Mobile) -->
                 <div class="category-menu mt-2 d-lg-none text-center fw-semibold small">
 
-         <a href="/?lang=<%= lang %>"><%= translations.pages_name.Home %></a>
-    <a href="/about?lang=<%= lang %>"><%= translations.pages_name.ABOUT_US %></a>
-    <a href="/product?lang=<%= lang %>"><%= translations.pages_name.Product %></a>
-    <a href="/farming-tips?lang=<%= lang %>"><%= translations.pages_name.Farming_Tips %></a>
-    <a href="/soil-testing?lang=<%= lang %>"><%= translations.pages_name.Soil_Testing %></a>
-    <a href="/recommendation?lang=<%= lang %>"><%= translations.pages_name.Recomendation %></a>
-    <a href="/schemes?lang=<%= lang %>"><%= translations.pages_name.Goverment_Schemes %></a>
+                    <a href="/?lang=<%= lang %>">
+                        <%= translations.pages_name.Home %>
+                    </a>
+                    <a href="/about?lang=<%= lang %>">
+                        <%= translations.pages_name.ABOUT_US %>
+                    </a>
+                    <a href="/product?lang=<%= lang %>">
+                        <%= translations.pages_name.Product %>
+                    </a>
+                    <a href="/farming-tips?lang=<%= lang %>">
+                        <%= translations.pages_name.Farming_Tips %>
+                    </a>
+                    <a href="/soil-testing?lang=<%= lang %>">
+                        <%= translations.pages_name.Soil_Testing %>
+                    </a>
+                    <a href="/recommendation?lang=<%= lang %>">
+                        <%= translations.pages_name.Recomendation %>
+                    </a>
+                    <a href="/schemes?lang=<%= lang %>">
+                        <%= translations.pages_name.Goverment_Schemes %>
+                    </a>
                 </div>
             </div>
-        </div>  
+        </div>
     </nav>
 
     <!-- Category Menu (Desktop Sticky) -->
 
 
-      
+
 
 
 
 
     <div class="category-menu sticky-desktop d-none d-lg-block text-center fw-semibold small">
-         <a href="/?lang=<%= lang %>"><%= translations.pages_name.Home %></a>
-    <a href="/about?lang=<%= lang %>"><%= translations.pages_name.ABOUT_US %></a>
-    <a href="/product?lang=<%= lang %>"><%= translations.pages_name.Product %></a>
-    <a href="/farming-tips?lang=<%= lang %>"><%= translations.pages_name.Farming_Tips %></a>
-    <a href="/soil-testing?lang=<%= lang %>"><%= translations.pages_name.Soil_Testing %></a>
-    <a href="/recommendation?lang=<%= lang %>"><%= translations.pages_name.Recomendation %></a>
-    <a href="/schemes?lang=<%= lang %>"><%= translations.pages_name.Goverment_Schemes %></a>
-    </div>
-        
-
-      
+        <a href="/?lang=<%= lang %>">
+            <%= translations.pages_name.Home %>
+        </a>
+        <a href="/about?lang=<%= lang %>">
+            <%= translations.pages_name.ABOUT_US %>
+        </a>
+        <a href="/product?lang=<%= lang %>">
+            <%= translations.pages_name.Product %>
+        </a>
+        <a href="/farming-tips?lang=<%= lang %>">
+            <%= translations.pages_name.Farming_Tips %>
+        </a>
+        <a href="/soil-testing?lang=<%= lang %>">
+            <%= translations.pages_name.Soil_Testing %>
+        </a>
+        <a href="/recommendation?lang=<%= lang %>">
+            <%= translations.pages_name.Recomendation %>
+        </a>
+        <a href="/schemes?lang=<%= lang %>">
+            <%= translations.pages_name.Goverment_Schemes %>
+        </a>
     </div>
