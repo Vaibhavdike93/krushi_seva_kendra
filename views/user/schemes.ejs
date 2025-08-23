@@ -1,0 +1,142 @@
+<%- include("navbar.ejs") %>
+
+  <style>
+    :root {
+      --navbar-bg: #FAFAF5;
+      --page-bg: #FAF8F0;
+      --button-color: #f38020;
+      --footer-bg: #8B5E3C;
+    }
+    body { background-color: var(--page-bg); }
+    .gov-title { text-align: center; margin-bottom: 30px; font-weight: bold; color: #8B5E3C; }
+    .scheme-card {
+      border: none;
+      border-radius: 12px;
+      background-color: var(--navbar-bg);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }   
+    .scheme-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    .scheme-icon { font-size: 40px; color: var(--button-color); }
+    .apply-btn {
+      background-color: var(--button-color);
+      color: white;
+      border-radius: 20px;
+      padding: 5px 15px;
+      border: none;
+    }
+    .apply-btn:hover { background-color: #f6b94d; color: white; }
+  </style>
+
+
+<div class="container py-5">
+  <h2 class="gov-title"><i class="fa-solid fa-seedling"></i> Government Schemes for Farmers</h2>
+
+  <!-- Search -->
+  <div class="row mb-4 g-2">
+    <div class="col-12 col-md-6 offset-md-3 d-flex">
+      <input type="text" id="searchInput" class="form-control me-2" placeholder="Search schemes...">
+      <button class="btn apply-btn" onclick="searchSchemes()"><i class="fa fa-search"></i></button>
+    </div>
+  </div>
+
+  <!-- Schemes List -->
+  <div class="row g-4" id="schemesList">
+    <!-- Scheme 1 -->
+    <div class="col-md-4 scheme-item" data-aos="fade-up">
+      <div class="card scheme-card h-100 p-3 text-center">
+        <i class="fa-solid fa-tractor scheme-icon"></i>
+        <h5 class="mt-3">PM Kisan Samman Nidhi</h5>
+        <p class="text-muted">₹6,000/year to small & marginal farmers in 3 installments.</p>
+        <button class="btn apply-btn btn-sm mt-3" 
+          data-link="https://pmkisan.gov.in/"
+          onclick="redirectToLink(this)">Apply Now</button>
+      </div>
+    </div>
+
+    <!-- Scheme 2 -->
+    <div class="col-md-4 scheme-item" data-aos="fade-up" data-aos-delay="100">
+      <div class="card scheme-card h-100 p-3 text-center">
+        <i class="fa-solid fa-water scheme-icon"></i>
+        <h5 class="mt-3">PM Krishi Sinchai Yojana</h5>
+        <p class="text-muted">Support for irrigation to improve water use efficiency.</p>
+        <button class="btn apply-btn btn-sm mt-3" 
+          data-link="https://pmksy.gov.in/"
+          onclick="redirectToLink(this)">Apply Now</button>
+      </div>
+    </div>
+
+    <!-- Scheme 3 -->
+    <div class="col-md-4 scheme-item" data-aos="fade-up" data-aos-delay="200">
+      <div class="card scheme-card h-100 p-3 text-center">
+        <i class="fa-solid fa-wheat-awn scheme-icon"></i>
+        <h5 class="mt-3">Soil Health Card</h5>
+        <p class="text-muted">Free soil testing & crop-specific recommendations.</p>
+        <button class="btn apply-btn btn-sm mt-3" 
+          data-link="https://soilhealth.dac.gov.in/"
+          onclick="redirectToLink(this)">Apply Now</button>
+      </div>
+    </div>
+
+    <!-- Scheme 4 -->
+    <div class="col-md-4 scheme-item" data-aos="fade-up" data-aos-delay="300">
+      <div class="card scheme-card h-100 p-3 text-center">
+        <i class="fa-solid fa-leaf scheme-icon"></i>
+        <h5 class="mt-3">National Mission on Organic Farming</h5>
+        <p class="text-muted">Promotes organic farming & subsidies for compost units.</p>
+        <button class="btn apply-btn btn-sm mt-3" 
+          data-link="https://ncof.dacnet.nic.in/"
+          onclick="redirectToLink(this)">Apply Now</button>
+      </div>
+    </div>
+
+    <!-- Scheme 5 -->
+    <div class="col-md-4 scheme-item" data-aos="fade-up" data-aos-delay="400">
+      <div class="card scheme-card h-100 p-3 text-center">
+        <i class="fa-solid fa-hand-holding-water scheme-icon"></i>
+        <h5 class="mt-3">PM Fasal Bima Yojana</h5>
+        <p class="text-muted">Crop insurance to protect against natural calamities.</p>
+        <button class="btn apply-btn btn-sm mt-3" 
+          data-link="https://pmfby.gov.in/"
+          onclick="redirectToLink(this)">Apply Now</button>
+      </div>
+    </div>
+
+    <!-- Scheme 6 -->
+    <div class="col-md-4 scheme-item" data-aos="fade-up" data-aos-delay="500">
+      <div class="card scheme-card h-100 p-3 text-center">
+        <i class="fa-solid fa-sun scheme-icon"></i>
+        <h5 class="mt-3">KUSUM Yojana</h5>
+        <p class="text-muted">Subsidy for solar-powered irrigation pumps.</p>
+        <button class="btn apply-btn btn-sm mt-3" 
+          data-link="https://mnre.gov.in/"
+          onclick="redirectToLink(this)">Apply Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Search filter
+  function searchSchemes() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let schemes = document.getElementsByClassName("scheme-item");
+    for (let i = 0; i < schemes.length; i++) {
+      let schemeText = schemes[i].innerText.toLowerCase();
+      schemes[i].style.display = schemeText.includes(input) ? "" : "none";
+    }
+  }
+  document.getElementById("searchInput").addEventListener("keyup", searchSchemes);
+
+  // Redirect to link directly
+  function redirectToLink(button) {
+    let link = button.getAttribute("data-link");
+    window.open(link, "_blank"); // new tab
+  }
+</script>
+
+
+<%- include("footer.ejs") %>

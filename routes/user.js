@@ -796,6 +796,11 @@ router.get("/category/:categoryId", (req, res) => {
   });
 });
 
+router.get("/schemes",function(req,res){
+  res.render("user/schemes.ejs" ,  {search: req.query.search || '' })
+})
+
+
 
 
 
