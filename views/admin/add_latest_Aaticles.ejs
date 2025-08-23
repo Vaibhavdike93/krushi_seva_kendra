@@ -1,24 +1,42 @@
 <%- include("navbar") %>
+
 <div class="container mt-4">
-  <h3>Add Farming Tip</h3>
-  <form action="/farming/add" method="POST" enctype="multipart/form-data">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Add Farming Tip</h3>
+
+    <!-- Language Select Top-Right -->
+    <form method="POST" action="/admin/Aaticles/add" class="d-flex">
+      <select name="language" class="form-select me-2" required>
+        <option value="en">English</option>
+        <option value="mr">Marathi</option>
+        <option value="hi">Hindi</option>
+      </select>
+    </form>
+  </div>
+
+  <form action="/admin/Aaticles/add" method="POST" enctype="multipart/form-data">
     <div class="mb-3">
       <label>Title</label>
       <input type="text" name="title" placeholder="Enter Title" class="form-control" required>
     </div>
-    <div class="mb-3">
-      <label>Category</label>
-      <input type="text" name="category" placeholder="Enter Category" class="form-control" required>
-    </div>
+
+
+
     <div class="mb-3">
       <label>Description</label>
       <textarea name="description" placeholder="Enter Description" class="form-control" rows="5"></textarea>
     </div>
+
     <div class="mb-3">
       <label>Image</label>
       <input type="file" name="image" class="form-control">
     </div>
+
     <button type="submit" class="btn btn-success">Save</button>
     <a href="/farming" class="btn btn-secondary">Cancel</a>
   </form>
+
 </div>
+
+<%- include('footer') %>
