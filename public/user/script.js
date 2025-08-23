@@ -253,3 +253,228 @@ track.addEventListener('mousemove', e => {
     
 // product page script end
 
+
+
+//hero banner animation 
+
+        // Parallax effect for the hero background
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroBackground = document.querySelector('.hero-background');
+            
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.pageYOffset;
+                heroBackground.style.transform = `scale(1.1) translateY(${scrollPosition * 0.4}px)`;
+            });
+            
+            // Re-initialize animations when elements come into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'none';
+                        setTimeout(() => {
+                            entry.target.style.animation = '';
+                        }, 10);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Observe hero elements
+            const heroElements = document.querySelectorAll('.hero-heading, .accent-line, .hero-subheading, .cta-button');
+            heroElements.forEach(el => observer.observe(el));
+        });
+
+
+        // todays offers part start 
+         // Unique namespace for this carousel to prevent conflicts
+        const AgriculturalCarousel = (function() {
+            // Private variables for this carousel instance
+            let currentIndex = 0;
+            let carousel, cards, prevBtn, nextBtn, dots, wishlistIcons;
+            
+            // Initialize the carousel
+            function init(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                // Get elements within this specific container
+                carousel = container.querySelector('.carousel');
+                cards = container.querySelectorAll('.product-card');
+                prevBtn = container.querySelector('.carousel-btn.prev');
+                nextBtn = container.querySelector('.carousel-btn.next');
+                dots = container.querySelectorAll('.nav-dot');
+                wishlistIcons = container.querySelectorAll('.wishlist-icon');
+                
+                // Set up event listeners
+                bindEvents();
+                
+                // Initialize carousel
+                updateCarousel();
+            }
+            
+            // Bind all event listeners
+            function bindEvents() {
+                // Previous button event
+                prevBtn.addEventListener('click', function() {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateCarousel();
+                    }
+                });
+                
+                // Next button event
+                nextBtn.addEventListener('click', function() {
+                    const visibleCards = getVisibleCards();
+                    if (currentIndex < cards.length - visibleCards) {
+                        currentIndex++;
+                        updateCarousel();
+                    }
+                });
+                
+                // Dot navigation events
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('click', function() {
+                        currentIndex = index * getVisibleCards();
+                        updateCarousel();
+                    });
+                });
+                
+                // Wishlist icon events
+                wishlistIcons.forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const heart = this.querySelector('i');
+                        heart.classList.toggle('far');
+                        heart.classList.toggle('fas');
+                        this.classList.toggle('active');
+                        
+                        // Pulse animation
+                        this.style.animation = 'pulse 0.5s';
+                        setTimeout(() => {
+                            this.style.animation = '';
+                        }, 500);
+                    });
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    // Adjust currentIndex if it's now out of bounds
+                    const visibleCards = getVisibleCards();
+                    if (currentIndex > cards.length - visibleCards) {
+                        currentIndex = Math.max(0, cards.length - visibleCards);
+                    }
+                    updateCarousel();
+                });
+            }
+            
+            // Calculate how many cards are visible based on screen width
+            function getVisibleCards() {
+                if (window.innerWidth >= 1024) return 4;
+                if (window.innerWidth >= 768) return 3;
+                if (window.innerWidth >= 576) return 2;
+                return 1;
+            }
+            
+            // Update carousel position and dots
+            function updateCarousel() {
+                const visibleCards = getVisibleCards();
+                const cardWidth = cards[0].offsetWidth + parseInt(getComputedStyle(carousel).gap);
+                const translateX = -currentIndex * cardWidth;
+                carousel.style.transform = `translateX(${translateX}px)`;
+                
+                // Update dots
+                const totalPages = Math.ceil(cards.length / visibleCards);
+                const currentPage = Math.floor(currentIndex / visibleCards);
+                
+                dots.forEach((dot, index) => {
+                    if (index < totalPages) {
+                        dot.style.display = 'block';
+                        dot.classList.toggle('active', index === currentPage);
+                    } else {
+                        dot.style.display = 'none';
+                    }
+                });
+                
+                // Enable/disable navigation buttons
+                prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+                prevBtn.style.cursor = currentIndex === 0 ? 'not-allowed' : 'pointer';
+                
+                nextBtn.style.opacity = currentIndex >= cards.length - visibleCards ? '0.5' : '1';
+                nextBtn.style.cursor = currentIndex >= cards.length - visibleCards ? 'not-allowed' : 'pointer';
+            }
+            
+            // Public methods
+            return {
+                init: init
+            };
+        })();
+
+        // Initialize the carousel when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            AgriculturalCarousel.init('agriculturalCarousel');
+        });
+        // todays offers part end
+
+
+
+
+//why choose us 
+      //  document.addEventListener('DOMContentLoaded', function() {
+      //       const featureCards = document.querySelectorAll('.feature-card');
+            
+      //       // Create an intersection observer
+      //       const observer = new IntersectionObserver((entries) => {
+      //           entries.forEach((entry, index) => {
+      //               if (entry.isIntersecting) {
+      //                   // Add delay based on index for staggered animation
+      //                   setTimeout(() => {
+      //                       entry.target.classList.add('visible');
+      //                   }, index * 200);
+                        
+      //                   // Stop observing after animation
+      //                   observer.unobserve(entry.target);
+      //               }
+      //           });
+      //       }, {
+      //           threshold: 0.2,
+      //           rootMargin: '0px 0px -50px 0px'
+      //       });
+            
+      //       // Observe each feature card
+      //       featureCards.forEach(card => {
+      //           observer.observe(card);
+      //       });
+      //   });
+// why choose us script end 
+
+
+
+// services section 
+ // Simple JavaScript to trigger animations when elements come into view
+        // JavaScript with unique IDs and classes
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceCards = document.querySelectorAll('.krushi-service-card');
+            const recommendationCards = document.querySelectorAll('.krushi-recommendation-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            serviceCards.forEach(card => {
+                card.style.animationPlayState = 'paused';
+                observer.observe(card);
+            });
+            
+            recommendationCards.forEach(card => {
+                card.style.animationPlayState = 'paused';
+                observer.observe(card);
+            });
+        });
+
+    
+// services section end
