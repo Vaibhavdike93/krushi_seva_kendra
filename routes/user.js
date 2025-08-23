@@ -166,7 +166,12 @@ router.get("/product", async (req, res) => {
 
     const category = await exe("SELECT * FROM categories");
     const brands = await exe("SELECT * FROM brands");
-
+   let cartItems = [];
+let cartProductIds = [];
+if (req.session.user && req.session.user.user_id) {
+  cartItems = await exe("SELECT * FROM shopping_cart WHERE user_id = ?", [req.session.user.user_id]);
+  cartProductIds = cartItems.map(item => item.product_id); 
+}
     res.render("user/product", {
       products,
       lang,
@@ -177,7 +182,9 @@ router.get("/product", async (req, res) => {
       totalPages,
       startCount,
       endCount,
-      totalProducts
+      totalProducts,
+      cartItems,
+      cartProductIds
     });
   } catch (err) {
     console.error(err);
@@ -282,8 +289,17 @@ exe(query, params, (err, results) => {
         }
     });
 
+     exe(`SELECT product_id FROM cart WHERE user_id = ?`, [userId], (err, cartRows) => {
+            if (err) return res.status(500).json({ error: "Cart fetch error" });
+
+            let cartProductIds = cartRows.map(c => c.product_id);
+            res.json({ products: Object.values(products), cartProductIds });
+        });
+
+
     res.json(Object.values(products));
 });
+
 
 });
 
@@ -291,7 +307,7 @@ router.get("/product_details/:id", async (req, res) => {
   try {
     const lang = req.session.lang || 'en';
     const id = req.params.id;
-
+const userId = req.session.user?.user_id || null;
     const productQuery = `
       SELECT p.*, 
              c.category_name_en, c.category_name_hi, c.category_name_mr,
@@ -308,7 +324,6 @@ router.get("/product_details/:id", async (req, res) => {
 
     if (!rows || rows.length === 0) return res.status(404).send("Product not found");
 
-    // Variants अलग करा
     const product = {
       ...rows[0],
       variants: rows.map(v => ({
@@ -322,11 +337,19 @@ router.get("/product_details/:id", async (req, res) => {
 
     product.selectedVariant = product.variants[0];
 
-    // Dosage & Features direct table मधून
-    product.dosage = product.dosage.split('|');      // DB मधे pipe separated असल्यास
-    product.features = product.features.split('|');  // DB मधे pipe separated असल्यास
+    product.dosage = product.dosage.split('|');      
+    product.features = product.features.split('|'); 
+    
+     let alreadyInCart = false;
+    if (userId) {
+      const cartCheck = await exe(
+        "SELECT * FROM shopping_cart WHERE user_id=? AND product_id=? AND variant_id=?",
+        [userId, id, product.selectedVariant.variant_id]
+      );
+      if (cartCheck.length > 0) alreadyInCart = true;
+    }
 
-    res.render("user/product_details", { product, lang, search: req.query.search || '' });
+    res.render("user/product_details", { product, lang, search: req.query.search || '', alreadyInCart });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading product details");
@@ -341,30 +364,159 @@ router.get("/product_details/:id", async (req, res) => {
 
 
 
+router.post("/add_tocart", async (req, res) => {
+    try {
+        const userId = req.session.user?.user_id;
+        if (!userId) {
+            return res.redirect("/login");
+        }
+
+        const { product_id, variant_id } = req.body;
+        const lang = req.session.lang || "en";
+
+        if (!variant_id) {
+            return res.send("Please select a variant");
+        }
+
+        const variantRows = await exe(
+            "SELECT variant_id, price, weight FROM product_variants WHERE variant_id = ? AND product_id = ?",
+            [variant_id, product_id]
+        );
+        if (!variantRows.length) {
+            return res.send("Variant not found");
+        }
+        const variant = variantRows[0];
+
+        const productRows = await exe(
+            "SELECT discount, brand_id, product_name FROM product WHERE product_id = ?",
+            [product_id]
+        );
+        if (!productRows.length) {
+            return res.send("Product not found");
+        }
+
+        const discount = productRows[0]?.discount || 0;
+        const finalPrice = variant.price - discount;
+
+        const cartRowsCheck = await exe(
+            "SELECT * FROM shopping_cart WHERE user_id = ? AND product_id = ? AND variant_id = ?",
+            [userId, product_id, variant_id]
+        );
+
+        if (cartRowsCheck.length > 0) {
+            // 🔄 quantity + price update
+            const oldQty = cartRowsCheck[0].quantity;
+            const newQty = oldQty + 1;
+            const totalPrice = newQty * finalPrice;
+
+            await exe(
+                "UPDATE shopping_cart SET quantity = ?, price = ?, total_price = ? WHERE cart_id = ?",
+                [newQty, finalPrice, totalPrice, cartRowsCheck[0].cart_id]
+            );
+        } else {
+            const totalPrice = finalPrice * 1; 
+            await exe(
+                "INSERT INTO shopping_cart (user_id, product_id, variant_id, quantity, price, total_price, language) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [userId, product_id, variant_id, 1, finalPrice, totalPrice, lang]
+            );
+        }
+
+       res.redirect("/add_tocart?lang=" + lang); 
+
+    } catch (err) {
+        console.error("❌ Error in add_tocart:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
+router.get("/add_tocart", async (req, res) => {
+  try {
+    const userId = req.session.user?.user_id;
+    if (!userId) {
+      return res.redirect("/login");
+    }
+    const lang = req.session.lang || "en";
+
+    const cartItems = await exe(`
+      SELECT sc.*, p.product_name, p.main_image, p.discount, 
+             b.brand_name_en AS brand_name, 
+             v.weight, v.price
+      FROM shopping_cart sc
+      LEFT JOIN product p ON sc.product_id = p.product_id
+      LEFT JOIN product_variants v ON sc.variant_id = v.variant_id
+      LEFT JOIN brands b ON p.brand_id = b.brand_id
+      WHERE sc.user_id = ? AND sc.language = ?
+    `, [userId, lang]);
+
+    let total = 0;
+    let originalTotal = 0;
+
+    cartItems.forEach(item => {
+      let qty = item.quantity || 1;
+
+      // मूळ किंमत (variant price)
+      let originalPrice = item.price;
+
+      // discount टक्केवारी नुसार calculate केलेली किंमत
+      let discountedPrice = item.price;
+      if (item.discount && item.discount > 0) {
+        discountedPrice = item.price - (item.price * item.discount / 100);
+      }
+
+      total += discountedPrice * qty;
+      originalTotal += originalPrice * qty;
+
+      item.originalPrice = originalPrice;
+      item.discountedPrice = discountedPrice;
+    });
+
+    let net = total;
+    let youSaved = originalTotal - total;
+
+    res.render("user/add_tocart", { 
+      cartItems, 
+      totalPrice: total.toFixed(2), 
+      net: net.toFixed(2),
+      youSaved: youSaved.toFixed(2),
+      lang,
+      search: req.query.search || '' 
+    });
+  } catch (err) {
+    console.error("❌ Error in add_tocart:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 
 
-router.get("/add_tocart/:id",async function(req, res) {
-var id = req.params.id;
-var product = await exe(`SELECT * FROM product 
-  LEFT JOIN categories ON product.category_id = categories.category_id 
-  LEFT JOIN brands ON product.brand_id = brands.brand_id
-  LEFT JOIN product_variants ON product.product_id = product_variants.product_id
-  WHERE product.product_id = ? AND product.language = ?`, [id,req.session.lang || 'en']);
-  console.log(product);
-  res.render("user/add_tocart.ejs",
-    { search: req.query.search || '',
-      product:product[0] || null
-     }
-  );
-})
+router.get("/remove_cart/:cartId", async (req, res) => {
+    try { 
+      var id =req.params.cartId;
+      var sql = await exe("DELETE FROM shopping_cart WHERE cart_id = ?",[id]);
+      res.redirect("/add_tocart");
+    } catch(err){
+      console.error("Error remove cart");
+      res.status(500).json({success:false,message:"Server Error"});
+    }
+  })
 
 
 
 
-router.get("/add_to_cart",function(req,res){
-  res.render("user/add_to_cart.ejs")
-})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 router.get("/conatct",async function(req,res){

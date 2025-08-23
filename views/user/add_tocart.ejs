@@ -26,136 +26,135 @@
     <div class="col-md-8" id="cart-items">
 
       <!-- ITEM 1 -->
-      <div class="cart-item d-flex align-items-center justify-content-between" data-price="460">
-        <div class="d-flex align-items-center">
-          <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/glycel-herbicide-1-file-5004.png?v=1737432184&width=1920" class="me-3 rounded" alt="Product">
-          <div>
-            <h6 class="mb-1">Glycel Herbicide</h6>
-            <small class="text-muted">Sumitomo | Size: 1 ltr</small><br>
-            <span class="price">₹460</span> <span class="old-price">₹815</span>
-            <div class="mt-2 qty-controls">
-              <button class="btn btn-sm btn-success qty-minus">-</button>
-              <span class="mx-2 qty">1</span>
-              <button class="btn btn-sm btn-success qty-plus">+</button>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-trash"></i></button>
-      </div>
+     <% if(cartItems && cartItems.length > 0) {
+   cartItems.forEach(item => { %>
+    
+<div class="cart-item d-flex align-items-center justify-content-between" data-price="<%= item.discountedPrice %>">
+  <div class="d-flex align-items-center">
+    <img src="/uploads/<%= item.main_image %>" class="me-3 rounded" alt="<%= item.product_name %>">
+    <div>
+      <h6 class="mb-1"><%= item.product_name %></h6>
+      <small class="text-muted"><%= item.brand_name %> | Size: <%= item.weight %></small><br>
 
-      <!-- ITEM 2 -->
-      <div class="cart-item d-flex align-items-center justify-content-between" data-price="294">
-        <div class="d-flex align-items-center">
-          <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/roundup-herbicide-file-2203.jpg?v=1737425966&width=1920" class="me-3 rounded" alt="Product">
-          <div>
-            <h6 class="mb-1">Bayer Roundup Herbicide</h6>
-            <small class="text-muted">Bayer | Size: 500 ml</small><br>
-            <span class="price">₹294</span> <span class="old-price">₹425</span>
-            <div class="mt-2 qty-controls">
-              <button class="btn btn-sm btn-success qty-minus">-</button>
-              <span class="mx-2 qty">1</span>
-              <button class="btn btn-sm btn-success qty-plus">+</button>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-trash"></i></button>
-      </div>
+      <!-- Discounted Price -->
+      <span class="price">₹<%= item.discountedPrice %></span>
 
-      <!-- ITEM 3 -->
-      <div class="cart-item d-flex align-items-center justify-content-between" data-price="89">
-        <div class="d-flex align-items-center">
-          <img src="https://cdn.shopify.com/s/files/1/0722/2059/files/upl-saaf-fungicide-file-2147.jpg?v=1737483195&width=1920" class="me-3 rounded" alt="Product">
-          <div>
-            <h6 class="mb-1">Saaf Fungicide</h6>
-            <small class="text-muted">UPL | Size: 100 gms</small><br>
-            <span class="price">₹89</span> <span class="old-price">₹111</span>
-            <div class="mt-2 qty-controls">
-              <button class="btn btn-sm btn-success qty-minus">-</button>
-              <span class="mx-2 qty">1</span>
-              <button class="btn btn-sm btn-success qty-plus">+</button>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-trash"></i></button>
+      <!-- Original Price if Discount -->
+      <% if (item.discount > 0) { %>
+        <span class="old-price">₹<%= item.originalPrice %></span>
+      <% } %>
+
+      <div class="mt-2 qty-controls">
+        <button class="btn btn-sm btn-success qty-minus">-</button>
+        <span class="mx-2 qty"><%= item.quantity %></span>
+        <button class="btn btn-sm btn-success qty-plus">+</button>
       </div>
+    </div>
+  </div>
+  <a href="/remove_cart/<%= item.cart_id %>" class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-trash"></i></a>
+</div>
+
+
+
+
+<% }) } else { %>
+  <div class="text-center my-5">
+    <h5 class="text-muted">Your cart is empty</h5>
+    <a href="/product" class="btn btn-primary">Browse Products</a>
+  </div>
+<% } %>
 
     </div>
 
     <!-- RIGHT: Billing Box -->
     <div class="col-md-4">
-      <div class="billing-box">
-        <div class="alert alert-success p-2">
-          <i class="fas fa-tags"></i> Pay Online & Save 3% or More Instantly!
-        </div>
-        <h6>Billing Details</h6>
-        <div class="d-flex justify-content-between">
-          <span>Total Price</span>
-          <span id="total-price">₹0</span>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span>Shipping Charges</span>
-          <span><span class="text-success" id="shipping">Free</span></span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span>Discount</span>
-          <span class="text-success" id="discount">₹0</span>
-        </div>
-        <hr>
-        <div class="d-flex justify-content-between align-items-center">
-          <span class="net-price" id="net-price">₹0</span>
-          <button class="proceed-btn">Proceed</button>
-        </div>
-      </div>
+    <div class="billing-box">
+  <div class="alert alert-success p-2">
+    <i class="fas fa-tags"></i> Pay Online & Save 3% or More Instantly!
+  </div>
+  <h6>Billing Details</h6>
+<div class="d-flex justify-content-between">
+  <span>Total Price</span>
+  <span id="total-price">₹<%= totalPrice %></span>
+</div>
+
+<div class="d-flex justify-content-between mb-2">
+  <span>You Saved</span>
+  <span class="text-success" id="you-saved">₹<%= youSaved %></span>
+</div>
+<hr>
+<div class="d-flex justify-content-between align-items-center">
+  <span class="net-price" id="net-price">₹<%= net %></span>
+  <button class="proceed-btn">Proceed</button>
+</div>
+
+ 
+  
+</div>
+
     </div>
   </div>
 </div>
 
 <!-- JS -->
 <script>
+function toNumber(v){ return parseFloat(String(v).replace(/[^0-9.]/g,'') || 0); }
+
 function updateCart() {
-  let items = document.querySelectorAll(".cart-item");
-  let total = 0;
+  const items = document.querySelectorAll(".cart-item");
+  let total = 0, originalTotal = 0;
+
   items.forEach(item => {
-    let price = parseFloat(item.dataset.price);
-    let qty = parseInt(item.querySelector(".qty").innerText);
+    const price = toNumber(item.dataset.price);
+    const qty = parseInt(item.querySelector(".qty")?.textContent) || 0;
+
     total += price * qty;
+
+    const oldEl = item.querySelector(".old-price");
+    if (oldEl) originalTotal += toNumber(oldEl.textContent) * qty;
+    else originalTotal += price * qty;
   });
 
-  let discount = (total * 0.03).toFixed(2); 
-  let shipping = total > 500 ? 0 : 70;     
-  let net = total - discount + shipping;
+  const net = total;
+  const youSaved = +(originalTotal - total).toFixed(2);
 
-  document.getElementById("cart-count").innerText = items.length;
-  document.getElementById("total-price").innerText = "₹" + total.toFixed(2);
-  document.getElementById("discount").innerText = "₹" + discount;
-  document.getElementById("shipping").innerText = shipping === 0 ? "Free" : "₹" + shipping;
-  document.getElementById("net-price").innerText = "₹" + net.toFixed(2);
+  const setText = (id, val) => { 
+    const el = document.getElementById(id); 
+    if (el) el.textContent = val; 
+  };
+
+  setText("cart-count", items.length);
+  setText("total-price", "₹" + total.toFixed(2));
+  setText("net-price", "₹" + net.toFixed(2));
+  setText("you-saved", "₹" + youSaved.toFixed(2));
 }
 
-// Event Listeners
-document.addEventListener("click", function(e) {
-  if (e.target.classList.contains("qty-plus")) {
-    let qtyElem = e.target.parentElement.querySelector(".qty");
-    qtyElem.innerText = parseInt(qtyElem.innerText) + 1;
+document.addEventListener("click", function(e){
+  const plus = e.target.closest(".qty-plus");
+  const minus = e.target.closest(".qty-minus");
+  const removeBtn = e.target.closest(".remove-item");
+
+  if (plus) {
+    const qtyElem = plus.parentElement.querySelector(".qty");
+    qtyElem.textContent = (parseInt(qtyElem.textContent) || 0) + 1;
     updateCart();
   }
-  if (e.target.classList.contains("qty-minus")) {
-    let qtyElem = e.target.parentElement.querySelector(".qty");
-    let current = parseInt(qtyElem.innerText);
-    if (current > 1) {
-      qtyElem.innerText = current - 1;
-      updateCart();
-    }
-  }
-  if (e.target.classList.contains("remove-item") || e.target.closest(".remove-item")) {
-    e.target.closest(".cart-item").remove();
+
+  if (minus) {
+    const qtyElem = minus.parentElement.querySelector(".qty");
+    const current = parseInt(qtyElem.textContent) || 0;
+    if (current > 1) qtyElem.textContent = current - 1;
     updateCart();
   }
+
+
 });
 
-// Initialize
-updateCart();
+document.addEventListener("DOMContentLoaded", updateCart);
 </script>
+
+
+
 
 
 <%-include("footer")%>
