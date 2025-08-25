@@ -1,88 +1,47 @@
 <%- include("navbar") %>
 
 <div class="container py-5">
-  <!-- Search + Language Filter -->
-  <div class="row mb-4 g-2 align-items-center">
-    <!-- Search -->
-    <div class="col-12 col-md-6 d-flex">
+  
+
+  <!-- Search -->
+  <div class="row mb-4 g-2">
+    <div class="col-12 col-md-6 offset-md-3 d-flex">
       <input type="text" id="searchInput" class="form-control me-2" placeholder="Search schemes...">
       <button class="btn apply-btn"><i class="fa fa-search"></i></button>
-    </div>
-
-    <!-- Language Filter (Server-side reload) -->
-    <div class="col-12 col-md-6 d-flex justify-content-end gap-2">
-     <form method="get" action="/admin/Government_Scheme_list">
-  <select name="lang" class="form-select w-auto" onchange="this.form.submit()">
-    <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
-    <option value="hi" <%= lang === 'hi' ? 'selected' : '' %>>हिन्दी</option>
-    <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>मराठी</option>
-  </select>
-</form>
-
-      <button class="btn btn-dark" id="printBtn"><i class="fa fa-print"></i> Print</button>
     </div>
   </div>
 
   <!-- Schemes List -->
   <div class="row g-4" id="schemesList">
-    <% if(GovernmentSchemes.length > 0) { %>
-      <% for (var i = 0; i < GovernmentSchemes.length; i++) { %>
-        <div class="col-md-4 scheme-item" data-aos="fade-up" data-aos-delay="<%= i*100 %>">
-          <div class="card scheme-card h-100 p-3 text-center">
-            <!-- Icon / Image -->
-            <% if(GovernmentSchemes[i].icon){ %>
-              <i class="<%= GovernmentSchemes[i].icon %> scheme-icon"></i>
-            <% } else { %>
-              <img src="/uploads/<%= GovernmentSchemes[i].image %>" class="img-fluid" style="height:200px;" alt="scheme icon">
-            <% } %>
+    <% for (var i = 0; i < info.length; i++) { %>
+      <div class="col-md-4 scheme-item" data-aos="fade-up" data-aos-delay="<%= i*100 %>">
+        <div class="card scheme-card h-100 p-3 text-center">
+          <!-- Icon / Image -->
+          <% if(info[i].icon){ %>
+            <i class="<%= info[i].icon %> scheme-icon"></i>
+          <% } else { %>
+            <img src="/uploads/<%= info[i].image %>" class="img-fluid" style="height:200px;" alt="scheme icon">
+          <% } %>
 
-            <!-- Heading -->
-            <h5 class="mt-3"><%= GovernmentSchemes[i].heading %></h5>
+          <!-- Heading -->
+          <h5 class="mt-3"><%= info[i].heading %></h5>
 
-            <!-- Description -->
-            <p class="text-muted"><%= GovernmentSchemes[i].description.substring(0,100) %>...</p>
+          <!-- Description -->
+          <p class="text-muted"><%= info[i].description.substring(0,100) %>...</p>
 
-            <!-- Buttons -->
-            <div class="d-flex justify-content-center gap-2 mt-3">
-              <a href="<%= GovernmentSchemes[i].button_link %>" target="_blank">
-                <button class="btn apply-btn btn-sm">Apply Now</button>
-              </a>
-              <a href="/admin/edit_Government_Schemes/<%= GovernmentSchemes[i].id %>" class="btn btn-warning btn-sm">Update</a>
-              <a href="/admin/delete_Government_Schemes/<%= GovernmentSchemes[i].id %>" class="btn btn-danger btn-sm">Delete</a>
-            </div>
+          <!-- Buttons -->
+          <div class="d-flex justify-content-center gap-2 mt-3">
+            <a href="<%= info[i].button_link%>" target="_blank"><button class="btn apply-btn btn-sm" 
+              >Apply Now</button></a>
+            
+            <a href="/admin/edit_Government_Schemes/<%= info[i].id %>" class="btn btn-warning btn-sm">Update</a>
+            <a href="/admin/delete_Government_Schemes/<%= info[i].id %>" class="btn btn-warning btn-sm">delete</a>
           </div>
         </div>
-      <% } %>
-    <% } else { %>
-      <p class="text-center">No schemes found in this language.</p>
+      </div>
     <% } %>
   </div>
 </div>
 
+
 <%- include("footer") %>
-
-<script>
-  // 🔍 Search Function (client-side)
-  document.getElementById("searchInput").addEventListener("keyup", function() {
-    let value = this.value.toLowerCase();
-    document.querySelectorAll(".scheme-item").forEach(function(item) {
-      let text = item.innerText.toLowerCase();
-      item.style.display = text.includes(value) ? "" : "none";
-    });
-  });
-
-  // 🖨 Print English Schemes Only
-  document.getElementById("printBtn").addEventListener("click", function() {
-    let printContent = "";
-    document.querySelectorAll(".scheme-item").forEach(function(item) {
-      printContent += item.outerHTML;
-    });
-
-    let win = window.open('', '', 'height=700,width=900');
-    win.document.write('<html><head><title>Print Schemes</title>');
-    win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
-    win.document.write('</head><body><div class="container"><div class="row g-4">' + printContent + '</div></div></body></html>');
-    win.document.close();
-    win.print();
-  });
-</script>
