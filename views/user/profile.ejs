@@ -1,0 +1,236 @@
+
+<%- include("navbar.ejs") %>
+
+<style>
+    :root {
+        --primary-color: #1e1e1e;
+        /* Dark background */
+        --secondary-color: #ff9800;
+        /* Orange accent */
+        --bg-color: #f4f6f8;
+        /* Page background */
+        --dark-text: #222;
+        --light-text: #666;
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+        background-color: var(--bg-color);
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        color: var(--dark-text);
+    }
+
+    /* Profile Header */
+    .profile-header {
+        background: var(--primary-color);
+        padding: 2rem 1.5rem;
+        border-radius: 0 0 1.5rem 1.5rem;
+        color: white;
+        box-shadow: var(--card-shadow);
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.75rem;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        background: #fffbf2;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-card h5 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--secondary-color);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-item {
+        margin-bottom: 1rem;
+        display: flex;
+    }
+
+    .info-item span:first-child {
+        font-weight: 600;
+        color: var(--dark-text);
+        min-width: 140px;
+    }
+
+    .info-item span:last-child {
+        color: var(--light-text);
+        flex-grow: 1;
+    }
+
+    /* Table Design */
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(255, 152, 0, 0.1);
+    }
+
+    /* Buttons */
+    .btn-edit {
+        background-color: var(--secondary-color);
+        color: #000;
+        border: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit:hover {
+        background-color: #e68a00;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-primary {
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--secondary-color);
+        color: #000;
+    }
+</style>
+
+<!-- Profile Header -->
+<div class="profile-header text-center">
+    <div class="container position-relative" style="z-index: 1;">
+        <img src="https://ui-avatars.com/api/?name=Rahul+Patil&background=1e1e1e&color=ff9800&size=200" alt="Profile"
+            class="profile-avatar">
+        <h3 class="mb-2">Rahul Patil</h3>
+        <p class="mb-1"><i class="bi bi-envelope-fill me-1"></i> rahul@example.com</p>
+        <p><i class="bi bi-telephone-fill me-1"></i> +91 9876543210</p>
+        <button class="btn btn-edit mt-2">
+            <i class="bi bi-pencil-fill me-1"></i>Edit Profile
+        </button>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-6">
+            <div class="info-card">
+                <h5><i class="bi bi-person-badge-fill"></i> Personal Information</h5>
+                <div class="info-item"><span>Full Name:</span><span>Rahul Patil</span></div>
+                <div class="info-item"><span>Email:</span><span>rahul@example.com</span></div>
+                <div class="info-item"><span>Phone:</span><span>+91 9876543210</span></div>
+                <div class="info-item"><span>Address:</span><span>Ahmednagar, Maharashtra, India - 414001</span></div>
+                <div class="info-item"><span>Farm Size:</span><span>12 Acres</span></div>
+                <div class="info-item"><span>Preferred Crops:</span><span>Wheat, Sugarcane, Cotton</span></div>
+            </div>
+
+            <div class="info-card">
+                <h5><i class="bi bi-tree-fill"></i> Farming Details</h5>
+                <div class="info-item"><span>Farm Location:</span><span>Ahmednagar District</span></div>
+                <div class="info-item"><span>Soil Type:</span><span>Black Cotton Soil</span></div>
+                <div class="info-item"><span>Irrigation:</span><span>Drip Irrigation</span></div>
+                <div class="info-item"><span>Certifications:</span>
+                    <span>
+                        <span class="badge bg-success me-1">Organic</span>
+                        <span class="badge bg-warning text-dark">GAP Certified</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-6">
+            <div class="info-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><i class="bi bi-clock-history"></i> Recent Transactions</h5>
+                    <a href="#" class="text-decoration-none" style="color: var(--secondary-color);">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Order ID</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>12 Aug 2025</td>
+                                <td>#AGR12548</td>
+                                <td>₹1,200</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>05 Aug 2025</td>
+                                <td>#AGR12547</td>
+                                <td>₹850</td>
+                                <td><span class="badge bg-danger">Failed</span></td>
+                            </tr>
+                            <tr>
+                                <td>28 Jul 2025</td>
+                                <td>#AGR12546</td>
+                                <td>₹2,500</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>20 Jul 2025</td>
+                                <td>#AGR12545</td>
+                                <td>₹1,000</td>
+                                <td><span class="badge bg-warning text-dark">Processing</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- <div class="info-card">
+                <h5><i class="bi bi-credit-card-fill"></i> Payment Methods</h5>
+                <div class="d-flex align-items-center mb-3 p-3 bg-light rounded">
+                    <i class="bi bi-credit-card-2-front-fill fs-4 me-3" style="color: var(--secondary-color);"></i>
+                    <div>
+                        <h6 class="mb-0">VISA •••• 4567</h6>
+                        <small class="text-muted">Expires 08/2026</small>
+                    </div>
+                    <div class="ms-auto"><button class="btn btn-sm btn-outline-danger">Remove</button></div>
+                </div>
+                <button class="btn btn-outline-primary w-100">
+                    <i class="bi bi-plus-circle-fill me-1"></i>Add Payment Method
+                </button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<%- include("footer.ejs") %>

@@ -40,6 +40,10 @@ req.session.destroy();
   res.redirect('/');
 });
 
+router.get('/profile', function(req, res) {
+ res.render('user/profile.ejs', { search: req.query.search || '' });
+});
+
 router.get('/registration', function(req, res) {
   let lang = req.session.lang || 'en';  
   const sql = 'SELECT crop_id, crop_name_en, crop_name_hi, crop_name_mr FROM crops';

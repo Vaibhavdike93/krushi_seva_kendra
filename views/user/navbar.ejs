@@ -192,26 +192,26 @@
             <ul class="navbar-nav flex-row gap-3 order-lg-3">
                 <li class="nav-item dropdown">
                     <form method="get" action="/" class="d-inline">
-                        <select name="lang" onchange="this.form.submit()">
-                            <option value="en" <%=lang==='en' ? 'selected' : '' %>>English</option>
-                            <option value="hi" <%=lang==='hi' ? 'selected' : '' %>>Hindi</option>
-                            <option value="mr" <%=lang==='mr' ? 'selected' : '' %>>Marathi</option>
+                        <select class="form-select form-select-sm fw-semibold" style="width:auto;" name="lang"
+                            onchange="this.form.submit()">
+                            <option value="en" <%=lang==='en' ? 'selected' : '' %>>🇬🇧 English</option>
+                            <option value="hi" <%=lang==='hi' ? 'selected' : '' %>>🇮🇳 Hindi</option>
+                            <option value="mr" <%=lang==='mr' ? 'selected' : '' %>>🇮🇳 Marathi</option>
                         </select>
                     </form>
-
-
                 </li>
+
                 <% if (!user) { %>
                     <!-- Guest / Not logged in -->
                     <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-regular fa-heart"></i></a></li>
                     <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
                     </li>
-                    <li><a class="nav-link" href="/registration?lang=<%= lang %>"><i class="fa-regular fa-user"></i>
+                    <li><a class="nav-link" href="/registration?lang=<%= lang %>"><i class="fa-solid fa-user"></i>
                             <%= translations.buttons.Register %>
                         </a></li>
                     <% } else { %>
                         <!-- Logged in user -->
-                        <li><a class="nav-link" href="/profile?lang=<%= lang %>"><i class="fa-regular fa-user"></i>
+                        <li><a class="nav-link" href="/profile?lang=<%= lang %>"><i class="fa-solid fa-user"></i>
                                 <%= translations.buttons.Profile %>
                             </a></li>
                         <li><a class="nav-link" href="/wishlist?lang=<%= lang %>"><i
@@ -222,7 +222,7 @@
                                     class="fa-solid fa-right-from-bracket"></i>
                                 <%= translations.buttons.logout %>
                             </a>
-                       
+
                         </li>
                         <% } %>
 
@@ -278,7 +278,7 @@
             </div>
         </div>
     </nav>
-    
+
     <!-- Category Menu (Desktop Sticky) -->
 
 
@@ -310,5 +310,3 @@
             <%= translations.pages_name.Goverment_Schemes %>
         </a>
     </div>
-
-    
