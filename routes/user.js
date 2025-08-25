@@ -994,6 +994,11 @@ router.get("/schemes",function(req,res){
   res.render("user/schemes.ejs" ,  {search: req.query.search || '' })
 })
 
+router.get("/soil_testing",function(req,res){
+  res.render("user/soil_testing.ejs" ,  {search: req.query.search || '' })
+
+})
+
 
 
 

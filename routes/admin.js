@@ -763,31 +763,32 @@ router.post("/update_banner/:id", async function(req, res) {
   var result = await exe(sql, [file_name, id]);
   res.redirect("/admin/offer_banner")
 });
+// --------------------------------------------------------------//
 router.get("/government_Schemes",function(req,res){
   res.render("admin/add_Government_Schemes.ejs")
 })
 
 router.post("/add_Government_Schemes", async function (req, res) {
   var d = req.body;
+  var file_name = "";
 
   if (req.files && req.files.image) {
-    var file_name = new Date().getTime() + req.files.image.name;
+    file_name = new Date().getTime() + "_" + req.files.image.name;
     req.files.image.mv("public/uploads/" + file_name);
-  } else {
-    var file_name = ""; 
   }
 
-  var sql = `INSERT INTO government_schemes (image, heading, description, button_link) VALUES (?,?,?,?)`;
-  var result = await exe(sql, [file_name, d.heading, d.description, d.link]);
-  res.redirect("/admin/Government_Schemes"); 
+  var sql = `INSERT INTO government_schemes (image, heading, description, button_link, language) VALUES (?,?,?,?,?)`;
+  await exe(sql, [file_name, d.heading, d.description, d.link, d.language]);
+
+  res.redirect("/admin/Government_Scheme_list");
 });
 
+router.get("/Government_Scheme_list", async (req, res) => {
+  let lang = req.query.lang || "en"; 
+  let GovernmentSchemes = await exe("SELECT * FROM government_schemes WHERE language = ?", [lang]);
+  res.render("admin/Government_Schemes.ejs", { GovernmentSchemes, lang });
+});
 
-router.get("/Government_Scheme_list",async function(req,res){
-  var sql = `SELECT * FROM government_schemes`;
-  var info = await exe(sql);
-  res.render("admin/Government_Schemes",{info})
-})
 
 router.get("/edit_Government_Schemes/:id",async function(req,res){
   var id = req.params.id;
@@ -824,6 +825,8 @@ router.get("/delete_Government_Schemes/:id",async function(req,res){
   var result = await exe(sql,[id]);
   res.redirect("/admin/Government_Scheme_list")
 })
+
+// ------------------------------------------------------------------------------//
 router.get("/latest_Aaticles",function(req,res){
   res.render("admin/add_latest_Aaticles.ejs")
 });
@@ -941,6 +944,69 @@ router.post("/all_orders", async function (req, res) {
 
 
 
+
+
+
+router.post('/Aaticles/add', async (req, res) => {
+  let { title, category, description, language } = req.body;  
+  let imageName = "";
+
+  if (req.files && req.files.image) {
+    let image = req.files.image;
+    imageName = Date.now() + path.extname(image.name);
+    image.mv("public/uploads/" + imageName); 
+  }
+
+  let sql = "INSERT INTO farming_tips (heading, description, image, language) VALUES (?, ?, ?, ?, ?)";
+  await query(sql, [title, description, imageName, language]);
+
+  res.redirect('/admin/latest_Aaticles_list');  
+});
+
+
+
+router.get("/latest_Aaticles_list", async (req, res) => {
+  let language = req.query.language || 'en'; 
+  let LatestArticles = await exe("SELECT * FROM LatestArticles WHERE language = ? ORDER BY id DESC", [language]);
+  res.render("admin/LatestArticles.ejs", { LatestArticles, language });
+});
+
+router.get("/edit_LatestArticle/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM LatestArticles WHERE id = ?`;
+  var artical = await exe(sql,[id])
+  res.render("admin/edit_latest_Aaticles.ejs",{artical})
+})
+
+router.post('/artical/Update/:id', async (req, res) => {
+  let { title, description } = req.body;
+  let id = req.params.id;
+
+  let imageName;
+
+ if (req.files && req.files.image) {
+  let image = req.files.image;
+  imageName = Date.now() + "_" + image.name; 
+  image.mv("public/uploads/" + imageName);
+} else {
+  let oldimg = await exe("SELECT image FROM LatestArticles WHERE id = ?", [id]);
+  imageName = oldimg[0].image;
+}
+  let sql = "UPDATE LatestArticles SET heading = ?,  description = ?, image = ? WHERE id = ?";
+   var result = await exe(sql, [title,  description, imageName, id]);
+
+  res.redirect("/admin/latest_Aaticles_list") 
+});
+
+
+router.get('/delete_LatestArticle/:id', async (req, res) => {
+  let id = req.params.id;
+
+  let sql = "DELETE FROM LatestArticles WHERE id = ?";
+  await exe(sql, [id]);
+
+  res.redirect('/admin/latest_Aaticles_list'); 
+});
 
 
 

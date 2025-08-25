@@ -478,3 +478,32 @@ track.addEventListener('mousemove', e => {
 
     
 // services section end
+
+
+// recommendationCards 
+  document.addEventListener('DOMContentLoaded', function() {
+            // GSAP animations for card entrance
+            gsap.registerPlugin(ScrollTrigger);
+            
+            gsap.to('.rec-card', {
+                opacity: 1,
+                y: 0,
+                stagger: 0.15,
+                duration: 0.8,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: '.quick-recs-section',
+                    start: 'top 80%',
+                    toggleActions: "play none none none"
+                }
+            });
+
+            // Track clicks for analytics
+            document.querySelectorAll('.rec-card, .btn-viewall, .sticky-cta').forEach(element => {
+                element.addEventListener('click', function() {
+                    const recId = this.getAttribute('data-rec-id') || 'view-all';
+                    console.log('Recommendation clicked:', recId);
+                    // Here you would send data to your analytics platform
+                });
+            });
+        });
