@@ -71,11 +71,11 @@
   <h2 class="text-center mb-4" data-aos="fade-down">Checkout</h2>
   <div class="row g-4">
 
-    <!-- Billing Details -->
+    <!-- Billing Details & Payment -->
     <div class="col-lg-6" data-aos="fade-right">
       <div class="checkout-container">
         <h4>Billing Details</h4>
-        <form action="/checkout" method="POST">
+        <form id="checkoutForm">
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Full Name</label>
@@ -89,7 +89,7 @@
 
             <div class="col-md-6">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" name="phone" placeholder="+91 9876543210"required>
+              <input type="text" class="form-control" name="phone" placeholder="+91 9876543210" required>
             </div>
 
             <div class="col-md-6">
@@ -104,17 +104,17 @@
 
             <div class="col-md-6">
               <label class="form-label">Taluka / City</label>
-              <input type="text" class="form-control" name="taluka" placeholder="Enter Taluka / City"required>
+              <input type="text" class="form-control" name="taluka" placeholder="Enter Taluka / City" required>
             </div>
 
             <div class="col-md-6">
               <label class="form-label">District</label>
-              <input type="text" class="form-control" name="district" placeholder="Enter District"required>
+              <input type="text" class="form-control" name="district" placeholder="Enter District" required>
             </div>
 
             <div class="col-md-6">
               <label class="form-label">State</label>
-              <input type="text" class="form-control" name="state" placeholder="Enter State"required>
+              <input type="text" class="form-control" name="state" placeholder="Enter State" required>
             </div>
 
             <div class="col-12">
@@ -122,73 +122,67 @@
               <textarea class="form-control" rows="2" name="landmark" placeholder="Enter Landmark or Notes"></textarea>
             </div>
           </div>
- <br>
-           <div class="checkout-container" data-aos="flip-up">
-        <h4>Payment Method</h4>
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="radio" name="payment" value="cod" id="cod" checked>
-          <label class="form-check-label" for="cod">Cash on Delivery</label>
-        </div>
-        
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="radio" name="payment" value="net-banking" id="netbanking">
-          <label class="form-check-label" for="netbanking">Net Banking</label>
-        </div>
-        <button class="btn-checkout w-100" data-aos="fade-up">Place Order</button>
-      </div>
+
+          <br>
+          <div class="checkout-container" data-aos="flip-up">
+            <h4>Payment Method</h4>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio" name="payment" value="cod" id="cod" checked>
+              <label class="form-check-label" for="cod">Cash on Delivery</label>
+            </div>
+
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="radio" name="payment" value="razorpay" id="razorpay">
+              <label class="form-check-label" for="razorpay">Net Banking / Online Payment</label>
+            </div>
+
+            <button type="submit" class="btn-checkout w-100" data-aos="fade-up">Place Order</button>
+          </div>
+
+          <!-- Hidden Inputs for Cart -->
+          <% if(cartItems && cartItems.length > 0){ %>
+            <% cartItems.forEach((item, index) => { %>
+              <input type="hidden" name="products[<%= index %>][product_id]" value="<%= item.product_id %>">
+              <input type="hidden" name="products[<%= index %>][product_name]" value="<%= item.product_name %>">
+              <input type="hidden" name="products[<%= index %>][weight]" value="<%= item.weight %>">
+              <input type="hidden" name="products[<%= index %>][quantity]" value="<%= item.quantity %>">
+              <input type="hidden" name="products[<%= index %>][price]" value="<%= item.discountedPrice %>">
+              <input type="hidden" name="products[<%= index %>][saved]" value="<%= item.saved %>">
+            <% }) %>
+            <input type="hidden" name="orderTotal" value="<%= total.toFixed(2) %>">
+            <input type="hidden" name="orderSaved" value="<%= youSaved.toFixed(2) %>">
+          <% } %>
+
+        </form>
       </div>
     </div>
 
+    <!-- Order Summary -->
     <div class="col-lg-6" data-aos="fade-left">
       <div class="checkout-container mb-4">
-  <h4>Order Summary</h4>
- <div class="order-summary" data-aos="zoom-in">
-  <h5>Items</h5>
+        <h4>Order Summary</h4>
+        <div class="order-summary" data-aos="zoom-in">
+          <h5>Items</h5>
 
-  <% if(cartItems && cartItems.length > 0) { %>
-    <% cartItems.forEach((item, index) => { %>
-      <p>
-        <%= item.product_name %> ( <%= item.weight %> ) × <%= item.quantity %>
-        <span class="float-end">
-          ₹<%= (item.discountedPrice * item.quantity).toFixed(2) %>
-        </span><br>
+          <% if(cartItems && cartItems.length > 0) { %>
+            <% cartItems.forEach(item => { %>
+              <p>
+                <%= item.product_name %> (<%= item.weight %>) × <%= item.quantity %>
+                <span class="float-end">₹<%= (item.discountedPrice * item.quantity).toFixed(2) %></span><br>
+                <% if(item.discount > 0){ %>
+                  <small class="text-success">Saved ₹<%= item.saved.toFixed(2) %></small>
+                <% } %>
+              </p>
+            <% }) %>
+            <hr>
+            <p><strong>Total</strong> <span class="float-end fw-bold">₹<%= total.toFixed(2) %></span></p>
+            <p class="text-success">You Saved: ₹<%= youSaved.toFixed(2) %></p>
+          <% } else { %>
+            <p>Your cart is empty</p>
+          <% } %>
 
-        <% if(item.discount > 0) { %>
-          <small class="text-success">
-            Saved ₹<%= item.saved.toFixed(2) %>
-          </small>
-        <% } %>
-      </p>
-
-      <input type="hidden" name="products[<%= index %>][product_id]" value="<%= item.product_id %>">
-      <input type="hidden" name="products[<%= index %>][product_name]" value="<%= item.product_name %>">
-      <input type="hidden" name="products[<%= index %>][weight]" value="<%= item.weight %>">
-      <input type="hidden" name="products[<%= index %>][quantity]" value="<%= item.quantity %>">
-      <input type="hidden" name="products[<%= index %>][price]" value="<%= item.discountedPrice %>">
-      <input type="hidden" name="products[<%= index %>][saved]" value="<%= item.saved %>">
-      <input type="hidden" name="product_id" value="<%=item.product_id%>" id="">
-    <% }) %>
-
-    <hr>
-    <p><strong>Total</strong>
-      <span class="float-end fw-bold">₹<%= total.toFixed(2) %></span>
-    </p>
-    <p class="text-success">You Saved: ₹<%= youSaved.toFixed(2) %></p>
-
-    <!-- ✅ Send Total + Saved to backend also -->
-    <input type="hidden" name="orderTotal" value="<%= total.toFixed(2) %>">
-    <input type="hidden" name="orderSaved" value="<%= youSaved.toFixed(2) %>">
-
-  <% } else { %>
-    <p>Your cart is empty</p>
-  <% } %>
-</div>
-
-</div>
-
-        </form>
-
-     
+        </div>
+      </div>
     </div>
 
   </div>
@@ -197,14 +191,80 @@
 <!-- AOS JS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-  AOS.init({
-    duration: 1000,
-    once: true
-  });
+  AOS.init({ duration: 1000, once: true });
 </script>
 
+<!-- Razorpay JS -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.getElementById("checkoutForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+
+  const name = formData.get("name");
+  const phone = formData.get("phone");
+  const email = formData.get("email");
+  const pincode = formData.get("pincode");
+  const state = formData.get("state");
+  const city = formData.get("taluka");
+  const address = formData.get("village");
+  const landmark = formData.get("landmark");
+  const district = formData.get("district");
+  const payment_method = formData.get("payment");
+  const amount = parseFloat(formData.get("orderTotal"));
+  const orderSaved = parseFloat(formData.get("orderSaved"));
+
+  // Collect products
+  const products = [];
+  for(let pair of formData.entries()){
+    if(pair[0].startsWith("products")){
+      const match = pair[0].match(/products\[(\d+)\]\[(\w+)\]/);
+      if(match){
+        const idx = match[1];
+        const key = match[2];
+        products[idx] = products[idx] || {};
+        products[idx][key] = pair[1];
+      }
+    }
+  }
+  const productsParam = encodeURIComponent(JSON.stringify(products));
+
+  if(payment_method === "cod"){
+    window.location.href = `/place_order?razorpay_payment_id=COD_${Date.now()}&name=${encodeURIComponent(name)}&phone=${phone}&email=${encodeURIComponent(email)}&pincode=${pincode}&state=${encodeURIComponent(state)}&city=${encodeURIComponent(city)}&district=${encodeURIComponent(district)}&landmark=${encodeURIComponent(landmark)}&address=${encodeURIComponent(address)}&amount=${amount}&orderSaved=${orderSaved}&products=${productsParam}&payment_method=cod`;
+  } else {
+    // Razorpay order create
+    const response = await fetch("/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: amount * 100 }) // ✅ paise send to backend
+      
+    });
+
+    const data = await response.json();
+
+    const options = {
+      key: "rzp_test_06ydm2R5DTbang", // replace with live key
+      amount: amount * 100, // ✅ correct
+      currency: "INR",
+      name: "Krushi Seva Kendra",
+      description: "Order Payment",
+      order_id: data.orderId,
+      handler: function (response){
+        // ✅ pass all params
+        window.location.href = `/place_order?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}&name=${encodeURIComponent(name)}&phone=${phone}&email=${encodeURIComponent(email)}&pincode=${pincode}&state=${encodeURIComponent(state)}&city=${encodeURIComponent(city)}&landmark=${encodeURIComponent(landmark)}&address=${encodeURIComponent(address)}&amount=${amount}&products=${productsParam}&payment_method=razorpay`;
+      },
+      prefill: { name, email, contact: phone },
+      theme: { color: "#3399cc" }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
+});
+
+</script>
 </body>
 </html>
-
 
 <%-include("footer")%>

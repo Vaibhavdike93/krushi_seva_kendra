@@ -1,3 +1,87 @@
-<%-include("navbar")%>
-<h1>welcome to home page </h1>
-<%-include("footer")%>
+<%- include("navbar") %>
+
+<div class="container my-5">
+  <h2 class="text-center mb-5 gradient-heading">📊 Order Highlights</h2>
+  <div class="row g-4">
+
+    <!-- All Orders -->
+    <div class="col-sm-6 col-md-3">
+      <div class="order-card all shadow-lg p-4 text-center rounded-4">
+        <i class="bi bi-bag-check-fill display-4 text-info"></i>
+        <h3 class="mt-3 fw-bold"><%=allCount%></h3>
+        <p class="mb-0 fs-5 text-secondary">All Orders</p>
+      </div>
+    </div>
+
+    <!-- Pending Orders -->
+    <div class="col-sm-6 col-md-3">
+      <div class="order-card pending shadow-lg p-4 text-center rounded-4">
+        <i class="bi bi-hourglass-split display-4 text-warning"></i>
+        <h3 class="mt-3 fw-bold"><%=pendingCount%></h3>
+        <p class="mb-0 fs-5 text-secondary">Pending</p>
+      </div>
+    </div>
+
+    <!-- Shipped Orders -->
+    <div class="col-sm-6 col-md-3">
+      <div class="order-card shipped shadow-lg p-4 text-center rounded-4">
+        <i class="bi bi-truck display-4 text-primary"></i>
+        <h3 class="mt-3 fw-bold"><%=ShippedCount%></h3>
+        <p class="mb-0 fs-5 text-secondary">Shipped</p>
+      </div>
+    </div>
+
+    <!-- Completed Orders -->
+    <div class="col-sm-6 col-md-3">
+      <div class="order-card completed shadow-lg p-4 text-center rounded-4">
+        <i class="bi bi-check-circle-fill display-4 text-success"></i>
+        <h3 class="mt-3 fw-bold"><%=completedCount%></h3>
+        <p class="mb-0 fs-5 text-secondary">Completed</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<%- include("footer") %>
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+.gradient-heading {
+  background: linear-gradient(90deg, #007BFF, #00CFC8);
+  color: white;
+  padding: 15px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  display: inline-block;
+}
+.order-card {
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  border-radius: 16px;
+}
+.order-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+.order-card h3 {
+  font-size: 2.5rem;
+}
+.all {
+  border-top: 6px solid #17a2b8;
+}
+.pending {
+  border-top: 6px solid #ffc107;
+}
+.shipped {
+  border-top: 6px solid #0d6efd;
+}
+.completed {
+  border-top: 6px solid #28a745;
+}
+</style>

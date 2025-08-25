@@ -24,14 +24,18 @@ res.locals.user = req.session.user;
 next();
 });
 
+
 app.use((req, res, next) => {
   if (req.query.lang) {
     req.session.lang = req.query.lang;   
   }
   res.locals.lang = req.session.lang || "en";
-  res.locals.translations = translations[res.locals.lang]; 
+
+  res.locals.translations = translations[res.locals.lang] || translations["en"];
+
   next();
 });
+
 
 
 

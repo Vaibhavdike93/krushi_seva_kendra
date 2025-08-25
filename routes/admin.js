@@ -3,11 +3,23 @@ var router = express.Router();
 var exe = require('./conn');
 var CheckLogin = require("./CheckLogin");
 var translations = require('../translation');
+const nodemailer = require("nodemailer");
 
 
 
-router.get('/', function(req, res) {
-  res.render('admin/index.ejs');
+
+router.get('/', async function(req, res) {
+  var pendingCount = await exe(`SELECT COUNT(*) AS cnt FROM orders WHERE status = 'Pending'`);
+  var ShippedCount = await exe(`SELECT COUNT(*) As cnt FROM orders WHERE status = 'Shipped'`);
+  var allCount = await exe(`SELECT COUNT(*) AS cnt FROM orders`);
+  var completedCount = await exe(`SELECT COUNT(*) AS cnt FROM orders WHERE status = 'Completed'`);
+  console.log(pendingCount);
+  res.render('admin/index.ejs',
+    {pendingCount: pendingCount[0].cnt,
+      ShippedCount:ShippedCount[0].cnt,
+      allCount:allCount[0].cnt,
+      completedCount:completedCount[0].cnt
+    });
 });
 
 router.get('/profile',function(req,res){
@@ -814,7 +826,122 @@ router.get("/delete_Government_Schemes/:id",async function(req,res){
 })
 router.get("/latest_Aaticles",function(req,res){
   res.render("admin/add_latest_Aaticles.ejs")
-})
+});
+
+
+
+
+
+
+
+
+
+
+router.get("/all_orders", async function (req, res) {
+  const { status } = req.query;
+
+  let sql;
+  if (status && status !== "All") {
+    sql = await exe(
+      `SELECT * FROM orders 
+       LEFT JOIN order_products ON orders.order_id = order_products.order_id 
+       WHERE orders.status=?`, 
+      [status]
+    );
+  } else {
+    sql = await exe(
+      `SELECT * FROM orders 
+       LEFT JOIN order_products ON orders.order_id = order_products.order_id`
+    );
+  }
+
+  res.render("admin/all_orders.ejs", { orders: sql, selectedStatus: status || "All" });
+});
+
+
+
+
+
+router.post("/all_orders", async function (req, res) {
+  const { order_id, order_status } = req.body;
+
+  try {
+    await exe("UPDATE orders SET status=? WHERE order_id=?", [order_status, order_id]);
+
+    const order = await exe(
+      `SELECT o.order_id, u.email, u.name, op.product_name
+       FROM orders o 
+       JOIN users u ON o.user_id = u.user_id 
+       JOIN order_products op ON o.order_id = op.order_id 
+       WHERE o.order_id=? LIMIT 1`, 
+      [order_id]
+    );
+
+    if (order.length > 0) {
+      const userEmail = order[0].email;
+      const userName = order[0].name;
+      const productName = order[0].product_name;
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "gorakshnathdalavi91@gmail.com", 
+          pass: "yydh qpqv vovi fjsm",
+        },
+      });
+
+      const mailOptions = {
+        from: `"Janmitra Krushi Seva Kendra" gorakshnathdalavi91@gmail.com`,
+        to: userEmail,
+        subject: `Your Order #${order_id} Status Update`,
+        html: `
+        <div style="font-family: Arial, sans-serif; background-color:#f9f9f9; padding:30px; text-align:center;">
+          <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:12px; padding:25px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+            
+            <h2 style="color:#007BFF; margin-bottom:10px;">Krushi Seva Kendra</h2>
+            <p style="color:#555; margin-top:0;">Hello <b>${userName}</b>,</p>
+            
+            <p style="font-size:16px; color:#333;">
+              The status of your order <b>#${order_id}</b> 
+              for product <b>${productName}</b> has been updated.
+            </p>
+            
+            <div style="margin:20px 0;">
+              <span style="display:inline-block; padding:12px 25px; font-size:18px; 
+                           background-color:${order_status === "Completed" ? "#28a745" : order_status === "Pending" ? "#ffc107" : order_status === "Shipped" ? "#17a2b8" : "#dc3545"};
+                           color:white; border-radius:30px; font-weight:bold;">
+                ${order_status}
+              </span>
+            </div>
+            
+            <p style="color:#555; font-size:15px; line-height:1.6;">
+              Thank you for shopping with us!  
+              We’ll keep you updated about your order progress.
+            </p>
+            
+           
+            
+            <hr style="margin:30px 0; border:none; border-top:1px solid #eee;">
+            <p style="color:#888; font-size:13px;">&copy; ${new Date().getFullYear()} Krushi Seva Kendra. All Rights Reserved.</p>
+          </div>
+        </div>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log("📧 Email sent to", userEmail);
+    }
+
+    res.redirect("/admin/all_orders");
+  } catch (err) {
+    console.error("Status update error:", err);
+    res.status(500).send("Error updating order status");
+  }
+});
+
+
+
+
 
 
 

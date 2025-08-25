@@ -59,6 +59,9 @@
     font-size: 1rem;
     color: #444;
   }
+  .select{
+    width: 180px;
+  }
   /* product_details page end */
 </style>
 
@@ -136,16 +139,8 @@
       <h5>Description</h5>
       <p><%= product.description %></p>
 
-      <h5>Usage Instructions</h5>
-      <ul class="pd-usage-list">
-        <% if(product.usage && product.usage.length) { %>
-          <% product.usage.split('|').forEach(u => { %>
-            <li><%= u %></li>
-          <% }) %>
-        <% } %>
-      </ul>
-
-      <h5>Dosage</h5>
+   
+      <h5>Dosage & Uses Intructions</h5>
       <ul class="pd-usage-list">
         <% product.dosage.forEach(d => { %>
           <li><%= d %></li>
@@ -165,39 +160,32 @@
   <hr class="my-5">
 
   <!-- Review Box -->
-  <div class="pd-review-box">
-    <div class="d-flex justify-content-between">
-      <div class="d-flex align-items-center mb-2">
-        <img src="https://i.pravatar.cc/40?img=1" alt="Rahul Sharma" class="rounded-circle me-2" width="40" height="40">
-        <h6 class="mb-0 fw-bold">Rahul Sharma</h6>
+  <% if (review && review.length > 0) { %>
+  <% review.forEach(function(r) { %>
+    <div class="pd-review-box">
+      <div class="d-flex justify-content-between">
+        <div class="d-flex align-items-center mb-2">
+          <h6 class="mb-0 fw-bold"><%= r.name %></h6>
+        </div>
+        <span>
+          <% for (var i = 1; i <= 5; i++) { %>
+            <% if (i <= r.rating) { %>
+              <i class="pd-stars">&#9733;</i>
+            <% } else { %>
+              <i class="pd-stars">&#9734;</i>
+            <% } %>
+          <% } %>
+        </span>
       </div>
-      <span>
-        <i class="pd-stars">&#9733;</i>
-        <i class="pd-stars">&#9733;</i>
-        <i class="pd-stars">&#9733;</i>
-        <i class="pd-stars">&#9733;</i>
-        <i class="pd-stars">&#9734;</i>
-      </span>
+      <p class="mt-2"><%= r.review %></p>
     </div>
-    <p class="mt-2">Very effective fertilizer! My tomato plants grew healthier and faster.</p>
-  </div>
+  <% }); %>
+<% } else { %>
+  <p>No Reviews Found</p>
+<% } %>
 
-  <div class="pd-review-box">
-    <div class="d-flex justify-content-between">
-      <div class="d-flex align-items-center mb-2">
-        <img src="https://i.pravatar.cc/40?img=2" alt="Sneha Patil" class="rounded-circle me-2" width="40" height="40">
-        <h6 class="mb-0 fw-bold">Sneha Patil</h6>
-      </div>
-      <span>
-        <i class="pd-stars">&#9733;</i>
-        <i class="pd-stars">&#9733;</i>
-        <i class="pd-stars">&#9733;</i>
-        <i class="pd-stars">&#9734;</i>
-        <i class="pd-stars">&#9734;</i>
-      </span>
-    </div>
-    <p class="mt-2">Good product, but delivery was a bit late. Overall, happy with the results.</p>
-  </div>
+
+
 
   <!-- Add Review -->
   <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal">Write a Review</button>
@@ -206,7 +194,7 @@
 <!-- Review Modal -->
 <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <form class="modal-content">
+    <form class="modal-content" action="/submit_review" method="post">
       <div class="modal-header">
         <h5 class="modal-title">Write a Review</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -214,22 +202,25 @@
       <div class="modal-body">
         <div class="mb-3">
           <label class="form-label">Your Name</label>
-          <input type="text" class="form-control" required>
+          <input type="text" name="name" class="form-control" required>
         </div>
         <div class="mb-3">
           <label class="form-label">Rating</label>
           <div class="pd-star-rating" id="stars">
-            <span class="pd-star" data-value="5">&#9733;</span>
-            <span class="pd-star" data-value="4">&#9733;</span>
-            <span class="pd-star" data-value="3">&#9733;</span>
-            <span class="pd-star" data-value="2">&#9733;</span>
             <span class="pd-star" data-value="1">&#9733;</span>
+            <span class="pd-star" data-value="2">&#9733;</span>
+            <span class="pd-star" data-value="3">&#9733;</span>
+            <span class="pd-star" data-value="4">&#9733;</span>
+            <span class="pd-star" data-value="5">&#9733;</span>
           </div>
-          <div class="pd-reviews-text" id="reviews">No reviews yet</div>
+          <!-- Hidden input for storing rating -->
+          <input type="hidden" name="rating" id="rating" required>
+          <input type="hidden" name="product_id" value="<%=product.product_id%>" id="">
+          <div class="pd-reviews-text" id="reviews">Select stars to rate</div>
         </div>
         <div class="mb-3">
           <label class="form-label">Review</label>
-          <textarea class="form-control" rows="3" required></textarea>
+          <textarea class="form-control" name="review" rows="3" required></textarea>
         </div>
       </div>
       <div class="modal-footer">
@@ -238,6 +229,9 @@
     </form>
   </div>
 </div>
+
+
+
 
 <!-- Image Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
@@ -258,26 +252,24 @@
 <!-- Reviews Script -->
 <script>
   const stars = document.querySelectorAll(".pd-star");
+  const ratingInput = document.getElementById("rating");
   const reviewText = document.getElementById("reviews");
-  let rating = 0;
 
   stars.forEach(star => {
     star.addEventListener("click", () => {
-      rating = star.getAttribute("data-value");
-      updateStars(rating);
-      reviewText.textContent = `You rated ${rating} star${rating > 1 ? "s" : ""}`;
+      const value = star.getAttribute("data-value");
+      ratingInput.value = value; // hidden input update
+
+      // Reset all stars
+      stars.forEach(s => s.style.color = "#ccc");
+      // Highlight selected stars
+      for (let i = 0; i < value; i++) {
+        stars[i].style.color = "gold";
+      }
+
+      reviewText.textContent = `You selected ${value} star(s)`;
     });
   });
-
-  function updateStars(rating) {
-    stars.forEach(star => {
-      if (parseInt(star.getAttribute("data-value")) <= rating) {
-        star.classList.add("active");
-      } else {
-        star.classList.remove("active");
-      }
-    });
-  }
 </script>
 
 <%- include("footer.ejs") %>
@@ -352,4 +344,3 @@ document.getElementById("variantSelect").addEventListener("change", function() {
 </script>
 
 
-<%-include("footer")%>
