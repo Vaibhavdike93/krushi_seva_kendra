@@ -1,4 +1,3 @@
-const { sign } = require("jsonwebtoken");
 
 const translations = {
   en: {
@@ -57,7 +56,8 @@ const translations = {
       Shipping_Delivery: "Shipping & Delivery",
       Returns_Policy: "Returns Policy",
       Terms_condtion: "Terms & Conditions",
-      copyright:"Krushi Seva Kendra. All Rights Reserved."
+      copyright:"Krushi Seva Kendra. All Rights Reserved.",
+      connect :"Connect with us"
     },
     account:{your_account:"Create Your Account",
       join_us:"Join Krushi Seva Kendra in just 2 easy steps",
@@ -135,7 +135,8 @@ customer_rating: "ग्राहक रेटिंग"
   Shipping_Delivery: "शिपिंग आणि वितरण",
   Returns_Policy: "परतावा धोरण",
   Terms_condtion: "नियम आणि अटी",
-  copyright: "कृषी सेवा केंद्र. सर्व हक्क राखीव आहेत."
+  copyright: "कृषी सेवा केंद्र. सर्व हक्क राखीव आहेत.",
+  connect :"आमच्याशी संपर्क साधा"
 
     },
      account : {
@@ -213,7 +214,8 @@ customer_rating: "ग्राहक रेटिंग"
   Shipping_Delivery: "शिपिंग और डिलीवरी",
   Returns_Policy: "वापसी नीति",
   Terms_condtion: "नियम और शर्तें",
-  copyright: "कृषि सेवा केंद्र. सर्वाधिकार सुरक्षित।"
+  copyright: "कृषि सेवा केंद्र. सर्वाधिकार सुरक्षित।",
+  connect :"हमसे जुड़ें"
 
     },
      account : {

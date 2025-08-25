@@ -96,120 +96,66 @@
 
 
             <!-- Product Grid -->
-            <div class="products-grid" id="productList">
-                <!-- Product Card 1 -->
-                <% if(products && products.length> 0){ %>
-                    <% products.forEach(function(product, index){ var defaultVariant=product.variants &&
-                        product.variants.length> 0 ? product.variants[0] : null; %>
-                        <div class="product-card">
-                            <div class="discount-badge">
-                                <%=product.discount%>% OFF
-                            </div>
-                            <div class="wishlist-icon">
-                                <i class="far fa-heart"></i>
-                            </div>
-                            <div class="image-container">
-                                <img src="https://tse2.mm.bing.net/th/id/OIP.4XsW9jpGHXCHYiOdAJnYvAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
-                                    alt="Seed Packet" class="product-image">
-                            </div>
-                            <div class="product-info">
-                                <h3 class="product-title m-0">
-                                    <%=product.product_name%>
-                                </h3>
-                                <div class="product-brand m-0">
-                                    <%=product.brand_name%>
-                                </div>
-                                <!-- Stock Quantity Status -->
-                                <div class="stock-status text-center">
-                                    <% if(product.stock_quantity <=10) { %>
-                                        <span class="text-danger">
-                                            <%= translations.buttons.low_stock %>
-                                        </span>
-                                        <% } else { %>
-                                            <span class="text-success ">
-                                                <%= translations.buttons.in_stock %>
-                                            </span>
-                                            <% } %>
-                                </div>
-                                <div class="pricing">
-                                    <div class="current-price">₹<%=product.final_price%>
-                                    </div>
-                                    <div class="old-price">₹<%=product.original_price%>
-                                    </div>
-                                    <div class="savings">
-                                        <%= translations.buttons.save %> ₹<%=product.discount_amount%>
-                                    </div>
-                                </div>
+          <div class="products-grid" id="productList">
+  <% if(products && products.length > 0){ %>
+    <% products.forEach(function(product){ %>
+      <div class="product-card">
+        <div class="discount-badge"><%= product.discount %>% OFF</div>
+        <div class="wishlist-icon"><i class="far fa-heart"></i></div>
+        <div class="image-container">
+          <img src="/uploads/<%= product.main_image %>" alt="<%= product.product_name %>" class="product-image">
+        </div>
+        <div class="product-info">
+          <a href="/product_details/<%= product.product_id %>" class="product-link text-decoration-none">
+            <h3 class="product-title m-0"><%= product.product_name %></h3>
+            <div class="product-brand m-0"><%= product.brand_name %></div>
 
-
-                 <% if(products && products.length > 0){ %>
-                    <% products.forEach(function(product, index){ 
-                        var defaultVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null; %>   
-            <div class="product-card">
-    <div class="discount-badge"><%=product.discount%>% OFF</div>
-    <div class="wishlist-icon">
-        <i class="far fa-heart"></i>
-    </div>
-    <div class="image-container">
-        <img src="/uploads/<%= product.main_image %>" alt="Seed Packet" class="product-image">
-    </div>
-    <div class="product-info">
-        <a href="/product_details/<%=product.product_id%>" class="product-link text-decoration-none">
-        <h3 class="product-title m-0"><%=product.product_name%></h3>
-        <div class="product-brand m-0"><%=product.brand_name%></div>
-         <!-- Stock Quantity Status -->
-        <div class="stock-status text-center">
-            <% if(product.stock_quantity <= 10) { %>
+            <!-- Stock Quantity -->
+            <div class="stock-status text-center">
+              <% if(product.stock_quantity <= 10) { %>
                 <span class="text-danger"><%= translations.buttons.low_stock %></span>
-            <% } else { %>
-                <span class="text-success "><%= translations.buttons.in_stock %></span>
-            <% } %>
-        </div>
-        <div class="pricing">
-            <div class="current-price">₹<%=product.final_price%></div>
-            <div class="old-price">₹<%=product.original_price%></div>
-            <div class="savings"><%= translations.buttons.save %> ₹<%=product.discount_amount%></div>
-        </div>
-</a>
-       
-
-      <a href="/product_details/<%=product.product_id%>" 
-   class="add-to-cart-btn text-decoration-none"
-   <% if(cartProductIds && cartProductIds.includes(product.product_id)) { %> 
-       style="pointer-events: none; opacity: 0.5;" aria-disabled="true" 
-   <% } %>>
-   <i class="fas fa-shopping-cart"></i>
-   <% if(cartProductIds && cartProductIds.includes(product.product_id)) { %>
-       Added
-   <% } else { %>
-       <%= translations.buttons.add_to_cart %>
-   <% } %>
-</a>
-
-
-                                <a href="/product_details/<%=product.product_id%>"
-                                    class="add-to-cart-btn text-decoration-none">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    <%= translations.buttons.add_to_cart %>
-                                </a>
-
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                    <span>(42)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <% }) %>
-                            <% } else { %>
-                                <div class="no-products">No products found</div>
-                                <% } %>
-
+              <% } else { %>
+                <span class="text-success"><%= translations.buttons.in_stock %></span>
+              <% } %>
             </div>
+
+            <div class="pricing">
+              <div class="current-price">₹<%= product.final_price %></div>
+              <div class="old-price">₹<%= product.original_price %></div>
+              <div class="savings"><%= translations.buttons.save %> ₹<%= product.discount_amount %></div>
+            </div>
+          </a>
+
+          <!-- Add to cart -->
+          <a href="/product_details/<%= product.product_id %>"
+             class="add-to-cart-btn text-decoration-none"
+             <% if(cartProductIds && cartProductIds.includes(product.product_id)) { %>
+                style="pointer-events: none; opacity: 0.5;"
+             <% } %>>
+            <i class="fas fa-shopping-cart"></i>
+            <% if(cartProductIds && cartProductIds.includes(product.product_id)) { %>
+              Added
+            <% } else { %>
+              <%= translations.buttons.add_to_cart %>
+            <% } %>
+          </a>
+
+          <div class="rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+            <span>(42)</span>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="no-products">No products found</div>
+  <% } %>
+</div>
+
         </main>
     </div>
 

@@ -3,6 +3,8 @@ var exe = require('./conn');
 var router = express.Router();
 var translations = require("../translation");
 var nodemailer = require('nodemailer');
+var razorpay = require('./razerpay');
+const moment = require('moment');
 
  const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -90,11 +92,41 @@ router.get('/', async function(req, res) {
     var lang = req.session.language || "en";
     var categories = await exe("SELECT * FROM categories ")
      const search = req.query.search || "";
+console.log(lang);
+  var popularProducts = await exe(`
+  SELECT 
+      p.product_id,
+      p.product_name,
+      p.main_image,
+      p.discount,
+      v.variant_id,
+      v.weight,
+      v.price AS original_price,
+      ROUND(v.price - (v.price * p.discount / 100)) AS discount_price,
+      (v.price - ROUND(v.price - (v.price * p.discount / 100))) AS you_save,
+      COUNT(op.product_id) AS order_total
+  FROM order_products op
+  JOIN product p 
+      ON op.product_id = p.product_id
+  JOIN product_variants v 
+      ON v.product_id = p.product_id
+  WHERE v.variant_id = (
+      SELECT MIN(variant_id) 
+      FROM product_variants 
+      WHERE product_id = p.product_id
+  )
+  AND p.language = ?
+  GROUP BY p.product_id, p.product_name, p.main_image, v.variant_id, v.weight, v.price, p.discount
+  ORDER BY order_total DESC
+  LIMIT 8;
+`, [lang]);
+      console.log(popularProducts);
     res.render('user/index', {
         categories: categories,
         lang: lang,
         translations: translations[lang],
-        search
+        search,
+        popularProducts
     });
 });
 router.get("/product", async (req, res) => {
@@ -357,7 +389,9 @@ const userId = req.session.user?.user_id || null;
       if (cartCheck.length > 0) alreadyInCart = true;
     }
 
-    res.render("user/product_details", { product, lang, search: req.query.search || '', alreadyInCart });
+    var review = await exe("SELECT * FROM product_reviews WHERE product_id =? AND language =? LIMIT 5 ",[id,lang])
+// console.log(review);
+    res.render("user/product_details", { product, lang, search: req.query.search || '', alreadyInCart ,review});
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading product details");
@@ -673,9 +707,169 @@ router.post("/checkout", async function (req, res) {
   }
 });
 
-module.exports = router;
 
 
+router.get("/place_order", async (req, res) => {
+  try {
+    const userId = req.session.user.user_id;
+    const {
+      razorpay_payment_id,
+      name,
+      phone,
+      email,
+      pincode,
+      state,
+      city,
+      district,
+      landmark,
+      address,
+      amount,
+      products,
+      orderSaved,
+      payment_method  
+    } = req.query;
+
+    if (!name || !phone || !amount || !products) {
+      return res.status(400).send("Missing required fields");
+    }
+
+    let parsedProducts = [];
+    try {
+      parsedProducts = JSON.parse(products);
+    } catch (err) {
+      console.error(err);
+      return res.status(400).send("Invalid product data");
+    }
+
+    const orderQuery = `
+      INSERT INTO orders 
+      (user_id, name, phone, email, pincode, state, taluka, district, landmark, village, payment_id, payment_method, order_total, order_saved, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const orderResult = await exe(orderQuery, [
+      userId,
+      name,
+      phone,
+      email,
+      pincode,
+      state,
+      city,         
+      district,     
+      landmark,
+      address,     
+      razorpay_payment_id,
+      payment_method, 
+      amount,
+      orderSaved || 0, 
+      moment().format("YYYY-MM-DD HH:mm:ss")
+    ]);
+
+    const orderId = orderResult.insertId;
+
+    const productQuery = `
+      INSERT INTO order_products (order_id, product_id, product_name, weight, quantity, price, saved)
+      VALUES ?
+    `;
+    const productValues = parsedProducts.map(p => [
+      orderId,
+      p.product_id,
+      p.product_name,
+      p.weight,
+      p.quantity,
+      p.price,
+      p.saved
+    ]);
+
+    await exe(productQuery, [productValues]);
+
+    await exe("DELETE FROM shopping_cart WHERE user_id = ?", [userId]);
+
+    res.redirect(`/thankyou?order_id=${orderId}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong while placing order");
+  }
+});
+
+
+
+router.post("/create-order", async (req, res) => {
+  try {
+    const { amount } = req.body; 
+
+    const options = {
+      amount: amount * 100, 
+      currency: "INR",
+      receipt: "order_rcptid_" + Date.now()
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    res.json({
+      success: true,
+      order_id: order.id,
+      amount: order.amount,
+      currency: order.currency
+    });
+  } catch (err) {
+    console.error("Razorpay order create error:", err);
+    res.status(500).json({ success: false, error: "Something went wrong" });
+  }
+});
+
+
+
+
+router.get("/payment", async function(req, res) {
+    const orderId = req.query.order_id;
+    if (!orderId) {
+        return res.redirect("/checkout");
+    }
+
+    const amount = 50000; 
+
+    const options = {
+        amount: amount,  
+        currency: "INR",
+        receipt: orderId,
+        payment_capture: 1 
+    };
+
+    try {
+        const rzpOrder = await razorpay.orders.create(options);
+        res.render("user/payment", {
+            orderId,
+            razorpayOrderId: rzpOrder.id,
+            amount: rzpOrder.amount,
+            currency: rzpOrder.currency,
+            key_id: process.env.RAZORPAY_KEY_ID,
+            search: req.query.search || ''
+        });
+    } catch (err) {
+        console.error(err);
+        res.redirect("/checkout");
+    }
+});
+
+router.post("/submit_review", async (req, res) => {
+  try {
+    const userId = req.session.user?.user_id;
+    const lang = req.session.lang || "en";
+    if (!userId) {
+      res.redirect("/login");
+      return res.status(401).json({ success: false, message: "Login required" });
+    }
+    var sql = `INSERT INTO product_reviews (user_id,name, product_id, rating, review,language, created_at) VALUES (?, ?, ?, ?,?,?, NOW())`;
+    await exe(sql, [userId,req.body.name, req.body.product_id, req.body.rating, req.body.review,lang]);
+res.redirect("/product");
+  }
+
+  catch (err) {
+    console.error("❌ submit_review error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 
 

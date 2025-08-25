@@ -59,7 +59,7 @@
 <br><br>
     <!-- today's offers section  -->
 
-      <h2 class="section-title">Today's Best Offers</h2>
+      <h2 class="section-title">Our Most Popular Product</h2>
     
     <div class="carousel-container py-3" id="agriculturalCarousel">
         <button class="carousel-btn prev">
@@ -68,184 +68,44 @@
         
         <div class="carousel">
             <!-- Product Card 1 -->
-            <div class="product-card">
-                <div class="offer-badge">25% OFF</div>
-                <div class="wishlist-icon">
-                    <i class="far fa-heart"></i>
-                </div>
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1519098635138-4c6c2a3136d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Hybrid Seeds">
-                </div>
-                <h3 class="product-title">Hybrid Seeds</h3>
-                <p class="product-subtitle">Premium Quality</p>
-                <div class="pricing">
-                    <span class="current-price">₹350</span>
-                    <span class="original-price">₹500</span>
-                    <span class="savings">Save ₹150</span>
-                </div>
-                <select class="variant-select">
-                    <option>50g Pack</option>
-                    <option>100g Pack</option>
-                    <option>200g Pack</option>
-                </select>
-                <button class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-                <div class="rating">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
+             <% if(popularProducts && popularProducts.length > 0){
+                popularProducts.forEach(product => { %>
+
+                    <div class="product-card">
+                        <div class="offer-badge"><%=product.discount%> % OFF</div>
+                        <div class="wishlist-icon">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-image">
+                            <img src="/uploads/<%=product.main_image%>" alt="Hybrid Seeds">
+                        </div>
+                        <a href="/product_details/<%=product.product_id%>" class="text-decoration-none">
+                        <h3 class="product-title"><%=product.product_name%></h3>
+                        <!-- <p class="product-subtitle">Premium Quality</p> -->
+                        <div class="pricing">
+                            <span class="current-price">₹<%=product.discount_price%></span>
+                            <span class="original-price">₹<%=product.original_price%></span>
+                            <span class="savings">Save ₹<%=product.you_save%></span>
+                        </div>
+                      </a>
+                        <a href="/product_details/<%=product.product_id%>" class="add-to-cart text-decoration-none">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </a>
+                        <div class="rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="review-count">(128)</span>
+                        </div>
                     </div>
-                    <span class="review-count">(128)</span>
-                </div>
-            </div>
+           <%  }) } else { %>
+                <p>No popular products available at the moment.</p>
+                <% } %>
             
-            <!-- Product Card 2 -->
-            <div class="product-card">
-                <div class="offer-badge">30% OFF</div>
-                <div class="wishlist-icon">
-                    <i class="far fa-heart"></i>
-                </div>
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1596638787647-904b822cee91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Organic Fertilizer">
-                </div>
-                <h3 class="product-title">Organic Fertilizer</h3>
-                <p class="product-subtitle">Eco-Friendly</p>
-                <div class="pricing">
-                    <span class="current-price">₹600</span>
-                    <span class="original-price">₹800</span>
-                    <span class="savings">Save ₹200</span>
-                </div>
-                <select class="variant-select">
-                    <option>1kg Bag</option>
-                    <option>5kg Bag</option>
-                    <option>10kg Bag</option>
-                </select>
-                <button class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-                <div class="rating">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </div>
-                    <span class="review-count">(96)</span>
-                </div>
-            </div>
-            
-            <!-- Product Card 3 -->
-            <div class="product-card">
-                <div class="offer-badge">Limited Offer</div>
-                <div class="wishlist-icon">
-                    <i class="far fa-heart"></i>
-                </div>
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1584358148942-86fd46e8140e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Farm Tools Kit">
-                </div>
-                <h3 class="product-title">Farm Tools Kit</h3>
-                <p class="product-subtitle">Professional Grade</p>
-                <div class="pricing">
-                    <span class="current-price">₹900</span>
-                    <span class="original-price">₹1200</span>
-                    <span class="savings">Save ₹300</span>
-                </div>
-                <select class="variant-select">
-                    <option>Basic Set</option>
-                    <option>Standard Set</option>
-                    <option>Premium Set</option>
-                </select>
-                <button class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-                <div class="rating">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <span class="review-count">(215)</span>
-                </div>
-            </div>
-            
-            <!-- Product Card 4 -->
-            <div class="product-card">
-                <div class="offer-badge">20% OFF</div>
-                <div class="wishlist-icon">
-                    <i class="far fa-heart"></i>
-                </div>
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1611293388250-580b08c4a145?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Tractor Oil">
-                </div>
-                <h3 class="product-title">Tractor Oil</h3>
-                <p class="product-subtitle">Premium Lubricant</p>
-                <div class="pricing">
-                    <span class="current-price">₹560</span>
-                    <span class="original-price">₹700</span>
-                    <span class="savings">Save ₹140</span>
-                </div>
-                <select class="variant-select">
-                    <option>1 Liter</option>
-                    <option>5 Liters</option>
-                    <option>10 Liters</option>
-                </select>
-                <button class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-                <div class="rating">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                        <i class="far fa-star"></i>
-                    </div>
-                    <span class="review-count">(78)</span>
-                </div>
-            </div>
-            
-            <!-- Product Card 5 -->
-            <div class="product-card">
-                <div class="offer-badge">15% OFF</div>
-                <div class="wishlist-icon">
-                    <i class="far fa-heart"></i>
-                </div>
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Gardening Gloves">
-                </div>
-                <h3 class="product-title">Gardening Gloves</h3>
-                <p class="product-subtitle">Durable & Comfortable</p>
-                <div class="pricing">
-                    <span class="current-price">₹255</span>
-                    <span class="original-price">₹300</span>
-                    <span class="savings">Save ₹45</span>
-                </div>
-                <select class="variant-select">
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                </select>
-                <button class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-                <div class="rating">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </div>
-                    <span class="review-count">(142)</span>
-                </div>
-            </div>
         </div>
         
         <button class="carousel-btn next">
@@ -372,68 +232,97 @@
                         </ul>
                     </div>
                 </div>
-            </div>
-            
-        </div>
-        <div class="text-center mt-3">
+            </div><br>
+            <div class="text-center mt-3">
                 <a href="#" class="krushi-btn">Explore All Services</a>
             </div>
-    </section>
-
-    <!-- Recommendations Section -->
-    <section class="krushi-section krushi-recommendations">
-        <h2 class="section-title">Farming Recommendations</h2>
-        <div class="container">
-            
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn">
-                        <div class="krushi-image">
-                            <img src="https://fazlaninaturesnest.com/wp-content/uploads/2022/10/Exploring-the-Benefits-of-Organic-Farming_Putting-Wellness-and-Sustainability-Ahead_1-1.jpg" alt="Organic Farming">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Organic Farming Techniques</h3>
-                            <p>Learn how to implement sustainable organic farming practices that improve soil health and yield chemical-free produce.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.2">
-                        <div class="krushi-image">
-                            <img src="https://www.rainyfilters.com/static/images/blogs/highlighting_sustainable_practices_water_conservation_agriculture_inner2.png" alt="Water Management">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Efficient Water Management</h3>
-                            <p>Discover modern irrigation techniques that can help conserve water while ensuring optimal crop hydration.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.4">
-                        <div class="krushi-image">
-                            <img src="https://tse4.mm.bing.net/th/id/OIP.QiL3CFcagXNJvkIE5JIilwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Crop Rotation">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Smart Crop Rotation</h3>
-                            <p>Understand the benefits of strategic crop rotation for maintaining soil fertility and preventing pest infestations.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-           
         </div>
-         <div class="text-center mt-5">
-                <a href="#" class="krushi-btn">Explore All Recommendations</a>
-            </div>
+        
     </section>
 
 
 
+    <!-- recommendation section start -->
+      <section class="quick-recs-section" aria-labelledby="quickRecTitle">
+        <div class="recs-container">
+            <div class="recs-head">
+                <div>
+                    <div class="header-decoration">
+                        <div class="decoration-line"></div>
+                        <i class="fas fa-seedling soil-icon"></i>
+                        <div class="decoration-line"></div>
+                    </div>
+                    <h2 id="quickRecTitle" class="recs-title">Quick Soil Tips</h2>
+                    <p class="recs-subtitle">Short, tested actions you can do today — tap "View All" for the full plan.</p>
+                </div>
+                <a href="/recommendations" class="btn-viewall desktop" aria-label="View all recommendations">
+                    View All Recommendations <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
 
-    
+            <div class="recs-grid">
+                <!-- Card 1 -->
+                <article class="rec-card" role="article" aria-describedby="rec1-desc" data-rec-id="rec123" data-animation="slideUp">
+                    <div class="card-content">
+                        <div class="card-icon" aria-hidden="true">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div class="card-text">
+                            <h3 class="card-title">Apply 250 kg/ha lime</h3>
+                            <p id="rec1-desc" class="card-detail">pH 5.6 — apply before sowing.</p>
+                            <span class="badge badge-high">
+                                <span class="sr-only">Confidence: </span>High
+                            </span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="rec-card" role="article" aria-describedby="rec2-desc" data-rec-id="rec124" data-animation="slideUp" data-delay="0.2">
+                    <div class="card-content">
+                        <div class="card-icon" aria-hidden="true">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="card-text">
+                            <h3 class="card-title">Split Nitrogen: 50 kg/ha</h3>
+                            <p id="rec2-desc" class="card-detail">Top-dress at 20 days after transplant.</p>
+                            <span class="badge badge-medium">
+                                <span class="sr-only">Confidence: </span>Medium
+                            </span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="rec-card" role="article" aria-describedby="rec3-desc" data-rec-id="rec125" data-animation="slideUp" data-delay="0.4">
+                    <div class="card-content">
+                        <div class="card-icon" aria-hidden="true">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                        <div class="card-text">
+                            <h3 class="card-title">Resample next season</h3>
+                            <p id="rec3-desc" class="card-detail">Check after crop harvest; request on-field visit if unsure.</p>
+                            <span class="badge badge-low">
+                                <span class="sr-only">Confidence: </span>Low
+                            </span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <!-- Sticky CTA for mobile -->
+        <!-- <a href="/recommendations" class="sticky-cta" aria-label="View all recommendations">
+            <div class="sticky-cta-content">
+                <i class="fas fa-clipboard-list"></i>
+                <span>View All Recommendations</span>
+            </div>
+        </a> -->
+    </section>
+
+    <!-- recommendation section end -->
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const featureCards = document.querySelectorAll('.feature-card');
