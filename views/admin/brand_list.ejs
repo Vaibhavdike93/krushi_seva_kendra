@@ -1,5 +1,6 @@
 <%- include("navbar") %>
 
+<br>
 
 <!-- Brand List Table -->
 <div class="card shadow-sm border-0">
@@ -60,28 +61,28 @@
     </div>
 </div>
 
+<%- include("footer") %>
 
 
 <script>
-    $(document).ready(function () {
-        $('#brandTable').DataTable({
-            paging: true,
-            lengthMenu: [5, 10, 25, 50],
-            pageLength: 5,
-            ordering: true,
-            order: [[0, 'asc']],
-            language: {
-                search: "🔍 Search:",
-                lengthMenu: "Show _MENU_ entries",
-                info: "Showing _START_ to _END_ of _TOTAL_ brands",
-                paginate: {
-                    first: "First",
-                    last: "Last",
-                    next: "Next",
-                    previous: "Prev"
-                }
+$(document).ready(function () {
+    $('#brandTable').DataTable({
+        paging: true,
+        lengthMenu: [5, 10, 25, 50],
+        pageLength: 5,
+        ordering: true,
+        order: [[0, 'asc']],
+        language: {
+            search: "🔍 Search:",
+            lengthMenu: "Show _MENU_ entries",
+            info: "Showing _START_ to _END_ of _TOTAL_ brands",
+            paginate: {
+                first: "First",
+                last: "Last",
+                next: "Next",
+                previous: "Prev"
             }
-        });
+        }
     });
+});
 </script>
-    <%- include("footer") %>

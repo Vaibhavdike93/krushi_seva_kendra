@@ -40,6 +40,10 @@ req.session.destroy();
   res.redirect('/');
 });
 
+router.get('/profile', function(req, res) {
+ res.render('user/profile.ejs', { search: req.query.search || '' });
+});
+
 router.get('/registration', function(req, res) {
   let lang = req.session.lang || 'en';  
   const sql = 'SELECT crop_id, crop_name_en, crop_name_hi, crop_name_mr FROM crops';
@@ -1075,11 +1079,6 @@ router.get("/category/:categoryId", (req, res) => {
 
 router.get("/schemes",function(req,res){
   res.render("user/schemes.ejs" ,  {search: req.query.search || '' })
-})
-
-router.get("/soil_testing",function(req,res){
-  res.render("user/soil_testing.ejs" ,  {search: req.query.search || '' })
-
 })
 
 

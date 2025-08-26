@@ -1,11 +1,5 @@
 <%- include("navbar.ejs") %>
 
-    <!-- Banner -->
-    <!-- <section class="container-fluid m-0 p-0">
-        <div class="banner">
-        </div>
-    </section> -->
-
     <section class="hero-banner">
         <div class="hero-background"></div>
         <div class="overlay"></div>
@@ -67,7 +61,7 @@
 
       <h2 class="section-title"><%=translations.home_page.product%></h2>
     
-    <div class="carousel-container" id="agriculturalCarousel">
+    <div class="carousel-container py-3" id="agriculturalCarousel">
         <button class="carousel-btn prev">
             <i class="fas fa-chevron-left"></i>
         </button>
@@ -132,8 +126,6 @@
 
   
     <!-- today's offers section end  -->
-
-<br><br>
 
     <!-- why choose us section start -->
 
@@ -245,97 +237,68 @@
                         </ul>
                     </div>
                 </div>
-            </div><br>
-            <div class="text-center mt-3">
+            </div>
+            
+        </div>
+        <div class="text-center mt-3">
                 <a href="#" class="krushi-btn">Explore All Services</a>
             </div>
-        </div>
-        
     </section>
 
-
-
-    <!-- recommendation section start -->
-      <section class="quick-recs-section" aria-labelledby="quickRecTitle">
-        <div class="recs-container">
-            <div class="recs-head">
-                <div>
-                    <div class="header-decoration">
-                        <div class="decoration-line"></div>
-                        <i class="fas fa-seedling soil-icon"></i>
-                        <div class="decoration-line"></div>
+    <!-- Recommendations Section -->
+    <section class="krushi-section krushi-recommendations">
+        <h2 class="section-title">Farming Recommendations</h2>
+        <div class="container">
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="krushi-card recommendation" data-animation="zoomIn">
+                        <div class="krushi-image">
+                            <img src="https://fazlaninaturesnest.com/wp-content/uploads/2022/10/Exploring-the-Benefits-of-Organic-Farming_Putting-Wellness-and-Sustainability-Ahead_1-1.jpg" alt="Organic Farming">
+                        </div>
+                        <div class="krushi-content">
+                            <h3>Organic Farming Techniques</h3>
+                            <p>Learn how to implement sustainable organic farming practices that improve soil health and yield chemical-free produce.</p>
+                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
                     </div>
-                    <h2 id="quickRecTitle" class="recs-title">Quick Soil Tips</h2>
-                    <p class="recs-subtitle">Short, tested actions you can do today — tap "View All" for the full plan.</p>
                 </div>
-                <a href="/recommendations" class="btn-viewall desktop" aria-label="View all recommendations">
-                    View All Recommendations <i class="fas fa-arrow-right"></i>
-                </a>
+                <div class="col-md-4">
+                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.2">
+                        <div class="krushi-image">
+                            <img src="https://www.rainyfilters.com/static/images/blogs/highlighting_sustainable_practices_water_conservation_agriculture_inner2.png" alt="Water Management">
+                        </div>
+                        <div class="krushi-content">
+                            <h3>Efficient Water Management</h3>
+                            <p>Discover modern irrigation techniques that can help conserve water while ensuring optimal crop hydration.</p>
+                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.4">
+                        <div class="krushi-image">
+                            <img src="https://tse4.mm.bing.net/th/id/OIP.QiL3CFcagXNJvkIE5JIilwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Crop Rotation">
+                        </div>
+                        <div class="krushi-content">
+                            <h3>Smart Crop Rotation</h3>
+                            <p>Understand the benefits of strategic crop rotation for maintaining soil fertility and preventing pest infestations.</p>
+                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="recs-grid">
-                <!-- Card 1 -->
-                <article class="rec-card" role="article" aria-describedby="rec1-desc" data-rec-id="rec123" data-animation="slideUp">
-                    <div class="card-content">
-                        <div class="card-icon" aria-hidden="true">
-                            <i class="fas fa-flask"></i>
-                        </div>
-                        <div class="card-text">
-                            <h3 class="card-title">Apply 250 kg/ha lime</h3>
-                            <p id="rec1-desc" class="card-detail">pH 5.6 — apply before sowing.</p>
-                            <span class="badge badge-high">
-                                <span class="sr-only">Confidence: </span>High
-                            </span>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Card 2 -->
-                <article class="rec-card" role="article" aria-describedby="rec2-desc" data-rec-id="rec124" data-animation="slideUp" data-delay="0.2">
-                    <div class="card-content">
-                        <div class="card-icon" aria-hidden="true">
-                            <i class="fas fa-tint"></i>
-                        </div>
-                        <div class="card-text">
-                            <h3 class="card-title">Split Nitrogen: 50 kg/ha</h3>
-                            <p id="rec2-desc" class="card-detail">Top-dress at 20 days after transplant.</p>
-                            <span class="badge badge-medium">
-                                <span class="sr-only">Confidence: </span>Medium
-                            </span>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Card 3 -->
-                <article class="rec-card" role="article" aria-describedby="rec3-desc" data-rec-id="rec125" data-animation="slideUp" data-delay="0.4">
-                    <div class="card-content">
-                        <div class="card-icon" aria-hidden="true">
-                            <i class="fas fa-redo"></i>
-                        </div>
-                        <div class="card-text">
-                            <h3 class="card-title">Resample next season</h3>
-                            <p id="rec3-desc" class="card-detail">Check after crop harvest; request on-field visit if unsure.</p>
-                            <span class="badge badge-low">
-                                <span class="sr-only">Confidence: </span>Low
-                            </span>
-                        </div>
-                    </div>
-                </article>
-            </div>
+           
         </div>
-
-        <!-- Sticky CTA for mobile -->
-        <!-- <a href="/recommendations" class="sticky-cta" aria-label="View all recommendations">
-            <div class="sticky-cta-content">
-                <i class="fas fa-clipboard-list"></i>
-                <span>View All Recommendations</span>
+         <div class="text-center mt-5">
+                <a href="#" class="krushi-btn">Explore All Recommendations</a>
             </div>
-        </a> -->
     </section>
 
-    <!-- recommendation section end -->
 
 
+
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const featureCards = document.querySelectorAll('.feature-card');
