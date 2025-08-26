@@ -83,52 +83,73 @@ router.post('/registration', async (req, res) => {
 
 
 router.get('/', async function(req, res) {
-    
-   
-    if(req.query.lang){
-        req.session.language = req.query.lang; 
-    }
-    
-    var lang = req.session.language || "en";
-    var categories = await exe("SELECT * FROM categories ")
-     const search = req.query.search || "";
-console.log(lang);
-  var popularProducts = await exe(`
-  SELECT 
-      p.product_id,
-      p.product_name,
-      p.main_image,
-      p.discount,
-      v.variant_id,
-      v.weight,
-      v.price AS original_price,
-      ROUND(v.price - (v.price * p.discount / 100)) AS discount_price,
-      (v.price - ROUND(v.price - (v.price * p.discount / 100))) AS you_save,
-      COUNT(op.product_id) AS order_total
-  FROM order_products op
-  JOIN product p 
-      ON op.product_id = p.product_id
-  JOIN product_variants v 
-      ON v.product_id = p.product_id
-  WHERE v.variant_id = (
-      SELECT MIN(variant_id) 
-      FROM product_variants 
-      WHERE product_id = p.product_id
-  )
-  AND p.language = ?
-  GROUP BY p.product_id, p.product_name, p.main_image, v.variant_id, v.weight, v.price, p.discount
-  ORDER BY order_total DESC
-  LIMIT 8;
-`, [lang]);
-      console.log(popularProducts);
-    res.render('user/index', {
-        categories: categories,
-        lang: lang,
-        translations: translations[lang],
-        search,
-        popularProducts
+    try {
+        if(req.query.lang){
+            req.session.language = req.query.lang; 
+        }
+        var lang = req.session.language || "en";
+        var userId = req.session.user ? req.session.user.user_id : null;
+
+        var categories = await exe("SELECT * FROM categories");
+        const search = req.query.search || "";
+
+        var popularProducts = await exe(`
+            SELECT 
+                p.product_id,
+                p.product_name,
+                p.main_image,
+                p.discount,
+                v.variant_id,
+                v.weight,
+                v.price AS original_price,
+                ROUND(v.price - (v.price * p.discount / 100)) AS discount_price,
+                (v.price - ROUND(v.price - (v.price * p.discount / 100))) AS you_save,
+                COUNT(op.product_id) AS order_total
+            FROM order_products op
+            JOIN product p 
+                ON op.product_id = p.product_id
+            JOIN product_variants v 
+                ON v.product_id = p.product_id
+            WHERE v.variant_id = (
+                SELECT MIN(variant_id) 
+                FROM product_variants 
+                WHERE product_id = p.product_id
+            )
+            AND p.language = ?
+            GROUP BY p.product_id, p.product_name, p.main_image, v.variant_id, v.weight, v.price, p.discount
+            ORDER BY order_total DESC
+            LIMIT 8;
+        `, [lang]);
+
+        let wishlistMap = {};  
+if(userId){
+    const wishlistRows = await exe("SELECT wishlist_id, product_id FROM wishlist WHERE user_id = ?", [userId]);
+    wishlistRows.forEach(row => {
+        wishlistMap[row.product_id] = row.wishlist_id;
     });
+}
+
+popularProducts = popularProducts.map(p => {
+    return {
+        ...p,
+        inWishlist: wishlistMap[p.product_id] ? true : false,
+        wishlist_id: wishlistMap[p.product_id] || null
+    };
 });
+
+        res.render('user/index', {
+            categories: categories,
+            lang: lang,
+            translations: translations[lang],
+            search,
+            popularProducts
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+});
+
 router.get("/product", async (req, res) => {
   try {
     const lang = req.query.lang || "en";
@@ -175,14 +196,17 @@ router.get("/product", async (req, res) => {
           p.discount,
           p.stock_quantity,
           (v.price * p.discount / 100) AS discount_amount,
-          (v.price - (v.price * p.discount / 100)) AS final_price
+          (v.price - (v.price * p.discount / 100)) AS final_price,
+          w.wishlist_id,
+          CASE WHEN w.wishlist_id IS NOT NULL THEN 1 ELSE 0 END AS inWishlist
       FROM product p
       JOIN categories c ON p.category_id = c.category_id
       JOIN brands b ON p.brand_id = b.brand_id
       JOIN product_variants v ON p.product_id = v.product_id
+      LEFT JOIN wishlist w ON w.product_id = p.product_id AND w.user_id = ?
       WHERE p.language = ?
     `;
-    const params = [lang];
+    const params = [req.session.user ? req.session.user.user_id : 0, lang];
 
     if (search) {
       sql += " AND p.product_name LIKE ?";
@@ -206,12 +230,14 @@ router.get("/product", async (req, res) => {
 
     const category = await exe("SELECT * FROM categories");
     const brands = await exe("SELECT * FROM brands");
-   let cartItems = [];
-let cartProductIds = [];
-if (req.session.user && req.session.user.user_id) {
-  cartItems = await exe("SELECT * FROM shopping_cart WHERE user_id = ?", [req.session.user.user_id]);
-  cartProductIds = cartItems.map(item => item.product_id); 
-}
+
+    let cartItems = [];
+    let cartProductIds = [];
+    if (req.session.user && req.session.user.user_id) {
+      cartItems = await exe("SELECT * FROM shopping_cart WHERE user_id = ?", [req.session.user.user_id]);
+      cartProductIds = cartItems.map(item => item.product_id);
+    }
+
     res.render("user/product", {
       products,
       lang,
@@ -235,113 +261,119 @@ if (req.session.user && req.session.user.user_id) {
 
 
 
+
 router.post("/filter-products", (req, res) => {
-    const { categories, brands, price } = req.body;
+    const { categories, brands } = req.body;   
     const lang = req.session.lang || "en";
+    const userId = req.session.user ? req.session.user.user_id : null;
 
-    const categoryCol = lang === 'mr' ? 'c.category_name_mr' : lang === 'hi' ? 'c.category_name_hi' : 'c.category_name_en';
-    const brandCol = lang === 'mr' ? 'b.brand_name_mr' : lang === 'hi' ? 'b.brand_name_hi' : 'b.brand_name_en';
+    const categoryCol =
+        lang === 'mr' ? 'c.category_name_mr' :
+        lang === 'hi' ? 'c.category_name_hi' :
+        'c.category_name_en';
 
-   let query = `
-    SELECT 
-        p.product_id, p.product_name, p.stock_quantity, p.main_image, p.discount,
-        ${categoryCol} AS category_name,
-        ${brandCol} AS brand_name,
-        v.variant_id, v.weight, v.price
-    FROM product p
-    LEFT JOIN categories c ON p.category_id = c.category_id
-    LEFT JOIN brands b ON p.brand_id = b.brand_id
-    LEFT JOIN product_variants v ON p.product_id = v.product_id
-    WHERE 1=1 AND p.language = ?
-`;
+    const brandCol =
+        lang === 'mr' ? 'b.brand_name_mr' :
+        lang === 'hi' ? 'b.brand_name_hi' :
+        'b.brand_name_en';
 
-let params = [lang];
+    let query = `
+        SELECT 
+            p.product_id, p.product_name, p.stock_quantity, p.main_image, p.discount,
+            ${categoryCol} AS category_name,
+            ${brandCol} AS brand_name,
+            v.variant_id, v.weight, v.price
+        FROM product p
+        LEFT JOIN categories c ON p.category_id = c.category_id
+        LEFT JOIN brands b ON p.brand_id = b.brand_id
+        LEFT JOIN product_variants v ON p.product_id = v.product_id
+        WHERE 1=1 AND p.language = ?
+    `;
 
-if (categories && categories.length) {
-    const placeholders = categories.map(() => '?').join(',');
-    query += ` AND p.category_id IN (${placeholders})`;
-    params.push(...categories);
-}
+    let params = [lang];
 
-if (brands && brands.length) {
-    const placeholders = brands.map(() => '?').join(',');
-    query += ` AND p.brand_id IN (${placeholders})`;
-    params.push(...brands);
-}
-
-if (price) {
-    query += ` AND v.price <= ?`;
-    params.push(price);
-}
-
-
-exe(query, params, (err, results) => {
-    if (err) {
-        console.error(err);
-        return res.status(500).json({ error: "Database error" });
+    if (categories && categories.length) {
+        const placeholders = categories.map(() => '?').join(',');
+        query += ` AND p.category_id IN (${placeholders})`;
+        params.push(...categories);
     }
 
-    let products = {};
-    results.forEach(r => {
-       if (!products[r.product_id]) {
-    products[r.product_id] = {
-        product_id: r.product_id,
-        product_name: r.product_name,
-        stock_quantity: r.stock_quantity,
-        category_name: r.category_name,   
-        brand_name: r.brand_name,         
-        main_image: r.main_image,
-        discount: r.discount || 0,
-        variants: []
-    };
-}
+    if (brands && brands.length) {
+        const placeholders = brands.map(() => '?').join(',');
+        query += ` AND p.brand_id IN (${placeholders})`;
+        params.push(...brands);
+    }
 
+    exe(query, params, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Database error" });
+        }
 
-        if (r.variant_id) {
-            let discountedPrice = r.price;
-            let savings = 0;
-
-            if (r.discount && r.discount > 0) {
-                discountedPrice = r.price - (r.price * r.discount / 100);
-                savings = r.price - discountedPrice;
+        let products = {};
+        results.forEach(r => {
+            if (!products[r.product_id]) {
+                products[r.product_id] = {
+                    product_id: r.product_id,
+                    product_name: r.product_name,
+                    stock_quantity: r.stock_quantity,
+                    category_name: r.category_name,
+                    brand_name: r.brand_name,
+                    main_image: r.main_image,
+                    discount: r.discount || 0,
+                    variants: []
+                };
             }
 
-            products[r.product_id].variants.push({
-                variant_id: r.variant_id,
-                weight: r.weight,
-                original_price: r.price,
-                discount: r.discount || 0,
-                discounted_price: Math.round(discountedPrice),
-                you_save: Math.round(savings)
-            });
-        }
-    });
+            if (r.variant_id) {
+                let discountedPrice = r.price;
+                let savings = 0;
 
-    Object.values(products).forEach(p => {
-        if (p.variants.length > 0) {
-            p.original_price = p.variants[0].original_price;
-            p.final_price = p.variants[0].discounted_price;
-            p.discount_amount = p.variants[0].you_save;
-        } else {
-            p.original_price = 0;
-            p.final_price = 0;
-            p.discount_amount = 0;
-        }
-    });
+                if (r.discount && r.discount > 0) {
+                    discountedPrice = r.price - (r.price * r.discount / 100);
+                    savings = r.price - discountedPrice;
+                }
 
-     exe(`SELECT product_id FROM cart WHERE user_id = ?`, [userId], (err, cartRows) => {
-            if (err) return res.status(500).json({ error: "Cart fetch error" });
-
-            let cartProductIds = cartRows.map(c => c.product_id);
-            res.json({ products: Object.values(products), cartProductIds });
+                products[r.product_id].variants.push({
+                    variant_id: r.variant_id,
+                    weight: r.weight,
+                    original_price: r.price,
+                    discount: r.discount || 0,
+                    discounted_price: Math.round(discountedPrice),
+                    you_save: Math.round(savings)
+                });
+            }
         });
 
+        Object.values(products).forEach(p => {
+            if (p.variants.length > 0) {
+                p.original_price = p.variants[0].original_price;
+                p.final_price = p.variants[0].discounted_price;
+                p.discount_amount = p.variants[0].you_save;
+            } else {
+                p.original_price = 0;
+                p.final_price = 0;
+                p.discount_amount = 0;
+            }
+        });
 
-    res.json(Object.values(products));
+        if (userId) {
+            exe(`SELECT product_id FROM cart WHERE user_id = ?`, [userId], (err, cartRows) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ error: "Cart fetch error" });
+                }
+
+                let cartProductIds = cartRows.map(c => c.product_id);
+                return res.json({ products: Object.values(products), cartProductIds });
+            });
+        } else {
+            return res.json({ products: Object.values(products), cartProductIds: [] });
+        }
+    });
 });
 
 
-});
 
 router.get("/product_details/:id", async (req, res) => {
   try {
@@ -820,38 +852,6 @@ router.post("/create-order", async (req, res) => {
 
 
 
-
-router.get("/payment", async function(req, res) {
-    const orderId = req.query.order_id;
-    if (!orderId) {
-        return res.redirect("/checkout");
-    }
-
-    const amount = 50000; 
-
-    const options = {
-        amount: amount,  
-        currency: "INR",
-        receipt: orderId,
-        payment_capture: 1 
-    };
-
-    try {
-        const rzpOrder = await razorpay.orders.create(options);
-        res.render("user/payment", {
-            orderId,
-            razorpayOrderId: rzpOrder.id,
-            amount: rzpOrder.amount,
-            currency: rzpOrder.currency,
-            key_id: process.env.RAZORPAY_KEY_ID,
-            search: req.query.search || ''
-        });
-    } catch (err) {
-        console.error(err);
-        res.redirect("/checkout");
-    }
-});
-
 router.post("/submit_review", async (req, res) => {
   try {
     const userId = req.session.user?.user_id;
@@ -882,6 +882,89 @@ router.get("/thankyou/", function(req, res) {
   // res.send(req.body);
   // res.render("user/thankyou", { search: req.query.search || '' });
   });
+
+router.get("/wishlist/:product_id", async function (req, res) {
+    try {
+        const userId = req.session.user?.user_id;
+        if (!userId) {
+            return res.redirect("/login");
+        }
+
+        const productId = req.params.product_id;
+
+        const check = await exe(
+            "SELECT * FROM wishlist WHERE user_id = ? AND product_id = ?",
+            [userId, productId]
+        );
+
+        if (check.length > 0) {
+            await exe("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?", [
+                userId,
+                productId,
+            ]);
+        } else {
+            await exe("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)", [
+                userId,
+                productId,
+            ]);
+        }
+
+        res.redirect("/product");
+    } catch (err) {
+        console.error(err);
+        res.send("Error in wishlist");
+    }
+});
+
+router.get("/wishlist", async function (req, res) {
+  try {
+    const userId = req.session.user?.user_id;
+    if (!userId) {
+      return res.redirect("/login");
+    }
+
+    const wishlistItems = await exe(
+      `SELECT 
+    w.wishlist_id,
+    p.product_id,
+    p.product_name,
+    p.main_image,
+    p.discount,
+    v.variant_id,
+    v.weight,
+    v.price AS original_price,
+    (v.price - (v.price * p.discount / 100)) AS final_price,
+    (v.price * p.discount / 100) AS save_amount,
+    c.cart_id
+FROM wishlist w
+JOIN product p ON w.product_id = p.product_id
+JOIN product_variants v 
+    ON v.product_id = p.product_id 
+   AND v.price = (
+        SELECT MIN(price) 
+        FROM product_variants 
+        WHERE product_id = p.product_id
+    )
+LEFT JOIN shopping_cart c ON c.product_id = p.product_id AND c.user_id = w.user_id
+WHERE w.user_id = ?
+ORDER BY w.created_at DESC;
+`,
+      [userId]
+    );
+
+    res.render("user/wishlist", { wishlistItems, lang: req.session.language || "en" ,  search: req.query.search || ''});
+  } catch (err) {
+    console.error(err);
+    res.send("Error loading wishlist");
+  }
+});
+router.get("/remove_wishlist/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = await exe("DELETE FROM wishlist WHERE wishlist_id = ?",[id]);
+console.log(id)
+res.redirect("/product");
+})
+
 
 
 

@@ -1,0 +1,153 @@
+<%-include("navbar")%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wishlist - Krushi Seva Kendra</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body { background: #f8f9fa; }
+
+    .wishlist-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      background: #fff;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+      height: 100%;
+    }
+    .wishlist-card:hover { box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+
+    .discount-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #f38020;
+      color: #fff;
+      font-size: 13px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .wishlist-heart {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      color: #ff3366;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+    .wishlist-heart:hover { transform: scale(1.2); }
+
+    .wishlist-card img {
+      height: 150px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    .wishlist-card h6 {
+      font-size: 16px;
+      min-height: 38px;
+    }
+    .wishlist-card p { margin: 0; }
+
+    .price {
+      font-weight: bold;
+      font-size: 18px;
+      color: #212121;
+    }
+    .old-price {
+      text-decoration: line-through;
+      color: #888;
+      font-size: 14px;
+      margin-left: 5px;
+    }
+    .save-text {
+      color: #28a745;
+      font-size: 14px;
+    }
+
+    .btn-cart {
+      background-color: #f38020;
+      color: #fff;
+      font-weight: 500;
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .btn-cart:hover { background-color: #d96e17; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <h3 class="mb-4">My Wishlist</h3>
+  <div class="row g-4" id="wishlist-container">
+
+    <% if(wishlistItems && wishlistItems.length > 0 ) { %>
+<% wishlistItems.forEach(function(items){ %>
+
+    <div class="col-md-4 col-lg-3">
+      <div class="wishlist-card">
+        <span class="discount-badge"><%=items.discount%> %OFF</span>
+        <i class="fa-solid fa-heart wishlist-heart"></i>
+    
+        <img src="/uploads/<%=items.main_image%>" alt="Tomato Seeds">
+        
+        <h6 class="mb-1"><%=items.product_name%></h6>
+        <!-- <p class="text-muted small">Syngenta</p> -->
+        
+        <p>
+          <span class="price">₹<%= items.final_price %></span>
+          <span class="old-price">₹<%= items.original_price %></span>
+        </p>
+        <p class="save-text">Save ₹<%= items.save_amount %></p>
+    
+       
+    
+        <% if (items.cart_id) { %>
+  <button class="btn btn-secondary w-100" disabled>
+    <i class="fa-solid fa-check"></i> Added to Cart
+  </button>
+<% } else { %>
+  <a href="/product_details/<%=items.product_id%>" class="btn btn-cart">
+    <i class="fa-solid fa-cart-plus"></i> Move to Cart
+  </a>
+<% } %>
+
+      </div>
+    </div>
+
+<%}) %>
+  <%  } %>
+
+   
+
+  </div>
+</div>
+
+<!-- <script>
+  // Wishlist remove functionality
+  document.addEventListener("DOMContentLoaded", function () {
+    const hearts = document.querySelectorAll(".wishlist-heart");
+
+    hearts.forEach(heart => {
+      heart.addEventListener("click", function () {
+        const productCard = this.closest(".col-md-4");
+        productCard.remove(); // Remove the product from wishlist
+      });
+    });
+  });
+</script> -->
+
+</body>
+</html>
+
+<%-include("footer")%>

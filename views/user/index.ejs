@@ -65,7 +65,7 @@
 <br><br>
     <!-- today's offers section  -->
 
-      <h2 class="section-title">Our Most Popular Product</h2>
+      <h2 class="section-title"><%=translations.home_page.product%></h2>
     
     <div class="carousel-container" id="agriculturalCarousel">
         <button class="carousel-btn prev">
@@ -79,9 +79,14 @@
 
                     <div class="product-card">
                         <div class="offer-badge"><%=product.discount%> % OFF</div>
-                        <div class="wishlist-icon">
-                            <i class="far fa-heart"></i>
-                        </div>
+                      <a href="<%= product.inWishlist ? '/remove_wishlist/' + product.wishlist_id : '/wishlist/' + product.product_id %>" 
+   class="wishlist-icon text-decoration-none">
+  <% if(product.inWishlist) { %>
+    <i class="fas fa-heart text-danger"></i> 
+  <% } else { %>
+    <i class="far fa-heart"></i> 
+  <% } %>
+</a>
                         <div class="product-image">
                             <img src="/uploads/<%=product.main_image%>" alt="Hybrid Seeds">
                         </div>
@@ -133,7 +138,7 @@
     <!-- why choose us section start -->
 
      <section class="why-choose-us">
-        <h2 class="section-title">Why Choose Us</h2>
+        <h2 class="section-title"><%=translations.home_page.why_choose%></h2>
         
         <div class="features-grid">
             <!-- Feature 1 -->
@@ -180,7 +185,7 @@
 
     <!-- Services Section -->
     <section class="krushi-section krushi-services">
-        <h2 class="section-title">Our Services</h2>
+        <h2 class="section-title"><%=translations.home_page.services%></h2>
         <div class="container position-relative">
             <!-- <h2 class="section-title2">Our Services</h2> -->
             <div class="row g-4">

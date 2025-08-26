@@ -74,6 +74,12 @@ const translations = {
       dont_account:"Don't have an account?",
       signup:"Sign Up",
 
+    },
+    home_page:{
+      product:"Our Most Popular Product ",
+      why_choose:"Why Choose Us",
+      services:"Our Services",
+
     }
 
   },
@@ -154,6 +160,11 @@ customer_rating: "ग्राहक रेटिंग"
   signin: "कृषी सेवा केंद्रात पुढे जाण्यासाठी साइन इन करा",
   dont_account: "अजून खाते नाही का?",
   signup: "साइन अप करा"
+},
+home_page:{
+    product: "आमची सर्वाधिक लोकप्रिय उत्पादने",
+    why_choose: "आम्ही का निवडावे",
+    services: "आमची सेवा"
 }
 
 
@@ -233,7 +244,13 @@ customer_rating: "ग्राहक रेटिंग"
   signin: "कृषि सेवा केंद्र में आगे बढ़ने के लिए साइन इन करें",
   dont_account: "खाता नहीं है?",
   signup: "साइन अप करें"
+},
+home_page: {
+    product: "हमारे सबसे लोकप्रिय उत्पाद",
+    why_choose: "हमें क्यों चुनें",
+    services: "हमारी सेवाएँ"
 }
+
 
 
 
