@@ -148,6 +148,7 @@
               <input type="hidden" name="products[<%= index %>][quantity]" value="<%= item.quantity %>">
               <input type="hidden" name="products[<%= index %>][price]" value="<%= item.discountedPrice %>">
               <input type="hidden" name="products[<%= index %>][saved]" value="<%= item.saved %>">
+              <input type="hidden" name="products[<%= index %>][originalPrice]" value="<%= item.originalPrice %>">
             <% }) %>
             <input type="hidden" name="orderTotal" value="<%= total.toFixed(2) %>">
             <input type="hidden" name="orderSaved" value="<%= youSaved.toFixed(2) %>">
@@ -212,6 +213,7 @@ document.getElementById("checkoutForm").addEventListener("submit", async functio
   const landmark = formData.get("landmark");
   const district = formData.get("district");
   const payment_method = formData.get("payment");
+  const originalPrice = formData.get("originalPrice");
   const amount = parseFloat(formData.get("orderTotal"));
   const orderSaved = parseFloat(formData.get("orderSaved"));
 
