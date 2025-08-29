@@ -1123,23 +1123,10 @@ router.get("/download_invoice/:id", async function (req, res) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+router.get("/recommendation",function(req,res){
+  res.render("user/recommendation.ejs" ,  {search: req.query.search || '' })
+  
+})
 
 
 router.get("/conatct",async function(req,res){
@@ -1229,6 +1216,10 @@ router.get("/category/:categoryId", (req, res) => {
 
 router.get("/schemes",function(req,res){
   res.render("user/schemes.ejs" ,  {search: req.query.search || '' })
+})
+
+router.get("/about",function(req,res){
+  res.render("user/aboutus.ejs" ,  {search: req.query.search || '' })
 })
 
 

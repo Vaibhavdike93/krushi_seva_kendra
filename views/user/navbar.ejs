@@ -21,7 +21,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 
     <style>
         .bg-topbar {
@@ -147,6 +152,39 @@
                 margin: 0.5rem 0;
             }
 
+            /* Marquee Base (works on desktop and mobile) */
+            .marquee-container {
+                flex: 1;
+                overflow: hidden;
+                white-space: nowrap;
+                margin: 0 20px;
+            }
+
+            .marquee-text {
+                display: inline-block;
+                animation: scroll 15s linear infinite;
+                font-size: 0.875rem;
+                color: #d1d5db;
+            }
+
+            @keyframes scroll {
+                0% {
+                    transform: translateX(100%);
+                }
+
+                100% {
+                    transform: translateX(-100%);
+                }
+            }
+
+            /* Hide marquee on mobile if you want */
+            @media (max-width: 768px) {
+                .marquee-container {
+                    display: none;
+                }
+            }
+
+
             /* Category menu wrap in mobile */
             .category-menu {
                 display: flex;
@@ -171,14 +209,31 @@
 
     <!-- Top Bar -->
     <div class="bg-topbar text-white px-3 py-1">
-        <div class="d-flex flex-wrap justify-content-center justify-content-md-end align-items-center gap-3">
-            <a href="#" class="topbar-link"><i class="fa-brands fa-instagram"></i></a>
-            <span>|</span>
-            <a href="#" class="topbar-link"><i class="fa-brands fa-square-facebook"></i></a>
-            <span>|</span>
-            <a href="#" class="topbar-link"><i class="fa-brands fa-youtube"></i></a>
-            <div class="px-3 py-1 rounded text-white fw-semibold small bg-call-btn">
-                <%= translations.buttons.Call_To_Order %>: 1800-0000-0000
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+
+            <!-- Marquee on the left -->
+            <div class="marquee-container d-none d-md-block">
+                <marquee behavior="scroll" direction="left">
+                    🎉 Welcome to our store! • Free shipping on orders over 1 • New arrivals every week • 24/7
+                    customer support available
+                </marquee>
+            </div>
+
+
+
+
+
+            <!-- Social Media Links and Call Button -->
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="topbar-link"><i class="fa-brands fa-instagram"></i></a>
+                <span>|</span>
+                <a href="#" class="topbar-link"><i class="fa-brands fa-square-facebook"></i></a>
+                <span>|</span>
+                <a href="#" class="topbar-link"><i class="fa-brands fa-youtube"></i></a>
+
+                <div class="px-3 py-1 rounded text-white fw-semibold small bg-call-btn ms-3">
+                    Call To Order: 1800-0000-0000
+                </div>
             </div>
         </div>
     </div>

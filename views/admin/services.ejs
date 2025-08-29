@@ -1,0 +1,40 @@
+<%- include("navbar") %>
+
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Our Services</h2>
+
+  <!-- Language Select -->
+  <form method="GET" action="/admin/services" id="langForm" style="text-align:center; margin-bottom:20px;">
+    <select name="lang" onchange="document.getElementById('langForm').submit()" style="padding:5px 10px;">
+      <option value="eg" <%= lang === "eg" ? "selected" : "" %>>English</option>
+      <option value="mr" <%= lang === "mr" ? "selected" : "" %>>Marathi</option>
+      <option value="hi" <%= lang === "hi" ? "selected" : "" %>>Hindi</option>
+    </select>
+  </form>
+
+  <div class="row">
+    <% for (var i = 0; i < services.length; i++) { %>
+      <div class="col-md-6 mb-4">
+        <div class="card shadow p-3">
+          <h4><%= services[i].heading %></h4>
+          <p><%= services[i].description %></p>
+          <ul>
+            <li><%= services[i].point1 %></li>
+            <li><%= services[i].point2 %></li>
+            <li><%= services[i].point3 %></li>
+            <li><%= services[i].point4 %></li>
+          </ul>
+
+          <!-- Update Button -->
+          <div class="text-end mt-3">
+            <a href="/admin/services/update/<%= services[i].id %>" class="btn btn-sm btn-primary">
+              Update
+            </a>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include("footer") %>
