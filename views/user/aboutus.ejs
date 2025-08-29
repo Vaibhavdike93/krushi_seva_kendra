@@ -1,0 +1,739 @@
+<%- include("navbar.ejs") %>
+    <style>
+        :root {
+            --primary-green: #2d5016;
+            --accent-green: #4a7c59;
+            --light-green: #8fbc8f;
+            --warm-orange: #e67e22;
+            --light-orange: #f39c12;
+            --cream: #faf8f3;
+            --white: #ffffff;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text);
+            background-color: var(--cream);
+        }
+
+        .hero-section {
+            min-height: 450px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--accent-green) 100%);
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--white);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--white) 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            background: var(--warm-orange);
+            color: var(--white);
+            text-decoration: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out 0.6s both;
+        }
+
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .hero-cta:hover::before {
+            left: 100%;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
+            color: var(--white);
+        }
+
+        .hero-cta i {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-cta:hover i {
+            transform: translateY(2px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+
+        /* Our Story Section */
+        .story-section {
+            padding: 2rem 0;
+            background: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+
+        .story-title {
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            font-weight: 700;
+            color: black;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            position: relative;
+        }
+
+        .story-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--warm-orange), var(--light-orange));
+            border-radius: 2px;
+        }
+
+        .story-lead {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .story-text p {
+            font-size: 1.1rem;
+            color: var(--light-text);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+
+        .story-image {
+            position: relative;
+        }
+
+        .story-image-wrapper {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: rotate(2deg);
+            transition: transform 0.3s ease;
+        }
+
+        .story-image-wrapper:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .story-image-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(45, 80, 22, 0.1), transparent);
+            z-index: 2;
+        }
+
+        .story-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Timeline Elements */
+        .story-timeline {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--cream);
+            border-radius: 15px;
+            border-left: 4px solid var(--warm-orange);
+        }
+
+        .timeline-year {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--warm-orange);
+            min-width: 80px;
+        }
+
+        .timeline-content h4 {
+            color: var(--primary-green);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content p {
+            color: var(--light-text);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Mission Vision Values Section */
+        .mission-section {
+            padding: 2rem 0;
+            background: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .mission-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .mission-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .mission-header .mission-title {
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            font-weight: 700;
+            color: black;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .mission-header .mission-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--warm-orange), var(--light-orange));
+            border-radius: 2px;
+        }
+
+        .mission-subtitle {
+            font-size: 1.2rem;
+            color: var(--light-text);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .mission-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(230, 126, 34, 0.15);
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--warm-orange), var(--light-orange));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .mission-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--white);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .mission-icon {
+            background: linear-gradient(135deg, var(--warm-orange), var(--light-orange));
+        }
+
+        .mission-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-content p {
+            font-size: 1.1rem;
+            color: var(--light-text);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 6rem 0;
+            background: var(--accent-green);
+            color: var(--white);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 2rem 1rem;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--accent-light);
+            display: block;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .story-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .story-text {
+                padding-right: 0;
+                order: 2;
+            }
+
+            .story-image {
+                order: 1;
+            }
+
+            .story-actions {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .story-section {
+                padding: 4rem 0;
+            }
+
+            .story-container {
+                padding: 0 1rem;
+            }
+
+            .story-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin-top: 2rem;
+                padding-top: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .mission-section {
+                padding: 4rem 0;
+            }
+
+            .mission-container {
+                padding: 0 1rem;
+            }
+
+            .mission-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .mission-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .story-timeline {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+    </style>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">About Krushi Seva Kendra</h1>
+
+                <p class="hero-subtitle">
+                    Transforming agriculture through innovation, dedication, and farmer-centric services that empower
+                    communities and sustainable growth
+                </p>
+
+                <a href="#our-story" class="hero-cta">
+                    <i class="fas fa-arrow-down"></i>
+                    Discover Our Story
+                </a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <section id="our-story" class="story-section">
+        <div class="story-container">
+            <div class="story-content">
+                <div class="story-text">
+
+                    <h2 class="story-title">Our Story</h2>
+
+                    <p class="story-lead">
+                        Founded in 2005, Krushi Seva Kendra began as a small initiative to support local farmers with
+                        quality agricultural inputs and guidance.
+                    </p>
+                    <p>Today, we have grown into a trusted partner for thousands of farmers across the region, providing
+                        comprehensive agricultural solutions, from seeds and fertilizers to modern farming techniques
+                        and market access.</p>
+                    <p>Our journey has been shaped by the resilience and wisdom of the farming community we serve. Every
+                        day, we work towards our vision of sustainable agriculture and prosperous farming communities.
+                    </p>
+
+                    <div class="story-timeline">
+                        <div class="timeline-year">2005</div>
+                        <div class="timeline-content">
+                            <h4>The Beginning</h4>
+                            <p>Started with a vision to empower farmers through quality agricultural solutions</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="story-image">
+                    <div class="story-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            alt="Farmers working in agricultural field"
+                            onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Vision Values Section -->
+    <section class="mission-section">
+        <div class="mission-container">
+            <div class="mission-header">
+                <h2 class="mission-title">Our Mission, Vision & Values</h2>
+                <p class="mission-subtitle">The core principles that drive our commitment to agricultural excellence</p>
+            </div>
+
+            <div class="mission-grid">
+                <!-- Mission -->
+                <div class="mission-card">
+                    <div class="card-icon mission-icon">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Mission</h3>
+                        <p>Transforming The Future Of Farmers By Leveraging Science, Data, and Technology</p>
+                    </div>
+                </div>
+
+                <!-- Vision -->
+                <div class="mission-card">
+                    <div class="card-icon mission-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Vision</h3>
+                        <p>To Be An Iconic Global Digital Agriculture Ecosystem</p>
+                    </div>
+                </div>
+
+                <!-- Values -->
+                <div class="mission-card">
+                    <div class="card-icon mission-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Values</h3>
+                        <p>Always Staying Humble And Delivering Excellence</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="section-container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">15K+</span>
+                    <span class="stat-label">Farmers Served</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">75+</span>
+                    <span class="stat-label">Districts Covered</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">18+</span>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">Success Rate</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Counter animation for stats
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
+                const suffix = counter.textContent.replace(/[\d]/g, '');
+                let current = 0;
+                const increment = target / 100;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target + suffix;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current) + suffix;
+                    }
+                }, 20);
+            });
+        }
+
+                // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('stats-section')) {
+                        animateCounters();
+                    }
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections for scroll animations
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'all 0.8s ease-out';
+            observer.observe(section);
+        });
+
+        // Reset first section (hero) to be visible
+        document.querySelector('.hero').style.opacity = '1';
+        document.querySelector('.hero').style.transform = 'translateY(0)';
+    </script>
+
+
+    <%- include("footer.ejs") %>

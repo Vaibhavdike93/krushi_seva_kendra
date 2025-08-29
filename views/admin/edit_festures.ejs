@@ -1,0 +1,27 @@
+<%- include("navbar") %>
+
+<div class="container mt-4">
+  <h2>Edit Feature</h2>
+
+  <!-- Edit form -->
+  <form action="/admin/features/update/<%= info[0].id %>" method="POST">
+    
+    <!-- Feature Name -->
+    <div class="mb-3">
+      <label for="name">Feature Name</label>
+      <input type="text" class="form-control" id="name" name="name" 
+             value="<%= info[0].title %>" required>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label for="description">Description</label>
+      <textarea class="form-control" id="description" name="description" rows="3" required><%= info[0].description  %></textarea>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
+
+<%- include("footer") %>
