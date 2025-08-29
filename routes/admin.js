@@ -893,7 +893,7 @@ router.post("/all_orders", async function (req, res) {
     if (order_status === "Shipped") timestampField = "shipped_at";
     if (order_status === "Delivered") timestampField = "delivered_at";
     if (order_status === "Cancelled") timestampField = "cancelled_at";
-    if (order_status === "Completed") timestampField = "completed_at"; // ✅ हे नवीन जोडले
+    if (order_status === "Completed") timestampField = "completed_at"; 
 
     let query = "UPDATE orders SET status=?";
     let params = [order_status];
@@ -907,7 +907,6 @@ router.post("/all_orders", async function (req, res) {
 
     await exe(query, params);
 
-    // user + product info घेणे
     const order = await exe(
       `SELECT o.order_id, u.email, u.name, op.product_name
        FROM orders o 
@@ -926,7 +925,7 @@ router.post("/all_orders", async function (req, res) {
         service: "gmail",
         auth: {
           user: "gorakshnathdalavi91@gmail.com",
-          pass: "yydh qpqv vovi fjsm", // ⚠️ App Password वापर
+          pass: "yydh qpqv vovi fjsm", 
         },
       });
 
