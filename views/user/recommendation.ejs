@@ -1,6 +1,7 @@
 <%-include("navbar.ejs")%>
     <style>
-         body {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--page-bg);
             color: var(--text-primary);
             line-height: 1.6;
@@ -37,7 +38,7 @@
             border: 0;
         }
 
-        /* Herosheros Section */
+        /* Heros Section */
         .heros {
             padding: 40px 0;
             background-color: var(--page-bg);
@@ -113,8 +114,8 @@
             transform: translateY(-2px);
         }
 
-        /* Search Section */
-        .search-section {
+        /* Filters Section */
+        .filters {
             background-color: var(--neutral-light);
             padding: 20px;
             border-radius: var(--border-radius);
@@ -122,18 +123,99 @@
             margin-bottom: 24px;
         }
 
-        .search-container {
+        .filter-header {
             display: flex;
-            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
         }
 
-        .search-input {
-            flex: 1;
-            padding: 12px 16px;
+        .filter-title {
+            font-size: 1.2rem;
+        }
+
+        .filter-toggle {
+            background: none;
+            color: var(--button-color);
+            font-weight: 600;
+            display: none;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .filter-input {
+            padding: 10px 12px;
             border: 1px solid #ddd;
             border-radius: var(--border-radius);
+            background-color: white;
             font-family: inherit;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn-secondary {
+            background-color: var(--neutral-light);
+            color: var(--text-dark);
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background-color: #eee;
+        }
+
+        /* Summary Chips */
+        .summary-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .chip {
+            background-color: var(--light-green);
+            color: var(--text-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chip-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
             font-size: 1rem;
+        }
+
+        .clear-all {
+            background: none;
+            border: none;
+            color: var(--button-color);
+            font-weight: 600;
+            cursor: pointer;
         }
 
         /* Results Grid */
@@ -495,27 +577,6 @@
             margin-bottom: 24px;
         }
 
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #333;
-            color: white;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            z-index: 1001;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-
-        .toast.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         /* Responsive Design */
         @media (max-width: 992px) {
             .detail-drawer {
@@ -534,6 +595,18 @@
         @media (max-width: 768px) {
             .detail-drawer {
                 width: 85%;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-toggle {
+                display: block;
+            }
+
+            .filters.collapsed .filter-grid {
+                display: none;
             }
 
             .results-grid {
@@ -562,10 +635,6 @@
             .feedback-actions {
                 flex-direction: column;
             }
-
-            .search-container {
-                flex-direction: column;
-            }
         }
 
         /* Animation for counter */
@@ -584,16 +653,16 @@
             animation: countUp 0.5s ease forwards;
         }
     </style>
-    <br><br>
+
     <!-- Main Content -->
     <main class="container">
-        <!-- Herosheros Section -->
+        <!-- Heros Section -->
         <section class="heros">
             <div class="heros-content">
                 <div class="heros-text">
                     <h1 class="heros-title">Soil Recommendations</h1>
                     <p class="heros-subtitle">Practical, lab-tested steps tailored to your land. Open a recommendation to see dosages, schedule, and safety notes.</p>
-                    <button class="btn btn-primary" id="requestVisitBtn">
+                    <button class="btn btn-primary">
                         <i class="fas fa-calendar-check"></i>
                         Request Field Visit
                     </button>
@@ -611,16 +680,81 @@
             </div>
         </section>
 
-        <!-- Search Section -->
-        <section class="search-section">
-            <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search recommendations...">
-                <button class="btn btn-primary" id="searchBtn">
-                    <i class="fas fa-search"></i>
-                    Search
+        <!-- Filters Section -->
+        <section class="filters">
+            <div class="filter-header">
+                <h2 class="filter-title">Filter Recommendations</h2>
+                <button class="filter-toggle" id="filterToggle">
+                    <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" class="filter-input" placeholder="Enter keywords...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Crop Type</label>
+                    <select class="filter-input">
+                        <option value="">All Crops</option>
+                        <option value="wheat">Wheat</option>
+                        <option value="rice">Rice</option>
+                        <option value="corn">Corn</option>
+                        <option value="sugarcane">Sugarcane</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Soil Type</label>
+                    <select class="filter-input">
+                        <option value="">All Soil Types</option>
+                        <option value="clay">Clay</option>
+                        <option value="sandy">Sandy</option>
+                        <option value="loamy">Loamy</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Confidence Level</label>
+                    <select class="filter-input">
+                        <option value="">All Levels</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Date Range</label>
+                    <input type="date" class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Location</label>
+                    <select class="filter-input">
+                        <option value="">All Locations</option>
+                        <option value="north">North Fields</option>
+                        <option value="south">South Fields</option>
+                        <option value="east">East Fields</option>
+                        <option value="west">West Fields</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-primary">Apply Filters</button>
+                <button class="btn btn-secondary">Reset</button>
+            </div>
         </section>
+
+        <!-- Summary Chips -->
+        <div class="summary-chips">
+            <div class="chip">
+                Wheat <button class="chip-close">&times;</button>
+            </div>
+            <div class="chip">
+                Clay Soil <button class="chip-close">&times;</button>
+            </div>
+            <div class="chip">
+                High Confidence <button class="chip-close">&times;</button>
+            </div>
+            <button class="clear-all">Clear all</button>
+        </div>
 
         <!-- Results Grid -->
         <section class="results-grid" id="resultsGrid">
@@ -661,7 +795,7 @@
                     <i class="fas fa-flask"></i>
                     Soil Analysis Summary
                 </h3>
-                <p id="detailSummary">pH 5.6 — Apply lime before sowing to improve nutrient availability and crop yield.</p>
+                <p>pH 5.6 — Apply lime before sowing to improve nutrient availability and crop yield.</p>
             </div>
 
             <div class="drawer-section">
@@ -669,8 +803,23 @@
                     <i class="fas fa-weight"></i>
                     Dosage per Hectare
                 </h3>
-                <ul class="dosage-list" id="detailDosage">
-                    <!-- Will be populated by JavaScript -->
+                <ul class="dosage-list">
+                    <li class="dosage-item">
+                        <span>Lime</span>
+                        <span>250 kg/ha</span>
+                    </li>
+                    <li class="dosage-item">
+                        <span>Nitrogen (N)</span>
+                        <span>120 kg/ha</span>
+                    </li>
+                    <li class="dosage-item">
+                        <span>Phosphorus (P₂O₅)</span>
+                        <span>60 kg/ha</span>
+                    </li>
+                    <li class="dosage-item">
+                        <span>Potassium (K₂O)</span>
+                        <span>40 kg/ha</span>
+                    </li>
                 </ul>
             </div>
 
@@ -679,8 +828,28 @@
                     <i class="fas fa-calendar-alt"></i>
                     Application Schedule
                 </h3>
-                <ul class="schedule-checklist" id="detailSchedule">
-                    <!-- Will be populated by JavaScript -->
+                <ul class="schedule-checklist">
+                    <li class="checklist-item">
+                        <div class="checklist-status"><i class="fas fa-check"></i></div>
+                        <div>
+                            <p>Apply lime 2 weeks before sowing</p>
+                            <small>Due: 10 Sep 2023</small>
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <div class="checklist-status"></div>
+                        <div>
+                            <p>First nitrogen application</p>
+                            <small>Due: 25 Sep 2023</small>
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <div class="checklist-status"></div>
+                        <div>
+                            <p>Phosphorus and potassium application</p>
+                            <small>Due: 5 Oct 2023</small>
+                        </div>
+                    </li>
                 </ul>
             </div>
 
@@ -689,8 +858,23 @@
                     <i class="fas fa-seedling"></i>
                     Product Suggestions
                 </h3>
-                <div id="detailProducts">
-                    <!-- Will be populated by JavaScript -->
+                <div class="product-suggestion">
+                    <div class="product-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div>
+                        <h4>AgroLime Plus</h4>
+                        <p>Fast-acting lime formulation</p>
+                    </div>
+                </div>
+                <div class="product-suggestion">
+                    <div class="product-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div>
+                        <h4>NitroGrow 20-20-0</h4>
+                        <p>Balanced NPK fertilizer</p>
+                    </div>
                 </div>
             </div>
 
@@ -699,21 +883,24 @@
                     <i class="fas fa-exclamation-triangle"></i>
                     Important Notes
                 </h3>
-                <div id="detailWarnings">
-                    <!-- Will be populated by JavaScript -->
+                <div class="warning">
+                    <p>Do not apply lime and fertilizer at the same time. Wait at least 7 days between applications.</p>
+                </div>
+                <div class="warning">
+                    <p>Soil testing recommended after 3 cropping cycles or if changing crop type.</p>
                 </div>
             </div>
 
             <div class="drawer-actions">
-                <button class="btn btn-primary" id="exportPdfBtn">
+                <button class="btn btn-primary">
                     <i class="fas fa-download"></i>
                     Export PDF
                 </button>
-                <button class="btn btn-secondary" id="printBtn">
+                <button class="btn btn-secondary">
                     <i class="fas fa-print"></i>
                     Print
                 </button>
-                <button class="btn btn-primary" id="requestAgronomistBtn">
+                <button class="btn btn-primary">
                     <i class="fas fa-user"></i>
                     Request Agronomist
                 </button>
@@ -723,9 +910,6 @@
 
     <!-- Backdrop -->
     <div class="backdrop" id="backdrop"></div>
-
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
 
     <script>
         // Sample data for recommendations
@@ -739,25 +923,8 @@
                 updated_at: "2023-08-10",
                 crop: ["Wheat"],
                 soil_type: ["Clay"],
-                dosage: [
-                    { name: "Lime", amount: "250 kg/ha" },
-                    { name: "Nitrogen (N)", amount: "120 kg/ha" },
-                    { name: "Phosphorus (P₂O₅)", amount: "60 kg/ha" },
-                    { name: "Potassium (K₂O)", amount: "40 kg/ha" }
-                ],
-                schedule: [
-                    { task: "Apply lime 2 weeks before sowing", due: "10 Sep 2023", completed: true },
-                    { task: "First nitrogen application", due: "25 Sep 2023", completed: false },
-                    { task: "Phosphorus and potassium application", due: "5 Oct 2023", completed: false }
-                ],
-                products: [
-                    { name: "AgroLime Plus", description: "Fast-acting lime formulation" },
-                    { name: "NitroGrow 20-20-0", description: "Balanced NPK fertilizer" }
-                ],
-                warnings: [
-                    "Do not apply lime and fertilizer at the same time. Wait at least 7 days between applications.",
-                    "Soil testing recommended after 3 cropping cycles or if changing crop type."
-                ],
+                dosage: "250 kg/ha",
+                schedule: ["Apply lime 2 weeks before sowing", "First nitrogen application", "Phosphorus and potassium application"],
                 author: "Dr. Rajesh Kumar",
                 attachments: ["report.pdf", "soil_image.jpg"]
             },
@@ -770,22 +937,8 @@
                 updated_at: "2023-08-05",
                 crop: ["Rice"],
                 soil_type: ["Loamy"],
-                dosage: [
-                    { name: "Phosphorus (P₂O₅)", amount: "80 kg/ha" },
-                    { name: "Compost", amount: "2 tons/ha" }
-                ],
-                schedule: [
-                    { task: "Apply before flowering", due: "15 Sep 2023", completed: false },
-                    { task: "Water management critical", due: "Ongoing", completed: false }
-                ],
-                products: [
-                    { name: "PhosBoost", description: "High phosphorus fertilizer" },
-                    { name: "Organic compost", description: "Enriched with micronutrients" }
-                ],
-                warnings: [
-                    "Avoid waterlogging after application.",
-                    "Do not exceed recommended dosage to prevent nutrient imbalance."
-                ],
+                dosage: "80 kg/ha",
+                schedule: ["Apply before flowering", "Water management critical"],
                 author: "Dr. Priya Singh",
                 attachments: ["report.pdf"]
             },
@@ -798,22 +951,8 @@
                 updated_at: "2023-08-15",
                 crop: ["Corn"],
                 soil_type: ["Sandy"],
-                dosage: [
-                    { name: "Nitrogen (N)", amount: "90 kg/ha" },
-                    { name: "Zinc sulfate", amount: "25 kg/ha" }
-                ],
-                schedule: [
-                    { task: "Split application recommended", due: "5 Sep 2023", completed: false },
-                    { task: "Monitor soil moisture", due: "Weekly", completed: false }
-                ],
-                products: [
-                    { name: "NitroLess", description: "Controlled nitrogen release" },
-                    { name: "ZincMax", description: "Zinc supplement" }
-                ],
-                warnings: [
-                    "Excessive nitrogen can lead to lodging and reduced yield.",
-                    "Monitor plant growth and adjust if necessary."
-                ],
+                dosage: "90 kg/ha",
+                schedule: ["Split application recommended", "Monitor soil moisture"],
                 author: "Dr. Amit Patel",
                 attachments: ["report.pdf", "comparison_chart.pdf"]
             },
@@ -826,22 +965,8 @@
                 updated_at: "2023-08-12",
                 crop: ["Sugarcane"],
                 soil_type: ["Clay"],
-                dosage: [
-                    { name: "Compost", amount: "5 tons/ha" },
-                    { name: "Vermicompost", amount: "1 ton/ha" }
-                ],
-                schedule: [
-                    { task: "Apply during land preparation", due: "20 Aug 2023", completed: true },
-                    { task: "Incorporate properly", due: "22 Aug 2023", completed: true }
-                ],
-                products: [
-                    { name: "OrganicGold compost", description: "Well-decomposed organic matter" },
-                    { name: "VermiPro", description: "Premium vermicompost" }
-                ],
-                warnings: [
-                    "Ensure proper decomposition to avoid weed seeds in compost.",
-                    "Maintain adequate moisture after application."
-                ],
+                dosage: "5 tons/ha",
+                schedule: ["Apply during land preparation", "Incorporate properly"],
                 author: "Dr. Sunil Mehta",
                 attachments: ["report.pdf"]
             },
@@ -854,22 +979,8 @@
                 updated_at: "2023-08-08",
                 crop: ["Wheat"],
                 soil_type: ["Loamy"],
-                dosage: [
-                    { name: "Zinc sulfate", amount: "25 kg/ha" },
-                    { name: "Boron", amount: "5 kg/ha" }
-                ],
-                schedule: [
-                    { task: "Apply at sowing", due: "5 Sep 2023", completed: false },
-                    { task: "Foliar spray if symptoms appear", due: "As needed", completed: false }
-                ],
-                products: [
-                    { name: "ZincMax", description: "Zinc sulfate monohydrate" },
-                    { name: "BoroBoost", description: "Liquid boron supplement" }
-                ],
-                warnings: [
-                    "Do not mix zinc with phosphorus fertilizers.",
-                    "Apply boron carefully as excess can be toxic to plants."
-                ],
+                dosage: "25 kg/ha",
+                schedule: ["Apply at sowing", "Foliar spray if symptoms appear"],
                 author: "Dr. Neha Sharma",
                 attachments: ["report.pdf", "deficiency_images.zip"]
             },
@@ -882,20 +993,8 @@
                 updated_at: "2023-08-18",
                 crop: ["Rice"],
                 soil_type: ["Clay"],
-                dosage: [
-                    { name: "Drainage channels", amount: "As needed" }
-                ],
-                schedule: [
-                    { task: "Reduce irrigation frequency", due: "Immediately", completed: false },
-                    { task: "Create drainage channels", due: "25 Aug 2023", completed: false }
-                ],
-                products: [
-                    { name: "Drainage pipes", description: "PVC drainage pipes" }
-                ],
-                warnings: [
-                    "Water logging can lead to root rot and reduced yield.",
-                    "Monitor soil moisture regularly."
-                ],
+                dosage: "N/A",
+                schedule: ["Reduce irrigation frequency", "Create drainage channels"],
                 author: "Dr. Vikas Yadav",
                 attachments: ["report.pdf", "drainage_design.pdf"]
             }
@@ -907,13 +1006,8 @@
         const drawerClose = document.getElementById('drawerClose');
         const backdrop = document.getElementById('backdrop');
         const totalRecsElement = document.getElementById('totalRecs');
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const exportPdfBtn = document.getElementById('exportPdfBtn');
-        const printBtn = document.getElementById('printBtn');
-        const requestAgronomistBtn = document.getElementById('requestAgronomistBtn');
-        const requestVisitBtn = document.getElementById('requestVisitBtn');
-        const toast = document.getElementById('toast');
+        const filterToggle = document.getElementById('filterToggle');
+        const filtersSection = document.querySelector('.filters');
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
@@ -986,21 +1080,7 @@
             // Detail button click
             resultsGrid.addEventListener('click', function(e) {
                 if (e.target.classList.contains('btn-detail') || e.target.closest('.btn-detail')) {
-                    const card = e.target.closest('.rec-card');
-                    const recId = card.getAttribute('data-rec-id');
-                    openDetailDrawer(recId);
-                }
-                
-                if (e.target.classList.contains('btn-save') || e.target.closest('.btn-save')) {
-                    const card = e.target.closest('.rec-card');
-                    const recId = card.getAttribute('data-rec-id');
-                    toggleSaveRecommendation(recId, card);
-                }
-                
-                if (e.target.classList.contains('btn-download') || e.target.closest('.btn-download')) {
-                    const card = e.target.closest('.rec-card');
-                    const recId = card.getAttribute('data-rec-id');
-                    downloadPdf(recId);
+                    openDetailDrawer();
                 }
             });
             
@@ -1008,37 +1088,15 @@
             drawerClose.addEventListener('click', closeDetailDrawer);
             backdrop.addEventListener('click', closeDetailDrawer);
             
-            // Search functionality
-            searchBtn.addEventListener('click', performSearch);
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
+            // Filter toggle
+            filterToggle.addEventListener('click', function() {
+                filtersSection.classList.toggle('collapsed');
+                const icon = filterToggle.querySelector('i');
+                if (filtersSection.classList.contains('collapsed')) {
+                    icon.className = 'fas fa-chevron-down';
+                } else {
+                    icon.className = 'fas fa-chevron-up';
                 }
-            });
-            
-            // Drawer actions
-            exportPdfBtn.addEventListener('click', function() {
-                const recId = detailDrawer.getAttribute('data-current-rec');
-                downloadPdf(recId);
-            });
-            
-            printBtn.addEventListener('click', function() {
-                window.print();
-            });
-            
-            requestAgronomistBtn.addEventListener('click', function() {
-                showToast('Agronomist request sent successfully!');
-            });
-            
-            requestVisitBtn.addEventListener('click', function() {
-                showToast('Field visit requested successfully!');
-            });
-            
-            // Feedback buttons
-            document.querySelectorAll('.feedback-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    showToast('Thank you for your feedback!');
-                });
             });
             
             // Card hover effect (micro-tilt)
@@ -1089,72 +1147,8 @@
             });
         }
 
-        // Open detail drawer with specific recommendation
-        function openDetailDrawer(recId) {
-            const recommendation = recommendations.find(rec => rec.id === parseInt(recId));
-            if (!recommendation) return;
-            
-            // Set current recommendation ID
-            detailDrawer.setAttribute('data-current-rec', recId);
-            
-            // Populate drawer content
-            document.getElementById('detailSummary').textContent = recommendation.summary;
-            
-            // Populate dosage list
-            const dosageList = document.getElementById('detailDosage');
-            dosageList.innerHTML = '';
-            recommendation.dosage.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'dosage-item';
-                li.innerHTML = `<span>${item.name}</span><span>${item.amount}</span>`;
-                dosageList.appendChild(li);
-            });
-            
-            // Populate schedule
-            const scheduleList = document.getElementById('detailSchedule');
-            scheduleList.innerHTML = '';
-            recommendation.schedule.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'checklist-item';
-                li.innerHTML = `
-                    <div class="checklist-status ${item.completed ? 'completed' : ''}">${item.completed ? '<i class="fas fa-check"></i>' : ''}</div>
-                    <div>
-                        <p>${item.task}</p>
-                        <small>Due: ${item.due}</small>
-                    </div>
-                `;
-                scheduleList.appendChild(li);
-            });
-            
-            // Populate products
-            const productsContainer = document.getElementById('detailProducts');
-            productsContainer.innerHTML = '';
-            recommendation.products.forEach(product => {
-                const div = document.createElement('div');
-                div.className = 'product-suggestion';
-                div.innerHTML = `
-                    <div class="product-image">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div>
-                        <h4>${product.name}</h4>
-                        <p>${product.description}</p>
-                    </div>
-                `;
-                productsContainer.appendChild(div);
-            });
-            
-            // Populate warnings
-            const warningsContainer = document.getElementById('detailWarnings');
-            warningsContainer.innerHTML = '';
-            recommendation.warnings.forEach(warning => {
-                const div = document.createElement('div');
-                div.className = 'warning';
-                div.innerHTML = `<p>${warning}</p>`;
-                warningsContainer.appendChild(div);
-            });
-            
-            // Open drawer
+        // Open detail drawer
+        function openDetailDrawer() {
             detailDrawer.classList.add('open');
             backdrop.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1165,154 +1159,6 @@
             detailDrawer.classList.remove('open');
             backdrop.classList.remove('active');
             document.body.style.overflow = '';
-        }
-
-        // Toggle save recommendation
-        function toggleSaveRecommendation(recId, card) {
-            const btn = card.querySelector('.btn-save');
-            const isSaved = btn.classList.contains('saved');
-            
-            if (isSaved) {
-                btn.classList.remove('saved');
-                btn.innerHTML = '<i class="fas fa-bookmark"></i> Save';
-                showToast('Recommendation removed from saved items');
-            } else {
-                btn.classList.add('saved');
-                btn.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
-                showToast('Recommendation saved for later');
-            }
-        }
-
-        // Download PDF
-        function downloadPdf(recId) {
-            const recommendation = recommendations.find(rec => rec.id === parseInt(recId));
-            if (!recommendation) return;
-            
-            showToast(`Downloading PDF for ${recommendation.title}`);
-            
-            // In a real application, this would generate or fetch a PDF file
-            // For demonstration, we'll create a simpleg1 text-based "PDF"
-            const pdfContent = `
-                Krushi Seva Kendra - Soil Recommendation
-                ========================================
-                
-                Recommendation: ${recommendation.title}
-                Sample ID: ${recommendation.sample_id}
-                Date: ${formatDate(recommendation.updated_at)}
-                Confidence: ${recommendation.confidence}
-                
-                Summary:
-                ${recommendation.summary}
-                
-                Dosage per Hectare:
-                ${recommendation.dosage.map(item => `- ${item.name}: ${item.amount}`).join('\n')}
-                
-                Schedule:
-                ${recommendation.schedule.map(item => `- ${item.task} (Due: ${item.due})`).join('\n')}
-                
-                Important Notes:
-                ${recommendation.warnings.map(note => `- ${note}`).join('\n')}
-                
-                Author: ${recommendation.author}
-            `;
-            
-            // Create a blob and download link
-            const blob = new Blob([pdfContent], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Recommendation_${recommendation.sample_id}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // Perform search
-        function performSearch() {
-            const query = searchInput.value.toLowerCase().trim();
-            
-            if (query === '') {
-                renderRecommendationCards();
-                return;
-            }
-            
-            const filteredRecs = recommendations.filter(rec => 
-                rec.title.toLowerCase().includes(query) ||
-                rec.summary.toLowerCase().includes(query) ||
-                rec.crop.some(c => c.toLowerCase().includes(query)) ||
-                rec.soil_type.some(s => s.toLowerCase().includes(query))
-            );
-            
-            // Update results count
-            animateCounter(totalRecsElement, filteredRecs.length);
-            
-            // Clear and re-render results
-            resultsGrid.innerHTML = '';
-            
-            if (filteredRecs.length === 0) {
-                resultsGrid.innerHTML = `
-                    <div class="no-results">
-                        <h3>No recommendations found</h3>
-                        <p>Try different search terms or request a field visit for personalized recommendations.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            filteredRecs.forEach(rec => {
-                const card = document.createElement('article');
-                card.className = 'rec-card';
-                card.setAttribute('data-rec-id', rec.id);
-                card.setAttribute('data-confidence', rec.confidence);
-                card.setAttribute('data-crop', rec.crop[0]);
-                card.setAttribute('data-soil', rec.soil_type[0]);
-                
-                const confidenceClass = `confidence-${rec.confidence}`;
-                
-                card.innerHTML = `
-                    <div class="card-top">
-                        <div class="card-icon">
-                            <i class="fas fa-flask"></i>
-                        </div>
-                        <h3 class="card-title">${rec.title}</h3>
-                        <p class="card-summary">${rec.summary}</p>
-                        <div class="card-meta">
-                            <span class="confidence-badge ${confidenceClass}">${rec.confidence.charAt(0).toUpperCase() + rec.confidence.slice(1)}</span>
-                            <time class="card-date" datetime="${rec.updated_at}">${formatDate(rec.updated_at)}</time>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="card-action-btn btn-detail">
-                            <i class="fas fa-info-circle"></i>
-                            Details
-                        </button>
-                        <button class="card-action-btn btn-save">
-                            <i class="fas fa-bookmark"></i>
-                            Save
-                        </button>
-                        <button class="card-action-btn btn-download">
-                            <i class="fas fa-download"></i>
-                            PDF
-                        </button>
-                    </div>
-                `;
-                
-                resultsGrid.appendChild(card);
-            });
-            
-            // Re-setup intersection observer for new cards
-            setupIntersectionObserver();
-        }
-
-        // Show toast notification
-        function showToast(message) {
-            toast.textContent = message;
-            toast.classList.add('visible');
-            
-            setTimeout(() => {
-                toast.classList.remove('visible');
-            }, 3000);
         }
 
         // Animate counter
