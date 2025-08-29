@@ -82,13 +82,10 @@ router.post("/add_category", async function(req, res) {
     var d = req.body;
     let filename = "";
 
-    // Image upload
     if (req.files && req.files.categoryImage) {
         filename = new Date().getTime() + req.files.categoryImage.name;
         await req.files.categoryImage.mv("public/uploads/" + filename);
     }
-
-    // Insert into DB
     var sql = `INSERT INTO categories 
                (category_name_en, category_name_hi, category_name_mr, category_image) 
                VALUES (?, ?, ?, ?)`;
@@ -303,10 +300,7 @@ router.post("/add_product", async (req, res) => {
 
  const weights = req.body["weight[]"];
 const prices = req.body["price[]"];
-
-// console.log("weights:", weights);
-// console.log("prices:", prices);
-
+ 
     if (weights && prices) {
       for (let i = 0; i < weights.length; i++) {
         if (weights[i] && prices[i]) {
@@ -317,9 +311,6 @@ const prices = req.body["price[]"];
         }
       }
     }
-
-    // console.log(weights)
-    // console.log(prices)
 
     res.redirect("/admin/add_product");
   } catch (error) {
@@ -1014,6 +1005,121 @@ router.post("/services/update/:id",async function(req,res){
   var result = await exe(sql ,[d.heading,d.description,d.point1,d.point2,d.point3,d.point4,id]);
   res.redirect("/admin/services");
 })
+router.get("/story", async (req, res) => {
+    var lang = req.query.language || 'en'; // Default English
+    var sql = `SELECT * FROM about_story WHERE language = ?`;
+    var story = await exe(sql, [lang]);
+    res.render("admin/story.ejs", { story, lang });
+});
+router.get("/story/update/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM about_story WHERE id = ?`;
+  var story = await exe(sql,[id]);
+  res.render("admin/edit_story.ejs",{story})
+})
+
+router.post("/story/update/:id", async function(req, res) {
+    var id = req.params.id;
+    var d = req.body;
+    var file_name;
+
+    if(req.files && req.files.img) {
+        file_name = new Date().getTime() + "_" + req.files.img.name;
+        req.files.img.mv("public/uploads/" + file_name);
+    } else {
+        var old_data = await exe("SELECT * FROM about_story WHERE id = ?", [id]);
+        file_name = old_data[0].img; 
+    }
+
+    var sql = `UPDATE about_story SET 
+        parg_1 = ?,
+        parg_2 = ?,
+        parg_3 = ?,
+        image_url = ?
+        WHERE id = ?`;
+    
+    var result = await exe(sql, [d.parag_1, d.parag_2,d.parag_3, file_name, id]);
+    res.redirect("/admin/story"); 
+});
+router.get("/mission",async function(req,res){
+  var lang = req.query.language || 'en'; 
+  var sql = `SELECT * FROM mission WHERE language = ?`;
+  var missions = await exe(sql,[lang]);
+  console.log(missions)
+  res.render("admin/mission.ejs",{missions})
+})
+router.get("/mission/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM mission WHERE id = ?`;
+  var mission = await exe(sql,[id]);
+  res.render("admin/edit_mission.ejs",{mission})
+})
+router.post("/mission/update/:id", async function(req, res){
+  var id = req.params.id;
+  var d = req.body;
+
+  var sql = `UPDATE mission SET 
+    title = ?,
+    description = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [d.title, d.description, id]);
+  res.redirect("/admin/mission")
+});
+
+router.get("/vision",async function(req,res){
+  var lang = req.query.language || 'en'; 
+  var sql = `SELECT * FROM vision WHERE language = ?`;
+  var vision = await exe(sql,[lang]);
+  console.log(vision)
+  res.render("admin/vision.ejs",{vision})
+})
+router.get("/vision/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM vision WHERE id = ?`;
+  var vision = await exe(sql,[id]);
+  res.render("admin/edit_vision.ejs",{vision})
+})
+router.post("/vision/update/:id", async function(req, res){
+  var id = req.params.id;
+  var d = req.body;
+
+  var sql = `UPDATE vision SET 
+    title = ?,
+    description = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [d.title, d.description, id]);
+  res.redirect("/admin/vision")
+});
+
+
+
+router.get("/Values",async function(req,res){
+  var lang = req.query.language || 'en'; 
+  var sql = `SELECT * FROM valuesk WHERE language = ?`;
+  var Values = await exe(sql,[lang]);
+  res.render("admin/Values.ejs",{Values})
+})
+router.get("/Values/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM valuesk WHERE id = ?`;
+  var Values = await exe(sql,[id]);
+  res.render("admin/edit_Values.ejs",{Values})
+})
+router.post("/Values/update/:id", async function(req, res){
+  var id = req.params.id;
+  var d = req.body;
+
+  var sql = `UPDATE valuesk SET 
+    title = ?,
+    description = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [d.title, d.description, id]);
+  res.redirect("/admin/Values")
+});
+
 
 
 

@@ -1058,9 +1058,20 @@ router.get("/schemes",function(req,res){
   res.render("user/schemes.ejs" ,  {search: req.query.search || '' })
 })
 
-router.get("/about",function(req,res){
-  res.render("user/aboutus.ejs" ,  {search: req.query.search || '' })
-})
+router.get("/about", async function(req, res){
+    var lang = req.session.lang || "en"; 
+
+    var story = await exe(`SELECT * FROM about_story WHERE language = '${lang}'`);
+
+
+
+    res.render("user/aboutus.ejs", {
+        search: req.query.search || '',
+        story: story
+    });
+});
+
+
 
 
 

@@ -1,0 +1,41 @@
+<%- include('navbar') %>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Our Story</h2>
+
+  <!-- Language select -->
+  <form method="GET" action="/admin/story" class="mb-4 text-end">
+    <select name="language" class="form-select w-auto d-inline-block" onchange="this.form.submit()">
+      <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+      <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>Marathi</option>
+      <option value="hi" <%= lang === 'hi' ? 'selected' : '' %>>Hindi</option>
+    </select>
+  </form>
+
+  <% for(var i = 0; i < story.length; i++){ %>
+      <div class="story-card d-flex align-items-center justify-content-between mb-4" style="border:1px solid #eee; border-radius:10px; padding:20px; gap:20px;">
+        
+        <!-- Left: paragraphs -->
+        <div class="story-text" style="flex:1;">
+          <p><%= story[i].parg_1 %></p>
+          <p><%= story[i].parg_2 %></p>
+          <p><%= story[i].parg_3 %></p>
+
+          <!-- Update button -->
+          <a href="/admin/story/update/<%= story[i].id %>" class="btn btn-warning btn-sm mt-2">Update</a>
+        </div>
+
+        <!-- Right: image -->
+        <div class="story-img" style="flex:1;">
+          
+            <img src="/uploads/<%= story[i].image_url %>" alt="story image" style="width:100%; border-radius:10px;">
+        
+        </div>
+
+      </div>
+  <% } %>
+</div>
+
+
+
+<%- include('footer') %>

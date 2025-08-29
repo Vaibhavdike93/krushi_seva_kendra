@@ -583,15 +583,9 @@
                     <h2 class="story-title">Our Story</h2>
 
                     <p class="story-lead">
-                        Founded in 2005, Krushi Seva Kendra began as a small initiative to support local farmers with
-                        quality agricultural inputs and guidance.
-                    </p>
-                    <p>Today, we have grown into a trusted partner for thousands of farmers across the region, providing
-                        comprehensive agricultural solutions, from seeds and fertilizers to modern farming techniques
-                        and market access.</p>
-                    <p>Our journey has been shaped by the resilience and wisdom of the farming community we serve. Every
-                        day, we work towards our vision of sustainable agriculture and prosperous farming communities.
-                    </p>
+                        <%= story[0].parg_1 %></p>
+                    <p><%= story[0].parg_2 %></p>
+                    <p><%= story[0].parg_3 %></p>
 
                     <div class="story-timeline">
                         <div class="timeline-year">2005</div>
@@ -605,7 +599,7 @@
 
                 <div class="story-image">
                     <div class="story-image-wrapper">
-                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        <img src="/uploads/<%= story[0].image_url %>"
                             alt="Farmers working in agricultural field"
                             onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
                     </div>
