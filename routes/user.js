@@ -972,21 +972,10 @@ res.redirect("/product");
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+router.get("/recommendation",function(req,res){
+  res.render("user/recommendation.ejs" ,  {search: req.query.search || '' })
+  
+})
 
 
 

@@ -24,7 +24,6 @@ res.locals.user = req.session.user;
 next();
 });
 
-
 app.use((req, res, next) => {
   if (req.query.lang) {
     req.session.lang = req.query.lang;   
@@ -36,21 +35,11 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-
-
-
-
 app.set('view engine', 'ejs');
 app.use("/", userroute);
 app.use('/admin', adminroute);
 app.use("/accounts",accounts);
 app.use('/forgot',forgot);
-
-
-
-
 
 app.listen(1000, function() {
   console.log('Server is running on port 1000');
