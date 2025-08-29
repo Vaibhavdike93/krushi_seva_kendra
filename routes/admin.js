@@ -777,17 +777,25 @@ router.post("/add_Government_Schemes", async function (req, res) {
     var file_name = ""; 
   }
 
-  var sql = `INSERT INTO government_schemes (image, heading, description, button_link) VALUES (?,?,?,?)`;
-  var result = await exe(sql, [file_name, d.heading, d.description, d.link]);
+  var sql = `INSERT INTO government_schemes (image, heading, description, button_link,language) VALUES (?,?,?,?)`;
+  var result = await exe(sql, [file_name, d.heading, d.description, d.link,d.language]);
   res.redirect("/admin/Government_Schemes"); 
 });
 
+router.get("/Government_Scheme_list", async function(req, res) {
+    let language = req.query.lang || 'en'; 
 
-router.get("/Government_Scheme_list",async function(req,res){
-  var sql = `SELECT * FROM government_schemes`;
-  var info = await exe(sql);
-  res.render("admin/Government_Schemes",{info})
-})
+    try {
+        let sql = `SELECT * FROM government_schemes WHERE language='${language}'`;
+        let info = await exe(sql);
+
+        res.render("admin/government_schemes", { info, language });
+    } catch (err) {
+        console.error("Database error:", err);
+        res.send("Database error. Check console.");
+    }
+});
+
 
 router.get("/edit_Government_Schemes/:id",async function(req,res){
   var id = req.params.id;
@@ -828,7 +836,22 @@ router.get("/latest_Aaticles",function(req,res){
   res.render("admin/add_latest_Aaticles.ejs")
 });
 
+router.post("/farming/add",async function(req,res){
+  var d = req.body;
+  var sql = `INSERT INTO LatestArticles (	image,heading,description,language)VALUSE(?,?,?,?)`;
+  var result = await exe(sql,[d.title,d.category,d.filename])
+  res.redirect("admin/latest_Aaticles");
+})
 
+router.get("/latest_Aaticles_list", async function(req, res) {
+  let selectedLang = req.query.lang || "eng";  
+  let sql = "SELECT * FROM articles WHERE language = ?";
+  let articles = await query(sql, [selectedLang]);
+  res.render("admin/LatestAaticles.ejs", {
+    articles: articles,
+    selectedLang: selectedLang
+  });
+});
 
 
 
@@ -938,6 +961,59 @@ router.post("/all_orders", async function (req, res) {
     res.status(500).send("Error updating order status");
   }
 });
+
+router.get("/features", async function (req, res) {
+    let language = req.query.lang || 'en'; 
+
+    let sql = `SELECT * FROM features WHERE language='${language}'`;
+    let item = await exe(sql);
+
+    res.render("admin/features", { item, language });
+});
+
+router.get("/features/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM features WHERE id = ?`;
+  var info = await exe(sql,[id]);
+  res.render("admin/edit_festures.ejs",{info})
+})
+router.post("/features/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d = req.body;
+  var sql = `UPDATE features SET 
+  title = ?,
+  description = ?
+  WHERE id = ?`;
+  var result = await exe(sql,[d.name,d.description,id]);
+  res.redirect("/admin/features")
+})
+
+router.get("/services", async (req, res) => {
+  const lang = req.query.lang || "eg";
+  const services = await exe("SELECT * FROM services WHERE language = ?", [lang]);
+  res.render("admin/services.ejs", { services, lang });
+});
+router.get("/services/update/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM services WHERE id = ?`;
+  var service = await exe(sql,[id]);
+  res.render("admin/edit_services.ejs",{service})
+})
+router.post("/services/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d = req.body;
+  var sql = `UPDATE services SET 
+  title = ?,
+  description = ?,
+  point1 = ?,
+  point2 = ?,
+  point3 = ?,
+  point4 = ?
+  WHERE 
+  id = ?`;
+  var result = await exe(sql ,[d.heading,d.description,d.point1,d.point2,d.point3,d.point4,id]);
+  res.redirect("/admin/services");
+})
 
 
 
