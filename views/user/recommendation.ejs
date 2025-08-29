@@ -1,0 +1,1185 @@
+<%-include("navbar.ejs")%>
+    <style>
+        /* CSS Variables */
+        
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        /* Utility Classes */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Heros Section */
+        .heros {
+            padding: 40px 0;
+            background-color: var(--page-bg);
+        }
+
+        .heros-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 30px;
+        }
+
+        .heros-text {
+            flex: 1;
+        }
+
+        .heros-title {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .heros-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            max-width: 600px;
+        }
+
+        .heros-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: var(--neutral-light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            min-width: 250px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--button-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px);
+        }
+
+        /* Filters Section */
+        .filters {
+            background-color: var(--neutral-light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 24px;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .filter-title {
+            font-size: 1.2rem;
+        }
+
+        .filter-toggle {
+            background: none;
+            color: var(--button-color);
+            font-weight: 600;
+            display: none;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .filter-input {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            background-color: white;
+            font-family: inherit;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn-secondary {
+            background-color: var(--neutral-light);
+            color: var(--text-dark);
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background-color: #eee;
+        }
+
+        /* Summary Chips */
+        .summary-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .chip {
+            background-color: var(--light-green);
+            color: var(--text-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chip-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .clear-all {
+            background: none;
+            border: none;
+            color: var(--button-color);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .rec-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            transform: translateY(12px);
+            opacity: 0;
+            position: relative;
+        }
+
+        .rec-card.is-visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .rec-card:hover {
+            box-shadow: var(--box-shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .card-top {
+            padding: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background-color: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            color: var(--green-accent);
+            font-size: 1.2rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .card-summary {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .confidence-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .confidence-high {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .confidence-medium {
+            background-color: #FFF8E1;
+            color: #F57C00;
+        }
+
+        .confidence-low {
+            background-color: #FFEBEE;
+            color: #D32F2F;
+        }
+
+        .card-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .card-actions {
+            display: flex;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 12px 20px;
+        }
+
+        .card-action-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: none;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .card-action-btn:hover {
+            color: var(--button-color);
+        }
+
+        /* Detail Drawer */
+        .detail-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 50%;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: right 0.4s ease;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .detail-drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 10;
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .drawer-content {
+            padding: 20px;
+        }
+
+        .drawer-section {
+            margin-bottom: 24px;
+        }
+
+        .drawer-section-title {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dosage-list {
+            list-style-type: none;
+        }
+
+        .dosage-item {
+            padding: 12px;
+            background-color: var(--neutral-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .schedule-checklist {
+            list-style-type: none;
+        }
+
+        .checklist-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checklist-status {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checklist-status.completed {
+            background-color: var(--green-accent);
+            border-color: var(--green-accent);
+            color: white;
+        }
+
+        .product-suggestion {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: var(--neutral-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 8px;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+        }
+
+        .warning {
+            padding: 12px;
+            background-color: #FFF8E1;
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .drawer-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Feedback Section */
+        .feedback {
+            background-color: var(--neutral-light);
+            padding: 24px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .feedback-title {
+            margin-bottom: 16px;
+        }
+
+        .feedback-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .feedback-btn {
+            padding: 10px 24px;
+            border-radius: var(--border-radius);
+            background: none;
+            border: 1px solid #ddd;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .feedback-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .feedback-btn.helpful {
+            border-color: var(--green-accent);
+            color: var(--green-accent);
+        }
+
+        .feedback-btn.not-helpful {
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .pagination-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: none;
+            border: 1px solid #ddd;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .pagination-btn.active {
+            background-color: var(--button-color);
+            color: white;
+            border-color: var(--button-color);
+        }
+
+        .pagination-btn:hover:not(.active) {
+            background-color: #f0f0f0;
+        }
+
+        /* Backdrop */
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+            border-radius: var(--border-radius);
+        }
+
+        @keyframes shimmer {
+            to {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-card {
+            height: 280px;
+            margin-bottom: 24px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .detail-drawer {
+                width: 70%;
+            }
+
+            .heros-content {
+                flex-direction: column;
+            }
+
+            .heros-stats {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .detail-drawer {
+                width: 85%;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-toggle {
+                display: block;
+            }
+
+            .filters.collapsed .filter-grid {
+                display: none;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .detail-drawer {
+                width: 100%;
+            }
+
+            .heros-title {
+                font-size: 2rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .card-action-btn {
+                justify-content: flex-start;
+            }
+
+            .feedback-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Animation for counter */
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .counting {
+            animation: countUp 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Heros Section -->
+        <section class="heros">
+            <div class="heros-content">
+                <div class="heros-text">
+                    <h1 class="heros-title">Soil Recommendations</h1>
+                    <p class="heros-subtitle">Practical, lab-tested steps tailored to your land. Open a recommendation to see dosages, schedule, and safety notes.</p>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-calendar-check"></i>
+                        Request Field Visit
+                    </button>
+                </div>
+                <div class="heros-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Recommendations</span>
+                        <span class="stat-value" id="totalRecs">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Latest Update</span>
+                        <span class="stat-value" id="latestUpdate">Today</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters">
+            <div class="filter-header">
+                <h2 class="filter-title">Filter Recommendations</h2>
+                <button class="filter-toggle" id="filterToggle">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" class="filter-input" placeholder="Enter keywords...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Crop Type</label>
+                    <select class="filter-input">
+                        <option value="">All Crops</option>
+                        <option value="wheat">Wheat</option>
+                        <option value="rice">Rice</option>
+                        <option value="corn">Corn</option>
+                        <option value="sugarcane">Sugarcane</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Soil Type</label>
+                    <select class="filter-input">
+                        <option value="">All Soil Types</option>
+                        <option value="clay">Clay</option>
+                        <option value="sandy">Sandy</option>
+                        <option value="loamy">Loamy</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Confidence Level</label>
+                    <select class="filter-input">
+                        <option value="">All Levels</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Date Range</label>
+                    <input type="date" class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Location</label>
+                    <select class="filter-input">
+                        <option value="">All Locations</option>
+                        <option value="north">North Fields</option>
+                        <option value="south">South Fields</option>
+                        <option value="east">East Fields</option>
+                        <option value="west">West Fields</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-primary">Apply Filters</button>
+                <button class="btn btn-secondary">Reset</button>
+            </div>
+        </section>
+
+        <!-- Summary Chips -->
+        <div class="summary-chips">
+            <div class="chip">
+                Wheat <button class="chip-close">&times;</button>
+            </div>
+            <div class="chip">
+                Clay Soil <button class="chip-close">&times;</button>
+            </div>
+            <div class="chip">
+                High Confidence <button class="chip-close">&times;</button>
+            </div>
+            <button class="clear-all">Clear all</button>
+        </div>
+
+        <!-- Results Grid -->
+        <section class="results-grid" id="resultsGrid">
+            <!-- Cards will be dynamically inserted here -->
+        </section>
+
+        <!-- Feedback Section -->
+        <section class="feedback">
+            <h2 class="feedback-title">Was this recommendation helpful?</h2>
+            <p>Your answer helps us improve local advice.</p>
+            <div class="feedback-actions">
+                <button class="feedback-btn helpful">Yes, helpful</button>
+                <button class="feedback-btn not-helpful">Not helpful</button>
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="pagination-btn">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn active">3</button>
+            <button class="pagination-btn">4</button>
+            <button class="pagination-btn">5</button>
+        </div>
+    </main>
+
+    <!-- Detail Drawer -->
+    <aside class="detail-drawer" id="detailDrawer">
+        <div class="drawer-header">
+            <h2>Recommendation Details</h2>
+            <button class="drawer-close" id="drawerClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="drawer-content">
+            <div class="drawer-section">
+                <h3 class="drawer-section-title">
+                    <i class="fas fa-flask"></i>
+                    Soil Analysis Summary
+                </h3>
+                <p>pH 5.6 — Apply lime before sowing to improve nutrient availability and crop yield.</p>
+            </div>
+
+            <div class="drawer-section">
+                <h3 class="drawer-section-title">
+                    <i class="fas fa-weight"></i>
+                    Dosage per Hectare
+                </h3>
+                <ul class="dosage-list">
+                    <li class="dosage-item">
+                        <span>Lime</span>
+                        <span>250 kg/ha</span>
+                    </li>
+                    <li class="dosage-item">
+                        <span>Nitrogen (N)</span>
+                        <span>120 kg/ha</span>
+                    </li>
+                    <li class="dosage-item">
+                        <span>Phosphorus (P₂O₅)</span>
+                        <span>60 kg/ha</span>
+                    </li>
+                    <li class="dosage-item">
+                        <span>Potassium (K₂O)</span>
+                        <span>40 kg/ha</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="drawer-section">
+                <h3 class="drawer-section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Application Schedule
+                </h3>
+                <ul class="schedule-checklist">
+                    <li class="checklist-item">
+                        <div class="checklist-status"><i class="fas fa-check"></i></div>
+                        <div>
+                            <p>Apply lime 2 weeks before sowing</p>
+                            <small>Due: 10 Sep 2023</small>
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <div class="checklist-status"></div>
+                        <div>
+                            <p>First nitrogen application</p>
+                            <small>Due: 25 Sep 2023</small>
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <div class="checklist-status"></div>
+                        <div>
+                            <p>Phosphorus and potassium application</p>
+                            <small>Due: 5 Oct 2023</small>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="drawer-section">
+                <h3 class="drawer-section-title">
+                    <i class="fas fa-seedling"></i>
+                    Product Suggestions
+                </h3>
+                <div class="product-suggestion">
+                    <div class="product-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div>
+                        <h4>AgroLime Plus</h4>
+                        <p>Fast-acting lime formulation</p>
+                    </div>
+                </div>
+                <div class="product-suggestion">
+                    <div class="product-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div>
+                        <h4>NitroGrow 20-20-0</h4>
+                        <p>Balanced NPK fertilizer</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="drawer-section">
+                <h3 class="drawer-section-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Important Notes
+                </h3>
+                <div class="warning">
+                    <p>Do not apply lime and fertilizer at the same time. Wait at least 7 days between applications.</p>
+                </div>
+                <div class="warning">
+                    <p>Soil testing recommended after 3 cropping cycles or if changing crop type.</p>
+                </div>
+            </div>
+
+            <div class="drawer-actions">
+                <button class="btn btn-primary">
+                    <i class="fas fa-download"></i>
+                    Export PDF
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-print"></i>
+                    Print
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-user"></i>
+                    Request Agronomist
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Backdrop -->
+    <div class="backdrop" id="backdrop"></div>
+
+    <script>
+        // Sample data for recommendations
+        const recommendations = [
+            {
+                id: 1,
+                sample_id: "SMP-2023-001",
+                title: "Apply 250 kg/ha lime",
+                summary: "pH 5.6 — before sowing",
+                confidence: "high",
+                updated_at: "2023-08-10",
+                crop: ["Wheat"],
+                soil_type: ["Clay"],
+                dosage: "250 kg/ha",
+                schedule: ["Apply lime 2 weeks before sowing", "First nitrogen application", "Phosphorus and potassium application"],
+                author: "Dr. Rajesh Kumar",
+                attachments: ["report.pdf", "soil_image.jpg"]
+            },
+            {
+                id: 2,
+                sample_id: "SMP-2023-002",
+                title: "Increase phosphorus application",
+                summary: "Low P levels detected — apply before flowering",
+                confidence: "medium",
+                updated_at: "2023-08-05",
+                crop: ["Rice"],
+                soil_type: ["Loamy"],
+                dosage: "80 kg/ha",
+                schedule: ["Apply before flowering", "Water management critical"],
+                author: "Dr. Priya Singh",
+                attachments: ["report.pdf"]
+            },
+            {
+                id: 3,
+                sample_id: "SMP-2023-003",
+                title: "Reduce nitrogen application",
+                summary: "Excessive N detected — adjust dosage",
+                confidence: "high",
+                updated_at: "2023-08-15",
+                crop: ["Corn"],
+                soil_type: ["Sandy"],
+                dosage: "90 kg/ha",
+                schedule: ["Split application recommended", "Monitor soil moisture"],
+                author: "Dr. Amit Patel",
+                attachments: ["report.pdf", "comparison_chart.pdf"]
+            },
+            {
+                id: 4,
+                sample_id: "SMP-2023-004",
+                title: "Add organic matter",
+                summary: "Low organic content — apply compost",
+                confidence: "medium",
+                updated_at: "2023-08-12",
+                crop: ["Sugarcane"],
+                soil_type: ["Clay"],
+                dosage: "5 tons/ha",
+                schedule: ["Apply during land preparation", "Incorporate properly"],
+                author: "Dr. Sunil Mehta",
+                attachments: ["report.pdf"]
+            },
+            {
+                id: 5,
+                sample_id: "SMP-2023-005",
+                title: "Micronutrient supplement needed",
+                summary: "Zinc deficiency detected — apply zinc sulfate",
+                confidence: "high",
+                updated_at: "2023-08-08",
+                crop: ["Wheat"],
+                soil_type: ["Loamy"],
+                dosage: "25 kg/ha",
+                schedule: ["Apply at sowing", "Foliar spray if symptoms appear"],
+                author: "Dr. Neha Sharma",
+                attachments: ["report.pdf", "deficiency_images.zip"]
+            },
+            {
+                id: 6,
+                sample_id: "SMP-2023-006",
+                title: "Adjust irrigation schedule",
+                summary: "Water logging detected — improve drainage",
+                confidence: "low",
+                updated_at: "2023-08-18",
+                crop: ["Rice"],
+                soil_type: ["Clay"],
+                dosage: "N/A",
+                schedule: ["Reduce irrigation frequency", "Create drainage channels"],
+                author: "Dr. Vikas Yadav",
+                attachments: ["report.pdf", "drainage_design.pdf"]
+            }
+        ];
+
+        // DOM elements
+        const resultsGrid = document.getElementById('resultsGrid');
+        const detailDrawer = document.getElementById('detailDrawer');
+        const drawerClose = document.getElementById('drawerClose');
+        const backdrop = document.getElementById('backdrop');
+        const totalRecsElement = document.getElementById('totalRecs');
+        const filterToggle = document.getElementById('filterToggle');
+        const filtersSection = document.querySelector('.filters');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderRecommendationCards();
+            setupEventListeners();
+            animateCounter(totalRecsElement, recommendations.length);
+        });
+
+        // Render recommendation cards
+        function renderRecommendationCards() {
+            resultsGrid.innerHTML = '';
+            
+            recommendations.forEach(rec => {
+                const card = document.createElement('article');
+                card.className = 'rec-card';
+                card.setAttribute('data-rec-id', rec.id);
+                card.setAttribute('data-confidence', rec.confidence);
+                card.setAttribute('data-crop', rec.crop[0]);
+                card.setAttribute('data-soil', rec.soil_type[0]);
+                
+                const confidenceClass = `confidence-${rec.confidence}`;
+                
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="card-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h3 class="card-title">${rec.title}</h3>
+                        <p class="card-summary">${rec.summary}</p>
+                        <div class="card-meta">
+                            <span class="confidence-badge ${confidenceClass}">${rec.confidence.charAt(0).toUpperCase() + rec.confidence.slice(1)}</span>
+                            <time class="card-date" datetime="${rec.updated_at}">${formatDate(rec.updated_at)}</time>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-action-btn btn-detail">
+                            <i class="fas fa-info-circle"></i>
+                            Details
+                        </button>
+                        <button class="card-action-btn btn-save">
+                            <i class="fas fa-bookmark"></i>
+                            Save
+                        </button>
+                        <button class="card-action-btn btn-download">
+                            <i class="fas fa-download"></i>
+                            PDF
+                        </button>
+                    </div>
+                `;
+                
+                resultsGrid.appendChild(card);
+            });
+            
+            // Setup intersection observer for fade-up animation
+            setupIntersectionObserver();
+        }
+
+        // Format date as "10 Aug 2023"
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Detail button click
+            resultsGrid.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-detail') || e.target.closest('.btn-detail')) {
+                    openDetailDrawer();
+                }
+            });
+            
+            // Close drawer
+            drawerClose.addEventListener('click', closeDetailDrawer);
+            backdrop.addEventListener('click', closeDetailDrawer);
+            
+            // Filter toggle
+            filterToggle.addEventListener('click', function() {
+                filtersSection.classList.toggle('collapsed');
+                const icon = filterToggle.querySelector('i');
+                if (filtersSection.classList.contains('collapsed')) {
+                    icon.className = 'fas fa-chevron-down';
+                } else {
+                    icon.className = 'fas fa-chevron-up';
+                }
+            });
+            
+            // Card hover effect (micro-tilt)
+            setupCardHoverEffects();
+        }
+
+        // Setup intersection observer for card animations
+        function setupIntersectionObserver() {
+            const cards = document.querySelectorAll('.rec-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Add delay based on index for staggered effect
+                        entry.target.style.transitionDelay = `${(index % 6) * 45}ms`;
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+            
+            cards.forEach(card => observer.observe(card));
+        }
+
+        // Setup card hover effects (micro-tilt)
+        function setupCardHoverEffects() {
+            const cards = document.querySelectorAll('.rec-card');
+            
+            cards.forEach(card => {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                
+                card.addEventListener('mousemove', function(e) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateY = (x - centerX) / 25;
+                    const rotateX = (centerY - y) / 25;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    card.style.transform = '';
+                });
+            });
+        }
+
+        // Open detail drawer
+        function openDetailDrawer() {
+            detailDrawer.classList.add('open');
+            backdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close detail drawer
+        function closeDetailDrawer() {
+            detailDrawer.classList.remove('open');
+            backdrop.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Animate counter
+        function animateCounter(element, target) {
+            let count = 0;
+            const duration = 1500;
+            const steps = 60;
+            const increment = target / (duration / steps);
+            
+            const timer = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    count = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(count);
+            }, steps);
+        }
+    </script>
+<%-include("footer.ejs")%>

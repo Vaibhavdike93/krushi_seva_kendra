@@ -87,7 +87,9 @@
     <% products.forEach(function(product){ %>
       <div class="product-card">
         <div class="discount-badge"><%= product.discount %>% OFF</div>
-<a href="<%= product.inWishlist ? '/remove_wishlist/' + product.wishlist_id : '/wishlist/' + product.product_id %>" 
+<a href="<%= product.inWishlist 
+             ? '/remove_wishlist/' + product.wishlist_id + '?lang=' + lang 
+             : '/wishlist/' + product.product_id + '?lang=' + lang %>" 
    class="wishlist-icon text-decoration-none">
   <% if(product.inWishlist) { %>
     <i class="fas fa-heart text-danger"></i> 
@@ -95,6 +97,8 @@
     <i class="far fa-heart"></i> 
   <% } %>
 </a>
+
+
 
 
 
@@ -117,8 +121,8 @@
 
             <div class="pricing">
               <div class="current-price">₹<%= product.final_price %></div>
-              <div class="old-price">₹<%= product.original_price %></div>
-              <div class="savings"><%= translations.buttons.save %> ₹<%= product.discount_amount %></div>
+              <div class="old-price">₹<%= product.original_price %></div> 
+              <div class="savings"><%= translations.buttons.save %> <br> ₹<%= product.discount_amount %></div>
             </div>
           </a>
 
@@ -136,14 +140,29 @@
             <% } %>
           </a>
 
-          <div class="rating">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star-half-alt"></i>
-            <span>(42)</span>
-          </div>
+  <div class="rating">
+  <% 
+    let fullStars = Math.floor(product.avg_rating);
+    let halfStar = product.avg_rating % 1 >= 0.5;
+    let emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+  %>
+
+  <% for(let i=0; i<fullStars; i++){ %>
+    <i class="fas fa-star text-warning"></i>
+  <% } %>
+
+  <% if(halfStar){ %>
+    <i class="fas fa-star-half-alt text-warning"></i>
+  <% } %>
+
+  <% for(let i=0; i<emptyStars; i++){ %>
+    <i class="far fa-star text-warning"></i>
+  <% } %>
+
+  <span>(<%= product.total_reviews %> Reviews)</span>
+</div>
+
+
         </div>
       </div>
     <% }) %>

@@ -5,7 +5,9 @@ var translations = require("../translation");
 var nodemailer = require('nodemailer');
 var razorpay = require('./razerpay');
 const moment = require('moment');
-
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const path = require("path");
  const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -21,12 +23,13 @@ router.get('/login', function(req, res) {
 });
 
 router.post("/login", async function (req, res) {
+  let lang = req.session.lang || 'en';  
   var match = `SELECT * FROM users WHERE email = ? AND password = ?`;
   var data = await exe(match, [req.body.email, req.body.password]);
 
   if (data.length > 0) {
     req.session.user = data[0];
-    res.redirect("/");
+    res.redirect(`/?lang=${lang}`);
   } else {
     res.render("user/signin.ejs", { 
       error: "Invalid email or password", 
@@ -36,12 +39,40 @@ router.post("/login", async function (req, res) {
 });
 
 router.get('/logout', function(req, res) {
+  let lang = req.session.lang || 'en';  
 req.session.destroy();
-  res.redirect('/');
+  res.redirect(`/?lang=${lang}`);
 });
 
-router.get('/profile', function(req, res) {
- res.render('user/profile.ejs', { search: req.query.search || '' });
+router.get('/profile',async function(req, res) {
+  var userId = req.session.user.user_id;
+  var lang = req.session.lang;
+const rows = await exe(`
+  SELECT u.user_id, u.name, u.email, u.mobile, u.address,
+         c.crop_id, c.crop_name_en, c.crop_name_hi, c.crop_name_mr
+  FROM users u
+  LEFT JOIN users_crops uc ON uc.user_id = u.user_id
+  LEFT JOIN crops c ON c.crop_id = uc.crop_id
+  WHERE u.user_id = ?
+`, [userId]);
+
+if (rows.length > 0) {
+  const user = {
+    user_id: rows[0].user_id,
+    name: rows[0].name,
+    email: rows[0].email,
+    mobile: rows[0].mobile,
+    address: rows[0].address,
+    preferredCrops: rows.map(r => r.crop_name_en) 
+  };
+
+  var orders = await exe("SELECT * FROM orders WHERE user_id = ? AND language = ? ORDER BY created_at  DESC LIMIT 3",[userId,lang||"en"]);
+
+  res.render("user/profile", { user,search:req.query.search || "" ,orders});
+} else {
+  res.render("profile", { user: null });
+}
+
 });
 
 router.get('/registration', function(req, res) {
@@ -76,7 +107,7 @@ router.post('/registration', async (req, res) => {
     }
 
     // res.send('User registered successfully!');
-    res.redirect('/login'); 
+    res.redirect(`/login?lang=${lang}`); 
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -173,8 +204,9 @@ router.get("/product", async (req, res) => {
       brandCol = "b.brand_name_mr";
     }
 
+    // Count query
     let countSql = `
-      SELECT COUNT(*) as total
+      SELECT COUNT(DISTINCT p.product_id) as total
       FROM product p
       JOIN product_variants v ON p.product_id = v.product_id
       WHERE p.language = ?
@@ -188,26 +220,30 @@ router.get("/product", async (req, res) => {
     const totalProducts = totalResult[0].total;
     const totalPages = Math.ceil(totalProducts / limit);
 
+    // Main query with GROUP BY
     let sql = `
       SELECT 
-          p.product_id,
-          p.product_name,
-          p.main_image,  
-          ${categoryCol} AS category_name,
-          ${brandCol} AS brand_name,
-          v.weight,
-          v.price AS original_price,
-          p.discount,
-          p.stock_quantity,
-          (v.price * p.discount / 100) AS discount_amount,
-          (v.price - (v.price * p.discount / 100)) AS final_price,
-          w.wishlist_id,
-          CASE WHEN w.wishlist_id IS NOT NULL THEN 1 ELSE 0 END AS inWishlist
+        p.product_id,
+        p.product_name,
+        p.main_image,  
+        ${categoryCol} AS category_name,
+        ${brandCol} AS brand_name,
+        v.weight,
+        v.price AS original_price,
+        p.discount,
+        p.stock_quantity,
+        (v.price * p.discount / 100) AS discount_amount,
+        (v.price - (v.price * p.discount / 100)) AS final_price,
+        w.wishlist_id,
+        CASE WHEN w.wishlist_id IS NOT NULL THEN 1 ELSE 0 END AS inWishlist,
+        IFNULL(ROUND(AVG(r.rating),1),0) AS avg_rating,
+        COUNT(r.review_id) AS total_reviews
       FROM product p
       JOIN categories c ON p.category_id = c.category_id
       JOIN brands b ON p.brand_id = b.brand_id
       JOIN product_variants v ON p.product_id = v.product_id
       LEFT JOIN wishlist w ON w.product_id = p.product_id AND w.user_id = ?
+      LEFT JOIN product_reviews r ON r.product_id = p.product_id
       WHERE p.language = ?
     `;
     const params = [req.session.user ? req.session.user.user_id : 0, lang];
@@ -223,6 +259,8 @@ router.get("/product", async (req, res) => {
           FROM product_variants v2
           WHERE v2.product_id = p.product_id
       )
+      GROUP BY p.product_id
+      ORDER BY p.product_id DESC
       LIMIT ? OFFSET ?
     `;
     params.push(limit, offset);
@@ -261,6 +299,7 @@ router.get("/product", async (req, res) => {
     res.status(500).send("Error loading products");
   }
 });
+
 
 
 
@@ -629,7 +668,7 @@ router.get("/checkout", async function(req, res) {
       total += discountedPrice * item.quantity;
       originalTotal += item.originalPrice * item.quantity;
     });
-
+console.log(cartItems);
     const youSaved = originalTotal - total;
 res.render("user/checkout", {
   cartItems,
@@ -644,105 +683,6 @@ res.render("user/checkout", {
     res.redirect("/cart");
   }
 });
-
-
-
-
-
-router.post("/checkout", async function (req, res) {
-  try {
-    const userId = req.session.user?.user_id;
-    if (!userId) {
-      return res.redirect("/login");
-    }
-
-    const {
-      name,
-      email,
-      phone,
-      pincode,
-      village,
-      taluka,
-      district,
-      state,
-      landmark,
-      payment,
-      products,
-      orderTotal,
-      orderSaved
-    } = req.body;
-
-    const language = req.session.lang || "en";
-
-    const orderResult = await exe(
-      `INSERT INTO orders 
-        (user_id, name, email, phone, pincode, village, taluka, district, state, landmark, payment_mode, language, order_total, order_saved) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        userId, name, email, phone, pincode, village, taluka, district, state,
-        landmark, payment, language, orderTotal, orderSaved
-      ]
-    );
-
-    const orderId = orderResult.insertId;
-
-    for (let product of products) {
-      await exe(
-        `INSERT INTO order_products (order_id, product_id, product_name, weight, quantity, price, saved) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          orderId,
-          product.product_id || null,
-          product.product_name,
-          product.weight,
-          product.quantity,
-          product.price,
-          product.saved
-        ]
-      );
-    }
-
-    await exe(`DELETE FROM shopping_cart WHERE user_id = ?`, [userId]);
-
-    const mailOptions = {
-      from: "yourmail@gmail.com",
-      to: email, 
-      subject: "Order Successful - Your Order #" + orderId,
-      html: `
-        <h2>Thank you for your order, ${name}!</h2>
-        <p>Your order has been placed successfully.</p>
-        <p><strong>Order ID:</strong> ${orderId}</p>
-        <p><strong>Order Total:</strong> ₹${orderTotal}</p>
-        <h3>Products:</h3>
-        <ul>
-          ${products.map(p => `<li>${p.product_name} (${p.weight}) - Qty: ${p.quantity} - ₹${p.price}</li>`).join("")}
-        </ul>
-        <p>We will contact you shortly regarding delivery.</p>
-      `
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error("Email error:", error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
-    });
-
-    if (payment === "cod") {
-      return res.redirect("/thankyou");
-    } else if (payment === "netbanking") {
-      return res.redirect("/payment?order_id=" + orderId);
-    } else {
-      return res.status(400).send("Invalid payment method");
-    }
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
-
 
 
 router.get("/place_order", async (req, res) => {
@@ -762,7 +702,7 @@ router.get("/place_order", async (req, res) => {
       amount,
       products,
       orderSaved,
-      payment_method  
+      payment_method,
     } = req.query;
 
     if (!name || !phone || !amount || !products) {
@@ -790,36 +730,72 @@ router.get("/place_order", async (req, res) => {
       email,
       pincode,
       state,
-      city,         
-      district,     
+      city,
+      district,
       landmark,
-      address,     
+      address,
       razorpay_payment_id,
-      payment_method, 
+      payment_method,
       amount,
-      orderSaved || 0, 
-      moment().format("YYYY-MM-DD HH:mm:ss")
+      orderSaved || 0,
+      moment().format("YYYY-MM-DD HH:mm:ss"),
     ]);
 
     const orderId = orderResult.insertId;
 
     const productQuery = `
-      INSERT INTO order_products (order_id, product_id, product_name, weight, quantity, price, saved)
+      INSERT INTO order_products (order_id, product_id, product_name, weight, quantity, price, originalPrice, saved)
       VALUES ?
     `;
-    const productValues = parsedProducts.map(p => [
+    const productValues = parsedProducts.map((p) => [
       orderId,
       p.product_id,
       p.product_name,
       p.weight,
       p.quantity,
       p.price,
-      p.saved
+      p.originalPrice,
+      p.saved,
     ]);
-
     await exe(productQuery, [productValues]);
 
     await exe("DELETE FROM shopping_cart WHERE user_id = ?", [userId]);
+
+    const productListHtml = parsedProducts
+      .map(
+        (p) =>
+          `<li>${p.product_name} (${p.weight}) - Qty: ${p.quantity} - ₹${p.price}</li>`
+      )
+      .join("");
+
+    const mailOptions = {
+      from: '"Krushi Seva Kendra" <your_email@gmail.com>',
+      to: email,
+      subject: `Order Confirmation - #${orderId}`,
+      html: `
+        <h2>Thank you for your order!</h2>
+        <p>Hi <b>${name}</b>,</p>
+        <p>Your order has been placed successfully.</p>
+        <p><b>Order ID:</b> ${orderId}</p>
+        <p><b>Payment Method:</b> ${payment_method}</p>
+        <p><b>Total Amount:</b> ₹${amount}</p>
+        <h3>Products:</h3>
+        <ul>
+          ${productListHtml}
+        </ul>
+        <p>We will notify you once your order is shipped.</p>
+        <br/>
+        <p>Regards,<br/>Janmitra Krushi Seva Kendra</p>
+      `,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Email error:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
 
     res.redirect(`/thankyou?order_id=${orderId}`);
   } catch (err) {
@@ -866,7 +842,7 @@ router.post("/submit_review", async (req, res) => {
     }
     var sql = `INSERT INTO product_reviews (user_id,name, product_id, rating, review,language, created_at) VALUES (?, ?, ?, ?,?,?, NOW())`;
     await exe(sql, [userId,req.body.name, req.body.product_id, req.body.rating, req.body.review,lang]);
-res.redirect("/product");
+res.redirect(`/product/?lang=${lang}`);
   }
 
   catch (err) {
@@ -886,38 +862,39 @@ router.get("/thankyou/", function(req, res) {
   // res.send(req.body);
   // res.render("user/thankyou", { search: req.query.search || '' });
   });
-
 router.get("/wishlist/:product_id", async function (req, res) {
-    try {
-        const userId = req.session.user?.user_id;
-        if (!userId) {
-            return res.redirect("/login");
-        }
+  try {
+    const userId = req.session.user?.user_id;
+    if (!userId) return res.redirect("/login");
 
-        const productId = req.params.product_id;
+    const productId = parseInt(req.params.product_id, 10);
+    if (isNaN(productId)) return res.status(400).send("Invalid product ID");
 
-        const check = await exe(
-            "SELECT * FROM wishlist WHERE user_id = ? AND product_id = ?",
-            [userId, productId]
-        );
+    const lang = req.query.lang || req.session.language || "en";
+    req.session.language = lang;
 
-        if (check.length > 0) {
-            await exe("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?", [
-                userId,
-                productId,
-            ]);
-        } else {
-            await exe("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)", [
-                userId,
-                productId,
-            ]);
-        }
+    const check = await exe(
+      "SELECT * FROM wishlist WHERE user_id = ? AND product_id = ?",
+      [userId, productId]
+    );
 
-        res.redirect("/product");
-    } catch (err) {
-        console.error(err);
-        res.send("Error in wishlist");
+    if (check.length > 0) {
+      await exe("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?", [
+        userId,
+        productId,
+      ]);
+    } else {
+      await exe("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)", [
+        userId,
+        productId,
+      ]);
     }
+
+    res.redirect(`/product?lang=${lang}`);   // 🔑 language preserved
+  } catch (err) {
+    console.error(err);
+    res.send("Error in wishlist");
+  }
 });
 
 router.get("/wishlist", async function (req, res) {
@@ -962,12 +939,195 @@ ORDER BY w.created_at DESC;
     res.send("Error loading wishlist");
   }
 });
-router.get("/remove_wishlist/:id",async function(req,res){
+router.get("/remove_wishlist/:id", async function (req, res) {
+  try {
+    const userId = req.session.user?.user_id;
+    if (!userId) return res.redirect("/login");
+
+    const wishlistId = parseInt(req.params.id, 10);
+    if (isNaN(wishlistId)) return res.status(400).send("Invalid wishlist ID");
+
+    const lang = req.query.lang || req.session.language || "en";
+    req.session.language = lang;
+
+    await exe("DELETE FROM wishlist WHERE wishlist_id = ? AND user_id = ?", [
+      wishlistId,
+      userId,
+    ]);
+
+    res.redirect(`/product?lang=${lang}`);   
+  } catch (err) {
+    console.error(err);
+    res.send("Error removing from wishlist");
+  }
+});
+
+
+router.get("/orders", async function (req, res) {
+  var userId = req.session.user.user_id;
+  var lang = req.session.lang || "en";
+  var orderSearch = req.query.q || "";
+
+  let query = `
+    SELECT orders.*, order_products.*, product.*
+    FROM orders
+    LEFT JOIN order_products ON order_products.order_id = orders.order_id
+    LEFT JOIN product ON product.product_id = order_products.product_id
+    WHERE orders.user_id = ? AND orders.language = ?
+  `;
+
+  let params = [userId, lang];
+
+  if (orderSearch) {
+    query += ` AND (orders.order_id LIKE ? OR product.product_name LIKE ? OR orders.status LIKE ?)`;
+    params.push(`%${orderSearch}%`, `%${orderSearch}%`, `%${orderSearch}%`);
+  }
+
+  const order = await exe(query, params);
+
+  res.render("user/orders.ejs", { orderSearch, order ,search:req.query.search || ""});
+});
+
+
+router.get("/canceled_order/:id",async function(req,res){
   var id = req.params.id;
-  var sql = await exe("DELETE FROM wishlist WHERE wishlist_id = ?",[id]);
-console.log(id)
-res.redirect("/product");
+  var sql = await exe("UPDATE orders SET status = 'Cancelled',cancelled_at = NOW() WHERE order_id = ?",[id]);
+  res.send(sql);
+  // redirect("/orders");
 })
+
+router.get("/order_details/:id",async function(req,res){
+  var id = req.params.id;
+  var lang = req.session.lang;
+  var userId = req.session.user.user_id;
+
+  var sql = await exe(`SELECT * FROM orders 
+    LEFT JOIN order_products ON order_products.order_id = orders.order_id 
+    LEFT JOIN product ON product.product_id = order_products.product_id
+    WHERE  orders.order_id = ? AND orders.user_id = ? AND orders.language = ?
+    `,[id,userId,lang]);
+    console.log(sql);
+  res.render("user/order_details.ejs",{search:req.query.search || "",order:sql[0]});
+});
+
+
+
+
+
+router.get("/download_invoice/:id", async function (req, res) {
+  try {
+    var id = req.params.id;
+
+    const orderResult = await exe(
+      `SELECT o.order_id, o.name, o.email, o.order_total, o.village, o.taluka, o.district, o.phone, o.payment_id, o.payment_method, o.created_at 
+       FROM orders o 
+       WHERE o.order_id = ?`,
+      [id]
+    );
+
+    let products = await exe(
+      `SELECT op.product_name, op.quantity, op.price, op.weight
+       FROM order_products op 
+       WHERE op.order_id = ?`,
+      [id]
+    );
+
+    products = products.map(p => {
+      return {
+        ...p,
+        total: p.quantity * p.price
+      };
+    });
+
+    const company = await exe("SELECT * FROM company_info");
+
+    const order = orderResult[0];
+    if (!order) return res.status(404).send("Order not found");
+
+    // ✅ Direct PDF response
+    res.setHeader("Content-disposition", `attachment; filename=invoice_${id}.pdf`);
+    res.setHeader("Content-type", "application/pdf");
+
+    const doc = new PDFDocument({ margin: 50 });
+    doc.pipe(res);
+
+    // === Company Info ===
+    doc.fontSize(18).text(company[0].name, { align: "center", underline: true });
+    doc.fontSize(10).text(company[0].address, { align: "center" });
+    doc.text(`Phone: ${company[0].phone || "-"}`, { align: "center" });
+    doc.moveDown(2);
+
+    doc.fontSize(16).text("INVOICE", { align: "center", underline: true });
+    doc.moveDown();
+
+    // === Order Info ===
+    doc.fontSize(12).text(`Invoice No: ${order.order_id}`);
+    doc.text(`Customer: ${order.name}`);
+    doc.text(`Email: ${order.email}`);
+    doc.text(`Phone: ${order.phone}`);
+    doc.text(`Address: ${order.village}, ${order.taluka}, ${order.district}`);
+    doc.text(`Payment Method: ${order.payment_method}`);
+    doc.text(`Payment ID: ${order.payment_id || "-"}`);
+    doc.text(`Date: ${new Date(order.created_at).toLocaleString()}`);
+    doc.moveDown(2);
+
+    // === Products Table ===
+    const tableTop = doc.y;
+    const itemX = 50;
+    const weightX = 220;
+    const qtyX = 320;
+    const priceX = 380;
+    const totalX = 450;
+
+    // Header background
+    doc.rect(itemX - 5, tableTop - 5, 500, 20).fill("#f0f0f0").stroke();
+    doc.fillColor("#000").fontSize(12).text("Product", itemX, tableTop);
+    doc.text("Weight", weightX, tableTop);
+    doc.text("Qty", qtyX, tableTop);
+    doc.text("Price", priceX, tableTop);
+    doc.text("Total", totalX, tableTop);
+
+    doc.moveDown();
+    let y = tableTop + 20;
+
+    products.forEach(p => {
+      doc.fontSize(10).fillColor("#000");
+      doc.text(p.product_name, itemX, y);
+      doc.text(p.weight, weightX, y);
+      doc.text(p.quantity.toString(), qtyX, y);
+      doc.text(`₹${p.price}`, priceX, y);
+      doc.text(`₹${p.total}`, totalX, y);
+      y += 20;
+    });
+
+    // Border line
+    doc.moveTo(itemX - 5, tableTop - 5).lineTo(itemX - 5, y).stroke();
+    doc.moveTo(weightX - 5, tableTop - 5).lineTo(weightX - 5, y).stroke();
+    doc.moveTo(qtyX - 5, tableTop - 5).lineTo(qtyX - 5, y).stroke();
+    doc.moveTo(priceX - 5, tableTop - 5).lineTo(priceX - 5, y).stroke();
+    doc.moveTo(totalX - 5, tableTop - 5).lineTo(totalX - 5, y).stroke();
+    doc.moveTo(itemX - 5, y).lineTo(totalX + 50, y).stroke();
+
+    doc.moveDown(2);
+    doc.fontSize(14).text(`Order Total: ₹${order.order_total}`, { align: "right", underline: true });
+
+    doc.end();
+
+  } catch (err) {
+    console.error("Invoice error:", err);
+    res.status(500).send("Error generating invoice");
+  }
+});
+
+
+
+
+
+router.get("/recommendation",function(req,res){
+  res.render("user/recommendation.ejs" ,  {search: req.query.search || '' })
+  
+})
+
 
 router.get("/conatct",async function(req,res){
   var info = await exe("select * from company_info")
@@ -1072,6 +1232,11 @@ router.get("/about", async function(req, res){
 });
 
 
+
+
+router.get("/soil_testing",function(req,res){
+  res.render("user/soil_testing.ejs" ,  {search: req.query.search || '' })
+})
 
 
 

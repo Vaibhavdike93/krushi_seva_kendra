@@ -12,7 +12,7 @@ const translations = {
     soil_type: { Black: "Black", Red: "Red", Sandy: "Sandy", All: "All" },
     pages_name: {
       Home: "Home",
-      ABOUT_US: "ABOUT US",
+      ABOUT_US: "About us",
       Product: "Product",
       Farming_Tips: "Farming Tips",
       Soil_Testing: "Soil Testing",
