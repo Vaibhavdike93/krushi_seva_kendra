@@ -1123,8 +1123,11 @@ router.get("/download_invoice/:id", async function (req, res) {
 
 
 
-router.get("/recommendation",function(req,res){
-  res.render("user/recommendation.ejs" ,  {search: req.query.search || '' })
+router.get("/recommendation",async function(req,res){
+  // var lang = req.session.lang || "en"
+  // var data = await exe(`SEELCT * FROM recomendations WHERE language = ? AND  `,[lang])
+
+  res.render("user/recommendation.ejs" ,  {search: req.query.search || ''});
   
 })
 
