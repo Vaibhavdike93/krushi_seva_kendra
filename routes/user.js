@@ -1073,6 +1073,11 @@ router.get("/about",function(req,res){
 })
 
 
+router.get("/soil_testing",function(req,res){
+  res.render("user/soil_testing.ejs" ,  {search: req.query.search || '' })
+})
+
+
 
 
 
