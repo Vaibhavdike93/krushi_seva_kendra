@@ -866,8 +866,25 @@ router.post("/all_orders", async function (req, res) {
   const { order_id, order_status } = req.body;
 
   try {
-    await exe("UPDATE orders SET status=? WHERE order_id=?", [order_status, order_id]);
+    let timestampField = null;
+    if (order_status === "Shipped") timestampField = "shipped_at";
+    if (order_status === "Delivered") timestampField = "delivered_at";
+    if (order_status === "Cancelled") timestampField = "cancelled_at";
+    if (order_status === "Completed") timestampField = "completed_at"; // ✅ हे नवीन जोडले
 
+    let query = "UPDATE orders SET status=?";
+    let params = [order_status];
+
+    if (timestampField) {
+      query += `, ${timestampField} = NOW()`;
+    }
+
+    query += " WHERE order_id=?";
+    params.push(order_id);
+
+    await exe(query, params);
+
+    // user + product info घेणे
     const order = await exe(
       `SELECT o.order_id, u.email, u.name, op.product_name
        FROM orders o 
@@ -885,13 +902,13 @@ router.post("/all_orders", async function (req, res) {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "gorakshnathdalavi91@gmail.com", 
-          pass: "yydh qpqv vovi fjsm",
+          user: "gorakshnathdalavi91@gmail.com",
+          pass: "yydh qpqv vovi fjsm", // ⚠️ App Password वापर
         },
       });
 
       const mailOptions = {
-        from: `"Janmitra Krushi Seva Kendra" gorakshnathdalavi91@gmail.com`,
+        from: `"Janmitra Krushi Seva Kendra" <gorakshnathdalavi91@gmail.com>`,
         to: userEmail,
         subject: `Your Order #${order_id} Status Update`,
         html: `
@@ -908,7 +925,7 @@ router.post("/all_orders", async function (req, res) {
             
             <div style="margin:20px 0;">
               <span style="display:inline-block; padding:12px 25px; font-size:18px; 
-                           background-color:${order_status === "Completed" ? "#28a745" : order_status === "Pending" ? "#ffc107" : order_status === "Shipped" ? "#17a2b8" : "#dc3545"};
+                           background-color:${order_status === "Completed" ? "#28a745" : order_status === "Pending" ? "#ffc107" : order_status === "Shipped" ? "#17a2b8" : order_status === "Delivered" ? "#007BFF" : "#dc3545"};
                            color:white; border-radius:30px; font-weight:bold;">
                 ${order_status}
               </span>
@@ -918,8 +935,6 @@ router.post("/all_orders", async function (req, res) {
               Thank you for shopping with us!  
               We’ll keep you updated about your order progress.
             </p>
-            
-           
             
             <hr style="margin:30px 0; border:none; border-top:1px solid #eee;">
             <p style="color:#888; font-size:13px;">&copy; ${new Date().getFullYear()} Krushi Seva Kendra. All Rights Reserved.</p>
@@ -938,6 +953,8 @@ router.post("/all_orders", async function (req, res) {
     res.status(500).send("Error updating order status");
   }
 });
+
+
 
 
 
