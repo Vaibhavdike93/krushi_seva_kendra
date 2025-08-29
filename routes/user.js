@@ -969,29 +969,6 @@ console.log(id)
 res.redirect("/product");
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 router.get("/conatct",async function(req,res){
   var info = await exe("select * from company_info")
   var paket = {info}
@@ -1079,6 +1056,10 @@ router.get("/category/:categoryId", (req, res) => {
 
 router.get("/schemes",function(req,res){
   res.render("user/schemes.ejs" ,  {search: req.query.search || '' })
+})
+
+router.get("/about",function(req,res){
+  res.render("user/aboutus.ejs" ,  {search: req.query.search || '' })
 })
 
 
