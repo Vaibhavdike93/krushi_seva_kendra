@@ -1,0 +1,14 @@
+<form method="GET" action="/latest_Aaticles_list">
+  <select name="lang" onchange="this.form.submit()">
+    <option value="English" <%= selectedLang === "English" ? "selected" : "" %>>English</option>
+    <option value="Marathi" <%= selectedLang === "Marathi" ? "selected" : "" %>>Marathi</option>
+    <option value="Hindi" <%= selectedLang === "Hindi" ? "selected" : "" %>>Hindi</option>
+  </select>
+</form>
+
+<!-- Articles list -->
+<ul>
+  <% articles.forEach(function(article){ %>
+    <li><%= article.title %> - <%= article.language %></li>
+  <% }) %>
+</ul>
