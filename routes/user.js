@@ -1014,110 +1014,7 @@ router.get("/order_details/:id",async function(req,res){
 
 
 
-router.get("/download_invoice/:id", async function (req, res) {
-  try {
-    var id = req.params.id;
 
-    const orderResult = await exe(
-      `SELECT o.order_id, o.name, o.email, o.order_total, o.village, o.taluka, o.district, o.phone, o.payment_id, o.payment_method, o.created_at 
-       FROM orders o 
-       WHERE o.order_id = ?`,
-      [id]
-    );
-
-    let products = await exe(
-      `SELECT op.product_name, op.quantity, op.price, op.weight
-       FROM order_products op 
-       WHERE op.order_id = ?`,
-      [id]
-    );
-
-    products = products.map(p => {
-      return {
-        ...p,
-        total: p.quantity * p.price
-      };
-    });
-
-    const company = await exe("SELECT * FROM company_info");
-
-    const order = orderResult[0];
-    if (!order) return res.status(404).send("Order not found");
-
-    // ✅ Direct PDF response
-    res.setHeader("Content-disposition", `attachment; filename=invoice_${id}.pdf`);
-    res.setHeader("Content-type", "application/pdf");
-
-    const doc = new PDFDocument({ margin: 50 });
-    doc.pipe(res);
-
-    // === Company Info ===
-    doc.fontSize(18).text(company[0].name, { align: "center", underline: true });
-    doc.fontSize(10).text(company[0].address, { align: "center" });
-    doc.text(`Phone: ${company[0].phone || "-"}`, { align: "center" });
-    doc.moveDown(2);
-
-    doc.fontSize(16).text("INVOICE", { align: "center", underline: true });
-    doc.moveDown();
-
-    // === Order Info ===
-    doc.fontSize(12).text(`Invoice No: ${order.order_id}`);
-    doc.text(`Customer: ${order.name}`);
-    doc.text(`Email: ${order.email}`);
-    doc.text(`Phone: ${order.phone}`);
-    doc.text(`Address: ${order.village}, ${order.taluka}, ${order.district}`);
-    doc.text(`Payment Method: ${order.payment_method}`);
-    doc.text(`Payment ID: ${order.payment_id || "-"}`);
-    doc.text(`Date: ${new Date(order.created_at).toLocaleString()}`);
-    doc.moveDown(2);
-
-    // === Products Table ===
-    const tableTop = doc.y;
-    const itemX = 50;
-    const weightX = 220;
-    const qtyX = 320;
-    const priceX = 380;
-    const totalX = 450;
-
-    // Header background
-    doc.rect(itemX - 5, tableTop - 5, 500, 20).fill("#f0f0f0").stroke();
-    doc.fillColor("#000").fontSize(12).text("Product", itemX, tableTop);
-    doc.text("Weight", weightX, tableTop);
-    doc.text("Qty", qtyX, tableTop);
-    doc.text("Price", priceX, tableTop);
-    doc.text("Total", totalX, tableTop);
-
-    doc.moveDown();
-    let y = tableTop + 20;
-
-    products.forEach(p => {
-      doc.fontSize(10).fillColor("#000");
-      doc.text(p.product_name, itemX, y);
-      doc.text(p.weight, weightX, y);
-      doc.text(p.quantity.toString(), qtyX, y);
-      doc.text(`₹${p.price}`, priceX, y);
-      doc.text(`₹${p.total}`, totalX, y);
-      y += 20;
-    });
-
-    // Border line
-    doc.moveTo(itemX - 5, tableTop - 5).lineTo(itemX - 5, y).stroke();
-    doc.moveTo(weightX - 5, tableTop - 5).lineTo(weightX - 5, y).stroke();
-    doc.moveTo(qtyX - 5, tableTop - 5).lineTo(qtyX - 5, y).stroke();
-    doc.moveTo(priceX - 5, tableTop - 5).lineTo(priceX - 5, y).stroke();
-    doc.moveTo(totalX - 5, tableTop - 5).lineTo(totalX - 5, y).stroke();
-    doc.moveTo(itemX - 5, y).lineTo(totalX + 50, y).stroke();
-
-    doc.moveDown(2);
-    doc.fontSize(14).text(`Order Total: ₹${order.order_total}`, { align: "right", underline: true });
-
-    doc.end();
-
-  } catch (err) {
-    console.error("Invoice error:", err);
-    res.status(500).send("Error generating invoice");
-  }
-});
 
 
 
@@ -1130,6 +1027,61 @@ router.get("/recommendation",async function(req,res){
   res.render("user/recommendation.ejs" ,  {search: req.query.search || ''});
   
 })
+
+function getSeason() {
+  const month = new Date().getMonth() + 1;
+  if (month >= 6 && month <= 10) return "Kharif";  
+  if (month >= 11 || month <= 3) return "Rabi";    
+  return "Summer";                                 
+}
+
+router.post("/recommendation", async function (req, res) {
+  try {
+    var lang = req.session.lang || "en";
+    var { crop_name, soil_type, stage } = req.body;
+    var season = getSeason();
+
+   let query = `
+SELECT r.*,
+       p.product_id,
+       p.product_name,
+       p.main_image,
+       p.discount,
+       MIN(pv.price) AS original_price,
+       ROUND(MIN(pv.price) - (MIN(pv.price) * p.discount / 100), 2) AS final_price,
+       ROUND(MIN(pv.price) * p.discount / 100, 2) AS discount_amount
+FROM recommendations r
+LEFT JOIN product p ON r.product_id = p.product_id
+LEFT JOIN product_variants pv ON p.product_id = pv.product_id
+WHERE r.language = ?
+  AND (r.crop_name = ? OR r.crop_name = 'All Crop')
+  AND (r.soil_type = ? OR r.soil_type = 'All')
+  AND (r.stage = ? OR r.stage = 'All')
+  AND (r.season = ? OR r.season = 'All')
+GROUP BY r.rec_id, p.product_id, p.product_name, p.main_image, p.discount
+`;
+
+
+    let params = [lang, crop_name, soil_type, stage, season];
+
+    console.log("👉 Query:", query);
+    console.log("👉 Params:", params);
+
+    let data = await exe(query, params);
+
+    res.render("user/recommendation.ejs", {
+      data,
+      totalCount: data.length,
+      search: req.query.search || ''
+    });
+  } catch (err) {
+    console.error("DB Error:", err);
+    res.send("Error fetching recommendations");
+  }
+});
+
+
+
 
 
 router.get("/conatct",async function(req,res){
@@ -1217,8 +1169,11 @@ router.get("/category/:categoryId", (req, res) => {
   });
 });
 
-router.get("/schemes",function(req,res){
-  res.render("user/schemes.ejs" ,  {search: req.query.search || '' })
+router.get("/schemes",async function(req,res){
+  var lang = req.session.lang;
+  var data = await exe("SELECT * FROM government_schemes WHERE language = ?",[lang])
+  console.log(data);
+  res.render("user/schemes.ejs" ,  {search: req.query.search || '' ,data})
 })
 
 router.get("/about",function(req,res){
