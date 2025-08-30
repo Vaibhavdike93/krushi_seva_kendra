@@ -1239,6 +1239,36 @@ router.get("/soil_testing",function(req,res){
 })
 
 
+router.post("/save_soil_test", async function (req, res) {
+  try {
+    const d = req.body;
+
+    const sql = `INSERT INTO soil_tests (farmerName, contactNumber, location, soilType, cropPlanned) 
+                 VALUES (?, ?, ?, ?, ?)`;
+
+    const values = [
+      d.farmerName,
+      d.contactNumber,
+      d.location,
+      d.soilType,
+      d.cropPlanned
+    ];
+
+    // using your exe() function which should return a promise
+    const result = await exe(sql, values);
+
+    console.log("Data inserted successfully, ID:", result.insertId);
+    // res.send("Soil Test record saved successfully!");
+    res.redirect("/soil_testing");
+  } catch (err) {
+    console.error("Error inserting data:", err);
+    res.status(500).send("Database error occurred");
+  }
+});
+
+
+
+
 
 
 

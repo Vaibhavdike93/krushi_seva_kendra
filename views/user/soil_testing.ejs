@@ -574,72 +574,76 @@
       <div class="form-section">
         <h2 class="form-title">Submit Soil Sample for Analysis</h2>
 
-        <form action="" class="soil-test-form" id="soilTestForm">
-          <div class="form-group">
-            <label for="farmerName">Farmer's Name</label>
-            <input
-              type="text"
-              id="farmerName"
-              class="form-control"
-              placeholder="Enter your full name"
-              required
-            />
-            <div class="form-error" id="nameError">Please enter a valid name</div>
-          </div>
+                 <form action="/save_soil_test" method="post" class="soil-test-form" id="soilTestForm">
+           <div class="form-group">
+             <label for="farmerName">Farmer's Name</label>
+             <input
+               type="text"
+               id="farmerName"
+               name="farmerName"
+               class="form-control"
+               placeholder="Enter your full name"
+               required
+             />
+             <div class="form-error" id="nameError">Please enter a valid name</div>
+           </div>
+         
+           <div class="form-group">
+             <label for="contactNumber">Contact Number</label>
+             <input
+               type="tel"
+               id="contactNumber"
+               name="contactNumber"
+               class="form-control"
+               placeholder="Enter your phone number"
+               required
+             />
+             <div class="form-error" id="phoneError">Please enter a valid phone number</div>
+           </div>
+         
+           <div class="form-group">
+             <label for="location">Location / Village</label>
+             <input
+               type="text"
+               id="location"
+               name="location"
+               class="form-control"
+               placeholder="Enter your village name"
+               required
+             />
+             <div class="form-error" id="locationError">Please enter your location</div>
+           </div>
+         
+           <div class="form-group">
+             <label for="soilType">Type of Soil</label>
+             <select id="soilType" name="soilType" class="form-control" required>
+               <option value="">Select Soil Type</option>
+               <option value="black">Black Soil</option>
+               <option value="red">Red Soil</option>
+               <option value="alluvial">Alluvial Soil</option>
+               <option value="sandy">Sandy Soil</option>
+               <option value="loamy">Loamy Soil</option>
+             </select>
+             <div class="form-error" id="soilTypeError">Please select soil type</div>
+           </div>
+         
+           <div class="form-group">
+             <label for="cropPlanned">Crop Planned</label>
+             <select id="cropPlanned" name="cropPlanned" class="form-control" required>
+               <option value="">Select Crop</option>
+               <option value="soybean">Soybean</option>
+               <option value="cotton">Cotton</option>
+               <option value="wheat">Wheat</option>
+               <option value="sugarcane">Sugarcane</option>
+               <option value="vegetables">Vegetables</option>
+               <option value="pulses">Pulses</option>
+             </select>
+             <div class="form-error" id="cropError">Please select a crop</div>
+           </div>
+         
+           <button type="submit" class="btn-submit">Submit Analysis</button>
+         </form>
 
-          <div class="form-group">
-            <label for="contactNumber">Contact Number</label>
-            <input
-              type="tel"
-              id="contactNumber"
-              class="form-control"
-              placeholder="Enter your phone number"
-              required
-            />
-            <div class="form-error" id="phoneError">Please enter a valid phone number</div>
-          </div>
-
-          <div class="form-group">
-            <label for="location">Location / Village</label>
-            <input
-              type="text"
-              id="location"
-              class="form-control"
-              placeholder="Enter your village name"
-              required
-            />
-            <div class="form-error" id="locationError">Please enter your location</div>
-          </div>
-
-          <div class="form-group">
-            <label for="soilType">Type of Soil</label>
-            <select id="soilType" class="form-control" required>
-              <option value="">Select Soil Type</option>
-              <option value="black">Black Soil</option>
-              <option value="red">Red Soil</option>
-              <option value="alluvial">Alluvial Soil</option>
-              <option value="sandy">Sandy Soil</option>
-              <option value="loamy">Loamy Soil</option>
-            </select>
-            <div class="form-error" id="soilTypeError">Please select soil type</div>
-          </div>
-
-          <div class="form-group">
-            <label for="cropPlanned">Crop Planned</label>
-            <select id="cropPlanned" class="form-control" required>
-              <option value="">Select Crop</option>
-              <option value="soybean">Soybean</option>
-              <option value="cotton">Cotton</option>
-              <option value="wheat">Wheat</option>
-              <option value="sugarcane">Sugarcane</option>
-              <option value="vegetables">Vegetables</option>
-              <option value="pulses">Pulses</option>
-            </select>
-            <div class="form-error" id="cropError">Please select a crop</div>
-          </div>
-
-          <button type="submit" class="btn-submit">Submit Analysis</button>
-        </form>
       </div>
 
       <!-- Testimonials Section -->
@@ -716,284 +720,4 @@
              alt="Detailed Sample Report" style="width: 100%; margin-top: 20px;">
       </div>
     </div>
-
-    <script>
-      // Initialize GSAP animations
-      gsap.registerPlugin(ScrollTrigger);
-
-      // Animate header elements
-      gsap.from("header h1", {
-        duration: 1,
-        y: -50,
-        opacity: 0,
-        ease: "power2.out",
-      });
-
-      gsap.from("header p", {
-        duration: 1,
-        y: -30,
-        opacity: 0,
-        delay: 0.3,
-        ease: "power2.out",
-      });
-
-      // Animate stats
-      gsap.utils.toArray(".stat-item").forEach((item, i) => {
-        gsap.from(item, {
-          scrollTrigger: {
-            trigger: ".stats-container",
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          delay: i * 0.2,
-          ease: "power2.out",
-        });
-      });
-
-      // Animate info section
-      gsap.from(".info-section p", {
-        scrollTrigger: {
-          trigger: ".info-section",
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-        x: -100,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.out",
-      });
-
-      // Animate benefit cards with bounce effect
-      gsap.utils.toArray(".benefit-card").forEach((card, i) => {
-        gsap.from(card, {
-          scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            toggleActions: "play none none none",
-          },
-          opacity: 0,
-          y: 50,
-          duration: 0.8,
-          delay: i * 0.2,
-          ease: "bounce.out",
-        });
-
-        // Animate icons with spin effect
-        gsap.from(card.querySelector(".benefit-icon"), {
-          scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            toggleActions: "play none none none",
-          },
-          rotation: -180,
-          opacity: 0,
-          duration: 1,
-          delay: i * 0.2 + 0.3,
-        });
-      });
-
-      // Animate form elements
-      gsap.utils.toArray(".form-group").forEach((field, i) => {
-        gsap.from(field, {
-          scrollTrigger: {
-            trigger: ".form-section",
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-          x: -50,
-          opacity: 0,
-          duration: 0.6,
-          delay: i * 0.1,
-        });
-      });
-
-      // Animate submit button
-      gsap.from(".btn-submit", {
-        scrollTrigger: {
-          trigger: ".btn-submit",
-          start: "top 90%",
-          toggleActions: "play none none none",
-        },
-        scale: 0,
-        rotation: -180,
-        duration: 0.8,
-        ease: "elastic.out(1, 0.5)",
-      });
-
-      // Form validation
-      const form = document.getElementById('soilTestForm');
-      const nameError = document.getElementById('nameError');
-      const phoneError = document.getElementById('phoneError');
-      const locationError = document.getElementById('locationError');
-      const soilTypeError = document.getElementById('soilTypeError');
-      const cropError = document.getElementById('cropError');
-
-      if (form) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Basic validation
-          let isValid = true;
-          const farmerName = document.getElementById('farmerName').value;
-          const contactNumber = document.getElementById('contactNumber').value;
-          const location = document.getElementById('location').value;
-          const soilType = document.getElementById('soilType').value;
-          const cropPlanned = document.getElementById('cropPlanned').value;
-          
-          // Name validation
-          if (!farmerName || farmerName.length < 3) {
-            nameError.style.display = 'block';
-            isValid = false;
-          } else {
-            nameError.style.display = 'none';
-          }
-          
-          // Phone validation (simple Indian mobile number validation)
-          const phoneRegex = /^[6-9]\d{9}$/;
-          if (!contactNumber || !phoneRegex.test(contactNumber)) {
-            phoneError.style.display = 'block';
-            isValid = false;
-          } else {
-            phoneError.style.display = 'none';
-          }
-          
-          // Location validation
-          if (!location) {
-            locationError.style.display = 'block';
-            isValid = false;
-          } else {
-            locationError.style.display = 'none';
-          }
-          
-          // Soil type validation
-          if (!soilType) {
-            soilTypeError.style.display = 'block';
-            isValid = false;
-          } else {
-            soilTypeError.style.display = 'none';
-          }
-          
-          // Crop validation
-          if (!cropPlanned) {
-            cropError.style.display = 'block';
-            isValid = false;
-          } else {
-            cropError.style.display = 'none';
-          }
-          
-          if (!isValid) {
-            // Shake form to indicate errors
-            gsap.to(form, {
-              x: 10,
-              duration: 0.1,
-              repeat: 5,
-              yoyo: true,
-              onComplete: () => {
-                gsap.to(form, { x: 0, duration: 0.1 });
-              }
-            });
-            return;
-          }
-          
-          // Simulate processing delay
-          setTimeout(() => {
-            alert('Form submitted successfully! We will get back to you soon.');
-            form.reset();
-          }, 2000);
-        });
-      }
-
-      // Add hover effects to form elements
-      const formControls = document.querySelectorAll(".form-control");
-      formControls.forEach((control) => {
-        control.addEventListener("focus", () => {
-          control.style.backgroundColor = "#FFF8E1";
-        });
-
-        control.addEventListener("blur", () => {
-          control.style.backgroundColor = "#fff";
-        });
-      });
-
-      // Sample report modal functionality
-      const viewSampleBtn = document.getElementById('viewSampleBtn');
-      const sampleModal = document.getElementById('sampleModal');
-      const closeModal = document.getElementById('closeModal');
-
-      if (viewSampleBtn) {
-        viewSampleBtn.addEventListener('click', () => {
-          sampleModal.style.display = 'flex';
-          document.body.style.overflow = 'hidden';
-        });
-      }
-
-      if (closeModal) {
-        closeModal.addEventListener('click', () => {
-          sampleModal.style.display = 'none';
-          document.body.style.overflow = 'auto';
-        });
-      }
-
-      // Close modal when clicking outside
-      window.addEventListener('click', (e) => {
-        if (e.target === sampleModal) {
-          sampleModal.style.display = 'none';
-          document.body.style.overflow = 'auto';
-        }
-      });
-
-      // FAQ functionality
-      const faqQuestions = document.querySelectorAll('.faq-question');
-      
-      faqQuestions.forEach(question => {
-        question.addEventListener('click', () => {
-          const faqItem = question.parentElement;
-          faqItem.classList.toggle('faq-active');
-          
-          const icon = question.querySelector('i');
-          if (faqItem.classList.contains('faq-active')) {
-            icon.classList.remove('fa-chevron-down');
-            icon.classList.add('fa-chevron-up');
-          } else {
-            icon.classList.remove('fa-chevron-up');
-            icon.classList.add('fa-chevron-down');
-          }
-        });
-      });
-
-      // Animate testimonials
-      gsap.utils.toArray('.testimonial-card').forEach((card, i) => {
-        gsap.from(card, {
-          scrollTrigger: {
-            trigger: '.testimonials',
-            start: 'top 85%',
-            toggleActions: 'play none none none'
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          delay: i * 0.2,
-          ease: 'power2.out'
-        });
-      });
-
-      // Animate FAQ items
-      gsap.utils.toArray('.faq-item').forEach((item, i) => {
-        gsap.from(item, {
-          scrollTrigger: {
-            trigger: '.faq-section',
-            start: 'top 85%',
-            toggleActions: 'play none none none'
-          },
-          opacity: 0,
-          x: -30,
-          duration: 0.6,
-          delay: i * 0.1,
-          ease: 'power2.out'
-        });
-      });
-    </script>
   <%-include("footer.ejs")%>

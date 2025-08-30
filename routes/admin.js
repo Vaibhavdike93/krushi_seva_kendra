@@ -1139,7 +1139,11 @@ router.post("/Values/update/:id", async function(req, res){
 
 
 
-
+router.get("/soil_testing_bookings",async function(req,res){
+  var sql = `SELECT * FROM soil_tests`;
+  var bookings = await exe(sql);
+  res.render("admin/soil_testing_bookings.ejs",{bookings})
+})
 
 
 

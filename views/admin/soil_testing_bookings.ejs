@@ -1,0 +1,64 @@
+<%- include("navbar") %>
+
+<div class="container bg-white p-4 rounded shadow mt-4">
+  <h3 class="text-center mb-4">Submitted Soil Sample Records</h3>
+
+  <!-- Search bar -->
+  <div class="mb-3">
+    <input type="text" id="searchInput" class="form-control" placeholder="Search by Farmer Name or Village...">
+  </div>
+
+  <table class="table table-striped table-bordered table-hover text-center align-middle">
+    <thead class="table-warning">
+      <tr>
+        <th>Sr. No.</th>
+        <th>Farmer's Name</th>
+        <th>Contact Number</th>
+        <th>Location / Village</th>
+        <th>Type of Soil</th>
+        <th>Crop Planned</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (bookings.length === 0) { %>
+        <tr>
+          <td colspan="6">No records found!</td>
+        </tr>
+      <% } else { %>
+        <% bookings.forEach(function(booking, index) { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= booking.farmerName %></td>
+            <td><%= booking.contactNumber %></td>
+            <td><%= booking.location %></td>
+            <td><%= booking.soilType %></td>
+            <td><%= booking.cropPlanned %></td>
+          </tr>
+        <% }); %>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Search/filter functionality
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('keyup', function() {
+    const filter = searchInput.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(filter) ? '' : 'none';
+    });
+  });
+</script>
+
+<style>
+  /* Hover effect */
+  .table-hover tbody tr:hover {
+    background-color: #f0f8ff;
+    transition: 0.3s;
+  }
+</style>
+
+<%- include("footer") %>
