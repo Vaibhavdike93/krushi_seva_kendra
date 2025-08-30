@@ -80,7 +80,22 @@ const translations = {
       why_choose:"Why Choose Us",
       services:"Our Services",
 
-    }
+    },
+
+    about_page:{
+      heading:"About Krushi Seva Kendra",
+      details :`Transforming agriculture through innovation, dedication,
+       and farmer-centric services that empower communities and sustainable growth`,
+       button:"Discover Our Story",
+       our_story:"Our Story",
+       mission :"Our Mission, Vision & Values",
+       mission_details:"The core principles that drive our commitment to agricultural excellence Mission",
+       team:"Meet Our Team",
+    },
+
+    shemes :{
+  heading:"Government Schemes for Farmers"
+}
 
   },
   mr: {
@@ -165,7 +180,23 @@ home_page:{
     product: "आमची सर्वाधिक लोकप्रिय उत्पादने",
     why_choose: "आम्ही का निवडावे",
     services: "आमची सेवा"
+},
+
+about_page: {
+    heading: "कृषी सेवा केंद्राबद्दल",
+    details: `नवोन्मेष, समर्पण आणि शेतकऱ्यांवर केंद्रित सेवा यांद्वारे शेतीचे रूपांतर,
+             जे समुदायांना सशक्त करते आणि शाश्वत विकास साधते`,
+    button: "आमची कथा जाणून घ्या",
+    our_story: "आमची कथा",
+    mission: "आमचे ध्येय, दृष्टिकोन आणि मूल्ये",
+    mission_details: "शेतीतील उत्कृष्टतेसाठी आमच्या वचनबद्धतेला प्रेरणा देणारे मुख्य तत्त्वे",
+    team: "आमच्या टीमला भेटा"
+},
+shemes: {
+    heading: "शेतकऱ्यांसाठी सरकारी योजना"
 }
+
+
 
 
   },
@@ -249,7 +280,35 @@ home_page: {
     product: "हमारे सबसे लोकप्रिय उत्पाद",
     why_choose: "हमें क्यों चुनें",
     services: "हमारी सेवाएँ"
+},
+
+about_page: {
+    heading: "कृषि सेवा केंद्र के बारे में",
+    details: `नवाचार, समर्पण और किसान-केंद्रित सेवाओं के माध्यम से कृषि को रूपांतरित करना,
+              जो समुदायों को सशक्त बनाती हैं और सतत विकास को बढ़ावा देती हैं`,
+    button: "हमारी कहानी जानें",
+    our_story: "हमारी कहानी",
+    mission: "हमारा मिशन, दृष्टि और मूल्य",
+    mission_details: "कृषि में उत्कृष्टता के प्रति हमारी प्रतिबद्धता को प्रेरित करने वाले मुख्य सिद्धांत",
+    team: "हमारी टीम से मिलें"
+},
+
+shemes: {
+    heading: "किसानों के लिए सरकारी योजनाएँ"
+},
+
+recomendation:{
+  heading:"Soil Recommendations",
+  details:"Practical, lab-tested steps tailored to your land. Open a recommendation to see dosages, schedule, and safety notes.",
+  filter:"Filter Recommendations",
+  crop_type:"Crop Type",
+  soil_type:"Soil Type",
+  stage :"Stage",
+  Type:""
 }
+
+
+
 
 
 
