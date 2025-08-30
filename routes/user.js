@@ -172,9 +172,12 @@ popularProducts = popularProducts.map(p => {
     };
 });
 
+
 var choose = await exe("SELECT * FROM features WHERE language = ?",[lang]);
 var services = await exe("SELECT * FROM services WHERE language = ?",[lang]);
 console.log(services);
+var h_recommendations = await exe(`SELECT * FROM h_recommendations WHERE language ='${lang}'`)
+
         res.render('user/index', {
             categories: categories,
             lang: lang,
@@ -182,7 +185,8 @@ console.log(services);
             search,
             popularProducts,
             choose,
-            services
+            services,
+            h_recommendations:h_recommendations
         });
     } catch (err) {
         console.error(err);
@@ -1185,13 +1189,20 @@ router.get("/about", async function(req, res){
     var lang = req.session.lang || "en"; 
 
     var story = await exe(`SELECT * FROM about_story WHERE language = '${lang}'`);
+
 var team = await exe(`SELECT * FROM team_members WHERE language = ?`,[lang]);
 var count = await exe(`SELECT * FROM about_count WHERE language = ?`,[lang]);
+ var missions = await exe(`SELECT * FROM mission WHERE language = '${lang}'`)
+    var vision = await exe(`SELECT * FROM 	vision WHERE language = '${lang}'`)
+    var values = await exe(`SELECT * FROM 	valuesk WHERE language = '${lang}'`)
 console.log(team);
     res.render("user/aboutus.ejs", {
         search: req.query.search || '',
         story: story,
         count,
+        missions,
+        vision,
+        values,
         team
     });
 });

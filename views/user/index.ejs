@@ -189,54 +189,33 @@
     </section>
 
     <!-- Recommendations Section -->    
-    <section class="krushi-section py-5">
-        <h2 class="section-title">Farming Recommendations</h2>
-        <div class="container">
-            
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn">
-                        <div class="krushi-image">
-                            <img src="https://fazlaninaturesnest.com/wp-content/uploads/2022/10/Exploring-the-Benefits-of-Organic-Farming_Putting-Wellness-and-Sustainability-Ahead_1-1.jpg" alt="Organic Farming">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Organic Farming Techniques</h3>
-                            <p>Learn how to implement sustainable organic farming practices that improve soil health and yield chemical-free produce.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.2">
-                        <div class="krushi-image">
-                            <img src="https://www.rainyfilters.com/static/images/blogs/highlighting_sustainable_practices_water_conservation_agriculture_inner2.png" alt="Water Management">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Efficient Water Management</h3>
-                            <p>Discover modern irrigation techniques that can help conserve water while ensuring optimal crop hydration.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.4">
-                        <div class="krushi-image">
-                            <img src="https://tse4.mm.bing.net/th/id/OIP.QiL3CFcagXNJvkIE5JIilwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Crop Rotation">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Smart Crop Rotation</h3>
-                            <p>Understand the benefits of strategic crop rotation for maintaining soil fertility and preventing pest infestations.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
+   <section class="krushi-section py-5">
+  <h2 class="section-title">Farming Recommendations</h2>
+  <div class="container">
+    <div class="row g-4">
+      <% for(var i=0; i < h_recommendations.length; i++){ %>
+        <div class="col-md-4">
+          <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="<%= i * 0.2 %>">
+            <div class="krushi-image">
+              <img src="/uploads/<%= h_recommendations[i].image %>" alt="<%= h_recommendations[i].heading %>">
             </div>
-           
+            <div class="krushi-content">
+              <h3><%= h_recommendations[i].heading %></h3>
+              <p><%= h_recommendations[i].description %></p>
+              <a href="#" class="krushi-read-more">
+                Read More <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
         </div>
-         <div class="text-center mt-5">
-                <a href="#" class="krushi-btn">Explore All Recommendations</a>
-            </div>
-    </section>
+      <% } %>
+    </div>
+  </div>
+  <div class="text-center mt-5">
+    <a href="#" class="krushi-btn">Explore All Recommendations</a>
+  </div>
+</section>
+
 
 
 

@@ -1,0 +1,27 @@
+<%- include("navbar") %>
+<div class="container mt-4">
+  <h2 class="text-center">Update Recommendation</h2>
+
+  <form method="POST" action="/admin/h_recommendations/update/<%= row.id %>" enctype="multipart/form-data" class="w-50 mx-auto">
+    <div class="mb-3">
+      <label>Heading</label>
+      <input type="text" name="name" value="<%= row.heading %>" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Description</label>
+      <textarea name="description" class="form-control" required><%= row.description %></textarea>
+    </div>
+
+
+    <div class="mb-3">
+      <label>Current Image</label><br>
+      <img src="/uploads/<%= row.image %>" width="120" class="mb-2"><br>
+      <input type="file" name="image" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-success">Update</button>
+    <a href="/h_recommendations?language=<%= row.language %>" class="btn btn-secondary">Back</a>
+  </form>
+</div>
+<%- include("footer") %>
