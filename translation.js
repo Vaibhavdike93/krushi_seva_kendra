@@ -8,7 +8,7 @@ const translations = {
       Flowering: "Flowering",
       Harvest: "Harvest"
     },
-    type: { Fertilizer: "Fertilizer", Pesticide: "Pesticide" },
+    type: { Fertilizer: "Fertilizer", Pesticide: "Pesticide",Insecticide:"Insecticide" },
     soil_type: { Black: "Black", Red: "Red", Sandy: "Sandy", All: "All" },
     pages_name: {
       Home: "Home",

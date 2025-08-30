@@ -55,6 +55,17 @@
               <select id="stageSelect" name="stage" class="form-select" required></select>
             </div>
           </div>
+<!-- Product Select -->
+<div class="row mb-3">
+  <div class="col-md-12">
+    <label class="form-label fw-semibold">Select Product</label>
+  <select id="productDropdown" name="product_id" class="form-select" required>
+  <option value="">-- Select Language First --</option>
+</select>
+
+
+  </div>
+</div>
 
           <!-- Row 4: Usage Instructions & Image -->
           <div class="row mb-3">
@@ -77,46 +88,71 @@
     </div>
   </div>
 
-  <script>
-    // Translations object
-    const translations = <%- JSON.stringify(translations) %>;
+ <script>
+  const translations = <%- JSON.stringify(translations) %>;
 
-    const langSelect = document.getElementById('langSelect');
-    const seasonSelect = document.getElementById('seasonSelect');
-    const stageSelect = document.getElementById('stageSelect');
-    const typeSelect = document.getElementById('typeSelect');
-    const soilTypeSelect = document.getElementById('soilTypeSelect');
+  const langSelect = document.getElementById('langSelect');
+  const seasonSelect = document.getElementById('seasonSelect');
+  const stageSelect = document.getElementById('stageSelect');
+  const typeSelect = document.getElementById('typeSelect');
+  const soilTypeSelect = document.getElementById('soilTypeSelect');
+  const productDropdown = document.getElementById("productDropdown");
 
   function populateSelect(selectElement, optionsObj) {
-  selectElement.innerHTML = '';
-  for (let key in optionsObj) {
-    const opt = document.createElement('option');
-    opt.value = optionsObj[key];   
-    opt.textContent = optionsObj[key];
-    selectElement.appendChild(opt);
+    selectElement.innerHTML = '';
+    for (let key in optionsObj) {
+      const opt = document.createElement('option');
+      opt.value = optionsObj[key];   
+      opt.textContent = optionsObj[key];
+      selectElement.appendChild(opt);
+    }
+  }
+
+  async function updateLanguageAndProducts() {
+  const lang = langSelect.value;
+
+  populateSelect(seasonSelect, translations[lang].season);
+  populateSelect(stageSelect, translations[lang].stage);
+  populateSelect(typeSelect, translations[lang].type);
+  populateSelect(soilTypeSelect, translations[lang].soil_type);
+
+  try {
+    const res = await fetch(`/admin/get-products/${lang}`);
+    const data = await res.json();
+    productDropdown.innerHTML = "";
+
+    if (data.length > 0) {
+      data.forEach(p => {
+        let opt = document.createElement("option");
+        opt.value = p.product_id;
+        opt.textContent = p.product_name;
+        productDropdown.appendChild(opt);
+      });
+    } else {
+      let opt = document.createElement("option");
+      opt.textContent = "-- No products available --";
+      productDropdown.appendChild(opt);
+    }
+  } catch (err) {
+    console.error("Error fetching products:", err);
   }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  updateLanguageAndProducts(); 
+});
 
-    function updateLanguage() {
-      const lang = langSelect.value;
-      populateSelect(seasonSelect, translations[lang].season);
-      populateSelect(stageSelect, translations[lang].stage);
-      populateSelect(typeSelect, translations[lang].type);
-      populateSelect(soilTypeSelect, translations[lang].soil_type);
-    }
+langSelect.addEventListener("change", updateLanguageAndProducts);
 
-    // Initial populate
-    updateLanguage();
 
-    // Change event
-    langSelect.addEventListener('change', updateLanguage);
+  function previewImage(event) {
+    const output = document.getElementById('imagePreview');
+    output.src = URL.createObjectURL(event.target.files[0]);
+  }
+</script>
 
-    // Image preview
-    function previewImage(event) {
-      const output = document.getElementById('imagePreview');
-      output.src = URL.createObjectURL(event.target.files[0]);
-    }
-  </script>
+
+
+
 
   <%- include("footer") %>
