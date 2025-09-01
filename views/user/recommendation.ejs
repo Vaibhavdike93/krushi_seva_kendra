@@ -691,10 +691,10 @@
       <label class="filter-label">Crop Type</label>
       <select class="filter-input" name="crop_name">
         <option value="All Crop">All Crops</option>
-        <option value="Wheat">Wheat</option>
-        <option value="Rice">Rice</option>
-        <option value="Corn">Corn</option>
-        <option value="Sugarcane">Sugarcane</option>
+        <%  crop.forEach(function(i){%>
+            <option value="<%=i.crop_name%>"><%=i.crop_name%></option>
+        <%})%>
+       
       </select>
     </div>
 
@@ -702,10 +702,10 @@
     <div class="filter-group">
       <label class="filter-label">Soil Type</label>
       <select class="filter-input" name="soil_type">
-        <option value="All ">All Soil Types</option>
-        <option value="Red">Red</option>
-        <option value="Sandy">Sandy</option>
-        <option value="Black">Black</option>
+        <option value="<%=translations.soil_type.All%> "><%=translations.soil_type.All%></option>
+        <option value="<%=translations.soil_type.Black%>"><%=translations.soil_type.Black%></option>
+        <option value="<%=translations.soil_type.Red%>"><%=translations.soil_type.Red%></option>
+        <option value="<%=translations.soil_type.Sandy%>"><%=translations.soil_type.Sandy%></option>
       </select>
     </div>
 
@@ -713,12 +713,10 @@
     <div class="filter-group">
       <label class="filter-label">Stage</label>
       <select class="filter-input" name="stage">
-        <option value="">All Stages</option>
-        <option value="Sowing">Sowing</option>
-        <option value="Vegetative">Vegetative</option>
-        <option value="Flowering">Flowering</option>
-        <option value="Fruiting">Fruiting</option>
-        <option value="Harvest">Harvesting</option>
+        <option value="<%=translations.recomendation.Sowing%>"><%=translations.recomendation.Sowing%></option>
+        <option value="<%=translations.recomendation.Vegetative%>"><%=translations.recomendation.Vegetative%></option>
+        <option value="<%=translations.recomendation.Flowering%>"><%=translations.recomendation.Flowering%></option>
+        <option value="<%=translations.recomendation.Harvest%>"><%=translations.recomendation.Harvest%></option>
       </select>
     </div>
 
@@ -727,10 +725,10 @@
       <label class="filter-label">Type</label>
       <select class="filter-input" name="type">
         <option value="">All Types</option>
-        <option value="Fertilizer">Fertilizer</option>
-        <option value="Insecticide">Insecticide</option>
-        <option value="Fungicide">Fungicide</option>
-        <option value="Herbicide">Herbicide</option>
+        <% type.forEach(function(i){%>
+            <option value="<%=i.type_name%>"><%=i.type_name%></option>
+        <%})%>
+      
       </select>
     </div>
 

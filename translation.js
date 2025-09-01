@@ -79,6 +79,8 @@ const translations = {
       product:"Our Most Popular Product ",
       why_choose:"Why Choose Us",
       services:"Our Services",
+heading :"Empowering Farmers, Growing Futures",
+details:'Seeds, fertilizers, and modern agri solutions — all in one place.'
 
     },
 
@@ -95,6 +97,22 @@ const translations = {
 
     shemes :{
   heading:"Government Schemes for Farmers"
+},
+recomendation:{
+  heading:"Soil Recommendations",
+  details:"Practical, lab-tested steps tailored to your land. Open a recommendation to see dosages, schedule, and safety notes.",
+  filter:"Filter Recommendations",
+  crop_type:"Crop Type",
+  soil_type:"Soil Type",
+  stage :"Stage",
+  type:"Type",
+  red:"Red",
+  sandy:"Sandy",
+  black:"Black",
+   Sowing: "Sowing",
+      Vegetative: "Vegetative",
+      Flowering: "Flowering",
+      Harvest: "Harvest"
 }
 
   },
@@ -179,7 +197,9 @@ customer_rating: "ग्राहक रेटिंग"
 home_page:{
     product: "आमची सर्वाधिक लोकप्रिय उत्पादने",
     why_choose: "आम्ही का निवडावे",
-    services: "आमची सेवा"
+    services: "आमची सेवा",
+    Heading: "🌱 शेतकऱ्यांना सबळ बनवून, उज्ज्वल भविष्य घडवित आहोत",
+Details: "बियाणे, खतं आणि आधुनिक कृषी उपाय — सर्व काही एकाच ठिकाणी."
 },
 
 about_page: {
@@ -194,7 +214,25 @@ about_page: {
 },
 shemes: {
     heading: "शेतकऱ्यांसाठी सरकारी योजना"
+},
+
+recomendation: {
+  heading: "मिट्टी की सिफारिशें",
+  details: "आपकी ज़मीन के अनुसार प्रयोगशाला द्वारा परीक्षण किए गए व्यावहारिक उपाय। किसी सिफारिश को खोलकर मात्रा, समय-सारणी और सुरक्षा निर्देश देखें।",
+  filter: "सिफारिशें फ़िल्टर करें",
+  crop_type: "फ़सल प्रकार",
+  soil_type: "मिट्टी का प्रकार",
+  stage: "चरण",
+  type: "प्रकार",
+  red: "लाल",
+  sandy: "रेतीली",
+  black: "काली",
+ Sowing: "पेरणी",
+      Vegetative: "वाढ",
+      Flowering: "फुलं येणे",
+      Harvest: "पिक काढणी"
 }
+
 
 
 
@@ -279,7 +317,9 @@ customer_rating: "ग्राहक रेटिंग"
 home_page: {
     product: "हमारे सबसे लोकप्रिय उत्पाद",
     why_choose: "हमें क्यों चुनें",
-    services: "हमारी सेवाएँ"
+    services: "हमारी सेवाएँ",
+    Heading: "🌱 किसानों को सशक्त बनाकर, सुनहरा भविष्य संवारें",
+Details: "बीज, उर्वरक और आधुनिक कृषि समाधान — सब कुछ एक ही जगह पर।"
 },
 
 about_page: {
@@ -304,7 +344,14 @@ recomendation:{
   crop_type:"Crop Type",
   soil_type:"Soil Type",
   stage :"Stage",
-  Type:""
+  type:"Type",
+  red:"Red",
+  sandy:"Sandy",
+  black:"Black",
+ Sowing: "बुवाई",
+      Vegetative: "वृद्धि",
+      Flowering: "फूलना",
+      Harvest: "कटाई"
 }
 
 
