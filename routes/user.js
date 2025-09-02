@@ -8,6 +8,7 @@ const moment = require('moment');
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
+const AuthUser = require("./AuthUser");
  const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -44,7 +45,7 @@ req.session.destroy();
   res.redirect(`/?lang=${lang}`);
 });
 
-router.get('/profile',async function(req, res) {
+router.get('/profile',AuthUser,async function(req, res) {
   var userId = req.session.user.user_id;
   var lang = req.session.lang;
 const rows = await exe(`
@@ -172,6 +173,10 @@ popularProducts = popularProducts.map(p => {
     };
 });
 
+
+var choose = await exe("SELECT * FROM features WHERE language = ?",[lang]);
+var services = await exe("SELECT * FROM services WHERE language = ?",[lang]);
+console.log(services);
 var h_recommendations = await exe(`SELECT * FROM h_recommendations WHERE language ='${lang}'`)
 
         res.render('user/index', {
@@ -180,6 +185,8 @@ var h_recommendations = await exe(`SELECT * FROM h_recommendations WHERE languag
             translations: translations[lang],
             search,
             popularProducts,
+            choose,
+            services,
             h_recommendations:h_recommendations
         });
     } catch (err) {
@@ -484,7 +491,7 @@ const userId = req.session.user?.user_id || null;
 
 
 
-router.post("/add_tocart", async (req, res) => {
+router.post("/add_tocart",AuthUser, async (req, res) => {
     try {
         const userId = req.session.user?.user_id;
         if (!userId) return res.redirect("/login");
@@ -496,7 +503,6 @@ router.post("/add_tocart", async (req, res) => {
             return res.send("Please select a variant");
         }
 
-        // ✅ Variant check
         const variantRows = await exe(
             "SELECT variant_id, price, weight FROM product_variants WHERE variant_id = ? AND product_id = ?",
             [variant_id, product_id]
@@ -505,26 +511,22 @@ router.post("/add_tocart", async (req, res) => {
 
         const variant = variantRows[0];
 
-        // ✅ Product check
         const productRows = await exe(
             "SELECT discount, brand_id, product_name FROM product WHERE product_id = ?",
             [product_id]
         );
         if (!productRows.length) return res.send("Product not found");
 
-        // ✅ Discount calculation
         const discountPercent = productRows[0]?.discount || 0;
         const discountAmount = (variant.price * discountPercent) / 100;
         const finalPrice = variant.price - discountAmount;
 
-        // ✅ Check existing cart item
         const cartRowsCheck = await exe(
             "SELECT * FROM shopping_cart WHERE user_id = ? AND product_id = ? AND variant_id = ?",
             [userId, product_id, variant_id]
         );
 
         if (cartRowsCheck.length > 0) {
-            // 🔄 Update quantity
             const oldQty = cartRowsCheck[0].quantity;
             const newQty = oldQty + 1;
             const totalPrice = newQty * finalPrice;
@@ -534,7 +536,6 @@ router.post("/add_tocart", async (req, res) => {
                 [newQty, finalPrice, totalPrice, cartRowsCheck[0].cart_id]
             );
         } else {
-            // ➕ Insert new cart item
             const totalPrice = finalPrice * 1;
             await exe(
                 "INSERT INTO shopping_cart (user_id, product_id, variant_id, quantity, price, total_price, language) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -551,7 +552,8 @@ router.post("/add_tocart", async (req, res) => {
 });
 
 
-router.get("/add_tocart", async (req, res) => {
+           
+router.get("/add_tocart",AuthUser, async (req, res) => {
   try {
     const userId = req.session.user?.user_id;
     if (!userId) {
@@ -607,7 +609,7 @@ router.get("/add_tocart", async (req, res) => {
   }
 });
 
-router.post("/update_cart_qty", async (req, res) => {
+router.post("/update_cart_qty",AuthUser, async (req, res) => {
   try {
     const userId = req.session.user?.user_id;
     if (!userId) return res.status(401).json({ success: false, message: "Login required" });
@@ -628,7 +630,7 @@ router.post("/update_cart_qty", async (req, res) => {
 });
 
 
-router.get("/remove_cart/:cartId", async (req, res) => {
+router.get("/remove_cart/:cartId",AuthUser, async (req, res) => {
     try { 
       var id =req.params.cartId;
       var sql = await exe("DELETE FROM shopping_cart WHERE cart_id = ?",[id]);
@@ -639,7 +641,7 @@ router.get("/remove_cart/:cartId", async (req, res) => {
     }
   })
 
-router.get("/checkout", async function(req, res) {
+router.get("/checkout",AuthUser, async function(req, res) {
   var userId = req.session.user?.user_id;
   if (!userId) {
       return res.redirect("/login");
@@ -688,7 +690,7 @@ res.render("user/checkout", {
 });
 
 
-router.get("/place_order", async (req, res) => {
+router.get("/place_order",AuthUser, async (req, res) => {
   try {
     const userId = req.session.user.user_id;
     const {
@@ -809,7 +811,7 @@ router.get("/place_order", async (req, res) => {
 
 
 
-router.post("/create-order", async (req, res) => {
+router.post("/create-order",AuthUser, async (req, res) => {
   try {
     const { amount } = req.body; 
 
@@ -835,7 +837,7 @@ router.post("/create-order", async (req, res) => {
 
 
 
-router.post("/submit_review", async (req, res) => {
+router.post("/submit_review",AuthUser, async (req, res) => {
   try {
     const userId = req.session.user?.user_id;
     const lang = req.session.lang || "en";
@@ -860,12 +862,12 @@ res.redirect(`/product/?lang=${lang}`);
 
 
 
-router.get("/thankyou/", function(req, res) {
+router.get("/thankyou/", AuthUser,function(req, res) {
   res.render("user/thankyou", { search: req.query.search || '' });
   // res.send(req.body);
   // res.render("user/thankyou", { search: req.query.search || '' });
   });
-router.get("/wishlist/:product_id", async function (req, res) {
+router.get("/wishlist/:product_id",AuthUser, async function (req, res) {
   try {
     const userId = req.session.user?.user_id;
     if (!userId) return res.redirect("/login");
@@ -893,14 +895,14 @@ router.get("/wishlist/:product_id", async function (req, res) {
       ]);
     }
 
-    res.redirect(`/product?lang=${lang}`);   // 🔑 language preserved
+    res.redirect(`/product?lang=${lang}`);   
   } catch (err) {
     console.error(err);
     res.send("Error in wishlist");
   }
 });
 
-router.get("/wishlist", async function (req, res) {
+router.get("/wishlist",AuthUser, async function (req, res) {
   try {
     const userId = req.session.user?.user_id;
     if (!userId) {
@@ -942,7 +944,7 @@ ORDER BY w.created_at DESC;
     res.send("Error loading wishlist");
   }
 });
-router.get("/remove_wishlist/:id", async function (req, res) {
+router.get("/remove_wishlist/:id",AuthUser, async function (req, res) {
   try {
     const userId = req.session.user?.user_id;
     if (!userId) return res.redirect("/login");
@@ -966,7 +968,7 @@ router.get("/remove_wishlist/:id", async function (req, res) {
 });
 
 
-router.get("/orders", async function (req, res) {
+router.get("/orders",AuthUser, async function (req, res) {
   var userId = req.session.user.user_id;
   var lang = req.session.lang || "en";
   var orderSearch = req.query.q || "";
@@ -992,14 +994,14 @@ router.get("/orders", async function (req, res) {
 });
 
 
-router.get("/canceled_order/:id",async function(req,res){
+router.get("/canceled_order/:id",AuthUser,async function(req,res){
   var id = req.params.id;
   var sql = await exe("UPDATE orders SET status = 'Cancelled',cancelled_at = NOW() WHERE order_id = ?",[id]);
   res.send(sql);
   // redirect("/orders");
 })
 
-router.get("/order_details/:id",async function(req,res){
+router.get("/order_details/:id",AuthUser,async function(req,res){
   var id = req.params.id;
   var lang = req.session.lang;
   var userId = req.session.user.user_id;
@@ -1024,27 +1026,22 @@ router.get("/order_details/:id",async function(req,res){
 
 
 router.get("/recommendation",async function(req,res){
-  // var lang = req.session.lang || "en"
-  // var data = await exe(`SEELCT * FROM recomendations WHERE language = ? AND  `,[lang])
-
-  res.render("user/recommendation.ejs" ,  {search: req.query.search || ''});
+  var lang = req.session.lang || "en";
+  var type = await exe(`SELECT * FROM recommendation_type WHERE language = ?`,[lang])
+let query = await exe(`SELECT crop_id, crop_name_${lang} as crop_name, crop_image FROM crops`);
+  res.render("user/recommendation.ejs" ,  {search: req.query.search || '',data: [],type,crop:query});
   
 })
 
-function getSeason() {
-  const month = new Date().getMonth() + 1;
-  if (month >= 6 && month <= 10) return "Kharif";  
-  if (month >= 11 || month <= 3) return "Rabi";    
-  return "Summer";                                 
-}
+
 
 router.post("/recommendation", async function (req, res) {
   try {
     var lang = req.session.lang || "en";
+    console.log(req.body);
     var { crop_name, soil_type, stage } = req.body;
-    var season = getSeason();
 
-   let query = `
+    let query = `
 SELECT r.*,
        p.product_id,
        p.product_name,
@@ -1060,28 +1057,32 @@ WHERE r.language = ?
   AND (r.crop_name = ? OR r.crop_name = 'All Crop')
   AND (r.soil_type = ? OR r.soil_type = 'All')
   AND (r.stage = ? OR r.stage = 'All')
-  AND (r.season = ? OR r.season = 'All')
 GROUP BY r.rec_id, p.product_id, p.product_name, p.main_image, p.discount
 `;
 
-
-    let params = [lang, crop_name, soil_type, stage, season];
-
-    console.log("👉 Query:", query);
-    console.log("👉 Params:", params);
-
+    let params = [lang, crop_name, soil_type, stage];
     let data = await exe(query, params);
+
+    let crop = await exe(`SELECT crop_id, crop_name_${lang} as crop_name, crop_image FROM crops`);
+    let type = await exe(`SELECT * FROM recommendation_type WHERE language = ?`, [lang]);
+
+    console.log(data);
+    console.log(query);
 
     res.render("user/recommendation.ejs", {
       data,
       totalCount: data.length,
-      search: req.query.search || ''
+      search: req.query.search || '',
+      crop,
+      type    
     });
   } catch (err) {
     console.error("DB Error:", err);
     res.send("Error fetching recommendations");
   }
 });
+
+
 
 
 
@@ -1183,54 +1184,57 @@ router.get("/about", async function(req, res){
     var lang = req.session.lang || "en"; 
 
     var story = await exe(`SELECT * FROM about_story WHERE language = '${lang}'`);
-    var missions = await exe(`SELECT * FROM mission WHERE language = '${lang}'`)
+
+var team = await exe(`SELECT * FROM team_members WHERE language = ?`,[lang]);
+var count = await exe(`SELECT * FROM about_count WHERE language = ?`,[lang]);
+ var missions = await exe(`SELECT * FROM mission WHERE language = '${lang}'`)
     var vision = await exe(`SELECT * FROM 	vision WHERE language = '${lang}'`)
     var values = await exe(`SELECT * FROM 	valuesk WHERE language = '${lang}'`)
-
-
+console.log(team);
     res.render("user/aboutus.ejs", {
         search: req.query.search || '',
         story: story,
-        missions:missions,
-        	vision:	vision,
-          values:values
+        count,
+        missions,
+        vision,
+        values,
+        team
     });
 });
 
 
 
 
-router.get("/soil_testing",function(req,res){
-  res.render("user/soil_testing.ejs" ,  {search: req.query.search || '' })
-})
+// router.get("/soil_testing",function(req,res){
+//   res.render("user/soil_testing.ejs" ,  {search: req.query.search || '' })
+// })
 
 
-router.post("/save_soil_test", async function (req, res) {
-  try {
-    const d = req.body;
+// router.post("/save_soil_test", async function (req, res) {
+//   try {
+//     const d = req.body;
 
-    const sql = `INSERT INTO soil_tests (farmerName, contactNumber, location, soilType, cropPlanned) 
-                 VALUES (?, ?, ?, ?, ?)`;
+//     const sql = `INSERT INTO soil_tests (farmerName, contactNumber, location, soilType, cropPlanned) 
+//                  VALUES (?, ?, ?, ?, ?)`;
 
-    const values = [
-      d.farmerName,
-      d.contactNumber,
-      d.location,
-      d.soilType,
-      d.cropPlanned
-    ];
+//     const values = [
+//       d.farmerName,
+//       d.contactNumber,
+//       d.location,
+//       d.soilType,
+//       d.cropPlanned
+//     ];
 
-    // using your exe() function which should return a promise
-    const result = await exe(sql, values);
+//     const result = await exe(sql, values);
 
-    console.log("Data inserted successfully, ID:", result.insertId);
-    // res.send("Soil Test record saved successfully!");
-    res.redirect("/soil_testing");
-  } catch (err) {
-    console.error("Error inserting data:", err);
-    res.status(500).send("Database error occurred");
-  }
-});
+//     console.log("Data inserted successfully, ID:", result.insertId);
+//     // res.send("Soil Test record saved successfully!");
+//     res.redirect("/soil_testing");
+//   } catch (err) {
+//     console.error("Error inserting data:", err);
+//     res.status(500).send("Database error occurred");
+//   }
+// });
 
 
 

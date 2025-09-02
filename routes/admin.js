@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 
 
 
-router.get('/', async function(req, res) {
+router.get('/',CheckLogin, async function(req, res) {
   var pendingCount = await exe(`SELECT COUNT(*) AS cnt FROM orders WHERE status = 'Pending'`);
   var ShippedCount = await exe(`SELECT COUNT(*) As cnt FROM orders WHERE status = 'Shipped'`);
   var allCount = await exe(`SELECT COUNT(*) AS cnt FROM orders`);
@@ -22,7 +22,7 @@ router.get('/', async function(req, res) {
     });
 });
 
-router.get('/profile',function(req,res){
+router.get('/profile',CheckLogin,function(req,res){
     res.render("admin/profile");
 })
 
@@ -438,7 +438,7 @@ const crops = await exe(
       crops,
       selectedCropIds,
       lang,
-      translations // ensure you pass translations object for season dropdown
+      translations 
     });
   } catch (err) {
     console.error(err);
@@ -612,12 +612,14 @@ var result = await exe(sql,[d.shop_name,d.shop_address_line1,
 
 router.get('/recomendation', async (req, res) => {
   try {
-    res.render("admin/recomendation.ejs", { products: [], translations });
+    const type = await exe("SELECT id, type_name FROM recommendation_type WHERE language = ?", ["en"]);
+    res.render("admin/recomendation.ejs", { products: [], type, translations });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading form");
   }
 });
+
 
 
 router.get("/get-products/:lang", async (req, res) => {
@@ -630,13 +632,27 @@ router.get("/get-products/:lang", async (req, res) => {
       [lang]
     );
 
-    console.log("👉 Products fetched:", products);
-    res.json(products);
+    const type = await exe(
+      "SELECT id, type_name FROM recommendation_type WHERE language = ?",
+      [lang]
+    );
+
+    let cropCol = "crop_name_en";
+    if (lang === "hi") cropCol = "crop_name_hi";
+    else if (lang === "mr") cropCol = "crop_name_mr";
+
+    const crops = await exe(
+      `SELECT crop_id, ${cropCol} AS crop_name FROM crops`
+    );
+
+    console.log("👉 Products:", products, "👉 Types:", type, "👉 Crops:", crops);
+    res.json({ products, type, crops });   // send crops also
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).json({ error: "DB Error" });
   }
 });
+
 
 
 
@@ -1219,6 +1235,12 @@ router.post("/team/update/:id",async function(req,res){
   var sql = `UPDATE team_members SET image=?, name=?, designation=?, description=?, experience_title=? WHERE id=?`;
   await exe(sql,[file_name,d.name,d.designation,d.description,d.experience_title,id]);
 
+
+router.get("/soil_testing_bookings",async function(req,res){
+  var sql = `SELECT * FROM soil_tests`;
+  var bookings = await exe(sql);
+  res.render("admin/soil_testing_bookings.ejs",{bookings})
+})
   res.redirect("/admin/team_members_list"); 
 });
 router.get("/team/delete/:id",async function(req,res){
@@ -1265,6 +1287,25 @@ router.post("/h_recommendations/update/:id", async function (req, res) {
 
   res.redirect("/admin/h_recommendations?language=" + d.language);
 });
+
+router.get("/recomendation_type",async function(req,res){
+  var type = await exe("SELECT * FROM recommendation_type ")
+  res.render("admin/recomendation_type.ejs",{type})
+});
+
+router.post("/add-recommendation-type",async function(req,res){
+  // res.send(req.body);
+  var d= req.body;
+var sql = `INSERT INTO recommendation_type (language, type_name) VALUES (?, ?)`;
+var data = await exe(sql,[d.language,d.type]);
+res.redirect("/admin/recomendation_type");
+});
+
+router.get("/delete_type/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = await exe("DELETE  FROM recommendation_type WHERE id = ?",[id]);
+  res.redirect("admin/recomendation_type");
+})
 
 
 
