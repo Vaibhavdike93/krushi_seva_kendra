@@ -611,8 +611,38 @@ var result = await exe(sql,[d.shop_name,d.shop_address_line1,
 })
 
 router.get('/recomendation', async (req, res) => {
-  res.render('admin/recomendation', { translations });
+  try {
+    res.render("admin/recomendation.ejs", { products: [], translations });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading form");
+  }
 });
+
+
+router.get("/get-products/:lang", async (req, res) => {
+  const lang = req.params.lang || "en";
+  console.log("👉 Requested language:", lang);
+
+  try {
+    const products = await exe(
+      "SELECT product_id, product_name FROM product WHERE language = ?",
+      [lang]
+    );
+
+    console.log("👉 Products fetched:", products);
+    res.json(products);
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "DB Error" });
+  }
+});
+
+
+
+
+
+
 
 router.post('/recommendations/add', async (req, res) => {
   try {
@@ -626,9 +656,9 @@ router.post('/recommendations/add', async (req, res) => {
 
     await exe(`
       INSERT INTO recommendations 
-      (name, type, crop_name, season, soil_type, stage, product_usage, language, image) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [d.name, d.type, d.crop_name, d.season, d.soil_type, d.stage, d.product_usage, d.language, filename]
+      (name, type, crop_name, season, soil_type, stage, product_usage, language, image,product_id) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
+      [d.name, d.type, d.crop_name, d.season, d.soil_type, d.stage, d.product_usage, d.language, filename,d.product_id]
     );
 
     res.redirect('/admin/recomendation');
@@ -659,7 +689,6 @@ router.get('/recomendation_list', async (req, res) => {
   }
 });
 
-// GET Edit form
 router.get('/recommendations_edit/:id', async (req, res) => {
   try {
     const recId = req.params.id;
@@ -1205,6 +1234,11 @@ router.get("/h_recommendations", async function (req, res) {
   var data = await exe(sql, [lang]);
   res.render("admin/h_recommendations_list.ejs", { data, lang });
 });
+router.get("/soil_testing_bookings",async function(req,res){
+  var sql = `SELECT * FROM soil_tests`;
+  var bookings = await exe(sql);
+  res.render("admin/soil_testing_bookings.ejs",{bookings})
+})
 
 router.get("/h_recommendations/edit/:id", async function (req, res) {
   var id = req.params.id;

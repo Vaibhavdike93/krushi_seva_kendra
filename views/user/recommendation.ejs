@@ -666,21 +666,12 @@
                 <div class="heros-text">
                     <h1 class="heros-title">Soil Recommendations</h1>
                     <p class="heros-subtitle">Practical, lab-tested steps tailored to your land. Open a recommendation to see dosages, schedule, and safety notes.</p>
-                    <button class="btn btn-primary">
+                    <!-- <button class="btn btn-primary">
                         <i class="fas fa-calendar-check"></i>
                         Request Field Visit
-                    </button>
+                    </button> -->
                 </div>
-                <div class="heros-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Total Recommendations</span>
-                        <span class="stat-value" id="totalRecs">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Latest Update</span>
-                        <span class="stat-value" id="latestUpdate">Today</span>
-                    </div>
-                </div>
+               
             </div>
         </section>
 
@@ -692,319 +683,141 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
-            <div class="filter-grid">
-                <div class="filter-group">
-                    <label class="filter-label">Search</label>
-                    <input type="text" class="filter-input" placeholder="Enter keywords...">
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Crop Type</label>
-                    <select class="filter-input">
-                        <option value="">All Crops</option>
-                        <option value="wheat">Wheat</option>
-                        <option value="rice">Rice</option>
-                        <option value="corn">Corn</option>
-                        <option value="sugarcane">Sugarcane</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Soil Type</label>
-                    <select class="filter-input">
-                        <option value="">All Soil Types</option>
-                        <option value="clay">Clay</option>
-                        <option value="sandy">Sandy</option>
-                        <option value="loamy">Loamy</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Confidence Level</label>
-                    <select class="filter-input">
-                        <option value="">All Levels</option>
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Date Range</label>
-                    <input type="date" class="filter-input">
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Location</label>
-                    <select class="filter-input">
-                        <option value="">All Locations</option>
-                        <option value="north">North Fields</option>
-                        <option value="south">South Fields</option>
-                        <option value="east">East Fields</option>
-                        <option value="west">West Fields</option>
-                    </select>
-                </div>
-            </div>
-            <div class="filter-actions">
-                <button class="btn btn-primary">Apply Filters</button>
-                <button class="btn btn-secondary">Reset</button>
-            </div>
+        <form action="/recommendation" method="POST">
+  <div class="filter-grid">
+
+    <!-- Crop Type -->
+    <div class="filter-group">
+      <label class="filter-label">Crop Type</label>
+      <select class="filter-input" name="crop_name">
+        <option value="All Crop">All Crops</option>
+        <option value="Wheat">Wheat</option>
+        <option value="Rice">Rice</option>
+        <option value="Corn">Corn</option>
+        <option value="Sugarcane">Sugarcane</option>
+      </select>
+    </div>
+
+    <!-- Soil Type -->
+    <div class="filter-group">
+      <label class="filter-label">Soil Type</label>
+      <select class="filter-input" name="soil_type">
+        <option value="All ">All Soil Types</option>
+        <option value="Red">Red</option>
+        <option value="Sandy">Sandy</option>
+        <option value="Black">Black</option>
+      </select>
+    </div>
+
+    <!-- Stage -->
+    <div class="filter-group">
+      <label class="filter-label">Stage</label>
+      <select class="filter-input" name="stage">
+        <option value="">All Stages</option>
+        <option value="Sowing">Sowing</option>
+        <option value="Vegetative">Vegetative</option>
+        <option value="Flowering">Flowering</option>
+        <option value="Fruiting">Fruiting</option>
+        <option value="Harvest">Harvesting</option>
+      </select>
+    </div>
+
+    <!-- Type -->
+    <div class="filter-group">
+      <label class="filter-label">Type</label>
+      <select class="filter-input" name="type">
+        <option value="">All Types</option>
+        <option value="Fertilizer">Fertilizer</option>
+        <option value="Insecticide">Insecticide</option>
+        <option value="Fungicide">Fungicide</option>
+        <option value="Herbicide">Herbicide</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="filter-actions">
+    <button type="submit" class="btn btn-primary">Apply Filters</button>
+    <!-- <button type="reset" class="btn btn-secondary">Reset</button> -->
+  </div>
+</form>
+
+            
         </section>
 
-        <!-- Summary Chips -->
-        <div class="summary-chips">
-            <div class="chip">
-                Wheat <button class="chip-close">&times;</button>
-            </div>
-            <div class="chip">
-                Clay Soil <button class="chip-close">&times;</button>
-            </div>
-            <div class="chip">
-                High Confidence <button class="chip-close">&times;</button>
-            </div>
-            <button class="clear-all">Clear all</button>
+       
+ <div class="products-grid" id="productList">
+  <% if(data && data.length > 0){ %>
+    <% data.forEach(function(product){ %>
+      <div class="product-card">
+        <div class="discount-badge"><%= product.discount %>% OFF</div>
+<a href="<%= product.inWishlist 
+             ? '/remove_wishlist/' + product.wishlist_id + '?lang=' + lang 
+             : '/wishlist/' + product.product_id + '?lang=' + lang %>" 
+   class="wishlist-icon text-decoration-none">
+  <% if(product.inWishlist) { %>
+    <i class="fas fa-heart text-danger"></i> 
+  <% } else { %>
+    <i class="far fa-heart"></i> 
+  <% } %>
+</a>
+
+
+
+
+
+        <div class="image-container">
+          <img src="/uploads/<%= product.main_image %>" alt="<%= product.product_name %>" width="100%"  class="product-image">
         </div>
+        <div class="product-info">
+          <a href="/product_details/<%= product.product_id %>" class="product-link text-decoration-none">
+            <h3 class="product-title m-0"><%= product.product_name %></h3>
+            <div class="product-brand m-0"><%= product.brand_name %></div>
 
-        <!-- Results Grid -->
-        <section class="results-grid" id="resultsGrid">
-            <!-- Cards will be dynamically inserted here -->
-        </section>
-
-        <!-- Feedback Section -->
-        <section class="feedback">
-            <h2 class="feedback-title">Was this recommendation helpful?</h2>
-            <p>Your answer helps us improve local advice.</p>
-            <div class="feedback-actions">
-                <button class="feedback-btn helpful">Yes, helpful</button>
-                <button class="feedback-btn not-helpful">Not helpful</button>
+            <!-- Stock Quantity -->
+            <div class="stock-status text-center">
+              <% if(product.stock_quantity <= 10) { %>
+                <span class="text-danger"><%= translations.buttons.low_stock %></span>
+              <% } else { %>
+                <span class="text-success"><%= translations.buttons.in_stock %></span>
+              <% } %>
             </div>
-        </section>
 
-        <!-- Pagination -->
-        <div class="pagination">
-            <button class="pagination-btn">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn active">3</button>
-            <button class="pagination-btn">4</button>
-            <button class="pagination-btn">5</button>
+            <div class="pricing">
+              <div class="current-price">₹<%= product.final_price %></div>
+              <div class="old-price">₹<%= product.original_price %></div> 
+              <div class="savings"><%= translations.buttons.save %> <br> ₹<%= product.discount_amount %></div>
+            </div>
+          </a>
+
+          <!-- Add to cart -->
+          <a href="/product_details/<%= product.product_id %>"
+             class="add-to-cart-btn text-decoration-none">Add To Cart</a>
+             
+          
+
+
+
+
         </div>
-    </main>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="no-products">No products found</div>
+  <% } %>
+</div>
 
-    <!-- Detail Drawer -->
-    <aside class="detail-drawer" id="detailDrawer">
-        <div class="drawer-header">
-            <h2>Recommendation Details</h2>
-            <button class="drawer-close" id="drawerClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="drawer-content">
-            <div class="drawer-section">
-                <h3 class="drawer-section-title">
-                    <i class="fas fa-flask"></i>
-                    Soil Analysis Summary
-                </h3>
-                <p>pH 5.6 — Apply lime before sowing to improve nutrient availability and crop yield.</p>
-            </div>
-
-            <div class="drawer-section">
-                <h3 class="drawer-section-title">
-                    <i class="fas fa-weight"></i>
-                    Dosage per Hectare
-                </h3>
-                <ul class="dosage-list">
-                    <li class="dosage-item">
-                        <span>Lime</span>
-                        <span>250 kg/ha</span>
-                    </li>
-                    <li class="dosage-item">
-                        <span>Nitrogen (N)</span>
-                        <span>120 kg/ha</span>
-                    </li>
-                    <li class="dosage-item">
-                        <span>Phosphorus (P₂O₅)</span>
-                        <span>60 kg/ha</span>
-                    </li>
-                    <li class="dosage-item">
-                        <span>Potassium (K₂O)</span>
-                        <span>40 kg/ha</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="drawer-section">
-                <h3 class="drawer-section-title">
-                    <i class="fas fa-calendar-alt"></i>
-                    Application Schedule
-                </h3>
-                <ul class="schedule-checklist">
-                    <li class="checklist-item">
-                        <div class="checklist-status"><i class="fas fa-check"></i></div>
-                        <div>
-                            <p>Apply lime 2 weeks before sowing</p>
-                            <small>Due: 10 Sep 2023</small>
-                        </div>
-                    </li>
-                    <li class="checklist-item">
-                        <div class="checklist-status"></div>
-                        <div>
-                            <p>First nitrogen application</p>
-                            <small>Due: 25 Sep 2023</small>
-                        </div>
-                    </li>
-                    <li class="checklist-item">
-                        <div class="checklist-status"></div>
-                        <div>
-                            <p>Phosphorus and potassium application</p>
-                            <small>Due: 5 Oct 2023</small>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="drawer-section">
-                <h3 class="drawer-section-title">
-                    <i class="fas fa-seedling"></i>
-                    Product Suggestions
-                </h3>
-                <div class="product-suggestion">
-                    <div class="product-image">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div>
-                        <h4>AgroLime Plus</h4>
-                        <p>Fast-acting lime formulation</p>
-                    </div>
-                </div>
-                <div class="product-suggestion">
-                    <div class="product-image">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div>
-                        <h4>NitroGrow 20-20-0</h4>
-                        <p>Balanced NPK fertilizer</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="drawer-section">
-                <h3 class="drawer-section-title">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Important Notes
-                </h3>
-                <div class="warning">
-                    <p>Do not apply lime and fertilizer at the same time. Wait at least 7 days between applications.</p>
-                </div>
-                <div class="warning">
-                    <p>Soil testing recommended after 3 cropping cycles or if changing crop type.</p>
-                </div>
-            </div>
-
-            <div class="drawer-actions">
-                <button class="btn btn-primary">
-                    <i class="fas fa-download"></i>
-                    Export PDF
-                </button>
-                <button class="btn btn-secondary">
-                    <i class="fas fa-print"></i>
-                    Print
-                </button>
-                <button class="btn btn-primary">
-                    <i class="fas fa-user"></i>
-                    Request Agronomist
-                </button>
-            </div>
-        </div>
-    </aside>
-
+       </main>
+<br><br><br><br>
+    
     <!-- Backdrop -->
     <div class="backdrop" id="backdrop"></div>
 
     <script>
-        // Sample data for recommendations
-        const recommendations = [
-            {
-                id: 1,
-                sample_id: "SMP-2023-001",
-                title: "Apply 250 kg/ha lime",
-                summary: "pH 5.6 — before sowing",
-                confidence: "high",
-                updated_at: "2023-08-10",
-                crop: ["Wheat"],
-                soil_type: ["Clay"],
-                dosage: "250 kg/ha",
-                schedule: ["Apply lime 2 weeks before sowing", "First nitrogen application", "Phosphorus and potassium application"],
-                author: "Dr. Rajesh Kumar",
-                attachments: ["report.pdf", "soil_image.jpg"]
-            },
-            {
-                id: 2,
-                sample_id: "SMP-2023-002",
-                title: "Increase phosphorus application",
-                summary: "Low P levels detected — apply before flowering",
-                confidence: "medium",
-                updated_at: "2023-08-05",
-                crop: ["Rice"],
-                soil_type: ["Loamy"],
-                dosage: "80 kg/ha",
-                schedule: ["Apply before flowering", "Water management critical"],
-                author: "Dr. Priya Singh",
-                attachments: ["report.pdf"]
-            },
-            {
-                id: 3,
-                sample_id: "SMP-2023-003",
-                title: "Reduce nitrogen application",
-                summary: "Excessive N detected — adjust dosage",
-                confidence: "high",
-                updated_at: "2023-08-15",
-                crop: ["Corn"],
-                soil_type: ["Sandy"],
-                dosage: "90 kg/ha",
-                schedule: ["Split application recommended", "Monitor soil moisture"],
-                author: "Dr. Amit Patel",
-                attachments: ["report.pdf", "comparison_chart.pdf"]
-            },
-            {
-                id: 4,
-                sample_id: "SMP-2023-004",
-                title: "Add organic matter",
-                summary: "Low organic content — apply compost",
-                confidence: "medium",
-                updated_at: "2023-08-12",
-                crop: ["Sugarcane"],
-                soil_type: ["Clay"],
-                dosage: "5 tons/ha",
-                schedule: ["Apply during land preparation", "Incorporate properly"],
-                author: "Dr. Sunil Mehta",
-                attachments: ["report.pdf"]
-            },
-            {
-                id: 5,
-                sample_id: "SMP-2023-005",
-                title: "Micronutrient supplement needed",
-                summary: "Zinc deficiency detected — apply zinc sulfate",
-                confidence: "high",
-                updated_at: "2023-08-08",
-                crop: ["Wheat"],
-                soil_type: ["Loamy"],
-                dosage: "25 kg/ha",
-                schedule: ["Apply at sowing", "Foliar spray if symptoms appear"],
-                author: "Dr. Neha Sharma",
-                attachments: ["report.pdf", "deficiency_images.zip"]
-            },
-            {
-                id: 6,
-                sample_id: "SMP-2023-006",
-                title: "Adjust irrigation schedule",
-                summary: "Water logging detected — improve drainage",
-                confidence: "low",
-                updated_at: "2023-08-18",
-                crop: ["Rice"],
-                soil_type: ["Clay"],
-                dosage: "N/A",
-                schedule: ["Reduce irrigation frequency", "Create drainage channels"],
-                author: "Dr. Vikas Yadav",
-                attachments: ["report.pdf", "drainage_design.pdf"]
-            }
-        ];
+       
+     
+          
 
-        // DOM elements
         const resultsGrid = document.getElementById('resultsGrid');
         const detailDrawer = document.getElementById('detailDrawer');
         const drawerClose = document.getElementById('drawerClose');
