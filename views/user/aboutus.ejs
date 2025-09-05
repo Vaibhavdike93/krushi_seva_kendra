@@ -282,37 +282,7 @@
             display: block;
         }
 
-        /* Timeline Elements */
-        .story-timeline {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--cream);
-            border-radius: 15px;
-            border-left: 4px solid var(--warm-orange);
-        }
-
-        .timeline-year {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--warm-orange);
-            min-width: 80px;
-        }
-
-        .timeline-content h4 {
-            color: var(--primary-green);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-content p {
-            color: var(--light-text);
-            margin: 0;
-            font-size: 0.95rem;
-        }
-
+    
         /* Mission Vision Values Section */
         .mission-section {
             padding: 2rem 0;
@@ -734,16 +704,15 @@
     <section class="hero-section">
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">About Krushi Seva Kendra</h1>
+                <h1 class="hero-title"><%=translations.about_page.heading%></h1>
 
                 <p class="hero-subtitle">
-                    Transforming agriculture through innovation, dedication, and farmer-centric services that empower
-                    communities and sustainable growth
+                   <%=translations.about_page.details%>
                 </p>
 
                 <a href="#our-story" class="hero-cta">
                     <i class="fas fa-arrow-down"></i>
-                    Discover Our Story
+                   <%=translations.about_page.button%>
                 </a>
             </div>
         </div>
@@ -758,20 +727,14 @@
             <div class="story-content">
                 <div class="story-text">
 
-                    <h2 class="story-title">Our Story</h2>
+                    <h2 class="story-title"><%=translations.about_page.our_story%></h2>
 
                     <p class="story-lead">
                         <%= story[0].parg_1 %></p>
                     <p><%= story[0].parg_2 %></p>
                     <p><%= story[0].parg_3 %></p>
 
-                    <div class="story-timeline">
-                        <div class="timeline-year">2005</div>
-                        <div class="timeline-content">
-                            <h4>The Beginning</h4>
-                            <p>Started with a vision to empower farmers through quality agricultural solutions</p>
-                        </div>
-                    </div>
+            
 
                 </div>
 
@@ -790,8 +753,8 @@
     <section class="mission-section">
         <div class="mission-container">
             <div class="mission-header">
-                <h2 class="mission-title">Our Mission, Vision & Values</h2>
-                <p class="mission-subtitle">The core principles that drive our commitment to agricultural excellence</p>
+                <h2 class="mission-title"><%=translations.about_page.mission%></h2>
+                <p class="mission-subtitle"><%=translations.about_page.mission_details%></p>
             </div>
 
             <div class="mission-grid">
@@ -801,8 +764,8 @@
                         <i class="fas fa-flag"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Mission</h3>
-                        <p>Transforming The Future Of Farmers By Leveraging Science, Data, and Technology</p>
+                        <h3><%= missions[0].title %></h3>
+                        <p><%= missions[0].description %></p>
                     </div>
                 </div>
 
@@ -812,8 +775,8 @@
                         <i class="fas fa-eye"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Vision</h3>
-                        <p>To Be An Iconic Global Digital Agriculture Ecosystem</p>
+                        <h3><%=vision[0].title %></h3>
+                        <p><%=vision[0].description %></p>
                     </div>
                 </div>
 
@@ -823,8 +786,8 @@
                         <i class="fas fa-heart"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Values</h3>
-                        <p>Always Staying Humble And Delivering Excellence</p>
+                        <h3><%=values[0].title %></h3>
+                        <p><%=values[0].description %></p>
                     </div>
                 </div>
             </div>
@@ -836,21 +799,18 @@
         <div class="stats-container">
             <div class="stats-grid">
                 <div class="stat-item">
-                    <span class="stat-number">15K+</span>
-                    <span class="stat-label">Farmers Served</span>
+                    <span class="stat-number"><%=count[0].count_1%></span>
+                    <span class="stat-label"><%=count[0].title_1%></span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">75+</span>
-                    <span class="stat-label">Districts Covered</span>
+                    <span class="stat-number"><%=count[0].count_2%></span>
+                    <span class="stat-label"><%=count[0].title_2%></span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">18+</span>
-                    <span class="stat-label">Years Experience</span>
+                    <span class="stat-number"><%=count[0].count_3%></span>
+                    <span class="stat-label"><%=count[0].title_3%></span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number">98%</span>
-                    <span class="stat-label">Success Rate</span>
-                </div>
+               
             </div>
         </div>
     </section>
@@ -859,75 +819,38 @@
     <section class="team py-5">
         <div class="section-container">
             <div class="section-header">
-                <h2 class="section-title">Meet Our Team</h2>
+                <h2 class="section-title"><%=translations.about_page.team%></h2>
             </div>
             
             <div class="team-grid">
-                <div class="team-card">
-                    <div class="team-image">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Rajesh Kumar - Founder & CEO" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
-                        <div class="team-overlay">
-                            <div class="social-links">
-                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="#"><i class="fab fa-twitter"></i></a>
-                                <a href="#"><i class="fas fa-envelope"></i></a>
+                <% if(team && team.length > 0) {%>
+                <% team.forEach(function(i){%>
+
+                    <div class="team-card">
+                        <div class="team-image">
+                            <img src="/uploads/<%=i.image%>" alt="Rajesh Kumar - Founder & CEO" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
+                            <!-- <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="#"><i class="fab fa-twitter"></i></a>
+                                    <a href="#"><i class="fas fa-envelope"></i></a>
+                                </div>
+                            </div> -->
+                        </div>
+                        <div class="team-content">
+                            <h3><%=i.name%></h3>
+                            <p class="team-role"><%=i.designation%></p>
+                            <p class="team-bio"><%=i.description%></p>
+                            <div class="team-badge">
+                                <i class="fas fa-award"></i>
+                               <%=i.experience_title%>
                             </div>
                         </div>
                     </div>
-                    <div class="team-content">
-                        <h3>Rajesh Kumar</h3>
-                        <p class="team-role">Founder & CEO</p>
-                        <p class="team-bio">With over 25 years of experience in agriculture, Rajesh founded Krushi Seva Kendra to serve the farming community with innovative solutions.</p>
-                        <div class="team-badge">
-                            <i class="fas fa-award"></i>
-                            25+ Years Experience
-                        </div>
-                    </div>
-                </div>
+                <%})%>
+                <%}%>
                 
-                <div class="team-card">
-                    <div class="team-image">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Priya Sharma - Head of Agriculture" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
-                        <div class="team-overlay">
-                            <div class="social-links">
-                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="#"><i class="fab fa-twitter"></i></a>
-                                <a href="#"><i class="fas fa-envelope"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="team-content">
-                        <h3>Priya Sharma</h3>
-                        <p class="team-role">Head of Agriculture</p>
-                        <p class="team-bio">Priya holds a PhD in Agricultural Sciences and leads our technical advisory and farmer education initiatives with scientific excellence.</p>
-                        <div class="team-badge">
-                            <i class="fas fa-graduation-cap"></i>
-                            PhD Agricultural Sciences
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="team-card">
-                    <div class="team-image">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Vikram Singh - Operations Manager" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
-                        <div class="team-overlay">
-                            <div class="social-links">
-                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="#"><i class="fab fa-twitter"></i></a>
-                                <a href="#"><i class="fas fa-envelope"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="team-content">
-                        <h3>Vikram Singh</h3>
-                        <p class="team-role">Operations Manager</p>
-                        <p class="team-bio">Vikram ensures smooth operations across all our centers and manages our comprehensive supply chain network efficiently.</p>
-                        <div class="team-badge">
-                            <i class="fas fa-cogs"></i>
-                            Operations Expert
-                        </div>
-                    </div>
-                </div>
+              
             </div>
         </div>
     </section>  

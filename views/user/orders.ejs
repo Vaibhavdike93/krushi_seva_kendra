@@ -109,6 +109,34 @@
     }
   </style>
 
+</head>
+<body>
+<div class="container mt-4">
+ 
+  <div class="row">
+    
+    <!-- Sidebar Filters -->
+   
+    
+    <!-- Orders Section -->
+    <div class="col-md-9">
+      <!-- Search -->
+      <!-- Orders Search -->
+<form action="/orders" method="get" class="mb-3">
+  <div class="input-group">
+    <input 
+      type="text" 
+      class="form-control" 
+      name="q" 
+      placeholder="Search your orders here"
+      value="<%= orderSearch %>"
+    >
+    <button class="btn btn-success" type="submit">
+      <i class="bi bi-search me-1"></i> Search
+    </button>
+  </div>
+</form>
+
   <div class="container mt-4">
     <div class="row">
 

@@ -1,0 +1,41 @@
+<%- include("navbar") %>
+<div class="container mt-4">
+  <h2 class="text-center">Recommendations List</h2>
+
+  <!-- Language Filter -->
+  <form method="GET" action="/admin/h_recommendations" class="text-center mb-3">
+    <select name="language" onchange="this.form.submit()" class="form-select w-25 d-inline">
+      <option value="en" <%= lang === "en" ? "selected" : "" %>>English</option>
+      <option value="mr" <%= lang === "mr" ? "selected" : "" %>>Marathi</option>
+      <option value="hi" <%= lang === "hi" ? "selected" : "" %>>Hindi</option>
+    </select>
+  </form>
+
+  <table class="table table-bordered text-center">
+    <thead>
+      <tr>
+        <th>sr</th>
+        <th>Heading</th>
+        <th>Description</th>
+        <th>Image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(var i=0; i < data.length; i++){ %>
+        <tr>
+          <td><%= i+1 %></td>
+          <td><%= data[i].heading %></td>
+          <td><%= data[i].description %></td>
+          <td>
+            <img src="/uploads/<%= data[i].image %>" width="100" height="80" style="object-fit:cover;">
+          </td>
+          <td>
+            <a href="/admin/h_recommendations/edit/<%= data[i].id %>" class="btn btn-sm btn-primary">Update</a>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include("footer") %>

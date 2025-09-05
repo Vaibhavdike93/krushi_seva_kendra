@@ -26,18 +26,26 @@
               <label class="form-label fw-semibold">Name</label>
               <input type="text" name="name" class="form-control" placeholder="Enter fertilizer/pesticide name" required>
             </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Type</label>
-              <select id="typeSelect" name="type" class="form-select" required></select>
-            </div>
+           <div class="col-md-6">
+  <label class="form-label fw-semibold">Type</label>
+  <select id="typeSelect" name="type" class="form-select" required>
+    <% type.forEach(function(i){ %>
+      <option value="<%= i.type_name %>"><%= i.type_name %></option>
+    <% }) %>
+  </select>
+</div>
+
           </div>
 
           <!-- Row 2: Crop Name & Season -->
           <div class="row mb-3">
             <div class="col-md-6">
-              <label class="form-label fw-semibold">Crop Name</label>
-              <input type="text" name="crop_name" class="form-control" placeholder="Enter applicable crop" required>
-            </div>
+  <label class="form-label fw-semibold">Crop Name</label>
+  <select id="cropDropdown" name="crop_name" class="form-select" required>
+    <option value="">-- Select Language First --</option>
+  </select>
+</div>
+
             <div class="col-md-6">
               <label class="form-label fw-semibold">Season</label>
               <select id="seasonSelect" name="season" class="form-select" required></select>
@@ -108,35 +116,65 @@
     }
   }
 
-  async function updateLanguageAndProducts() {
+const cropDropdown = document.getElementById("cropDropdown");
+
+async function updateLanguageAndProducts() {
   const lang = langSelect.value;
 
   populateSelect(seasonSelect, translations[lang].season);
   populateSelect(stageSelect, translations[lang].stage);
-  populateSelect(typeSelect, translations[lang].type);
   populateSelect(soilTypeSelect, translations[lang].soil_type);
 
   try {
     const res = await fetch(`/admin/get-products/${lang}`);
     const data = await res.json();
-    productDropdown.innerHTML = "";
 
-    if (data.length > 0) {
-      data.forEach(p => {
+    // ---- Update Products ----
+    productDropdown.innerHTML = "";
+    if (data.products.length > 0) {
+      data.products.forEach(p => {
         let opt = document.createElement("option");
         opt.value = p.product_id;
         opt.textContent = p.product_name;
         productDropdown.appendChild(opt);
       });
     } else {
-      let opt = document.createElement("option");
-      opt.textContent = "-- No products available --";
-      productDropdown.appendChild(opt);
+      productDropdown.innerHTML = `<option>-- No products available --</option>`;
     }
+
+    // ---- Update Types ----
+    typeSelect.innerHTML = "";
+    if (data.type.length > 0) {
+      data.type.forEach(t => {
+        let opt = document.createElement("option");
+        opt.value = t.type_name;
+        opt.textContent = t.type_name;
+        typeSelect.appendChild(opt);
+      });
+    } else {
+      typeSelect.innerHTML = `<option>-- No types available --</option>`;
+    }
+
+    // ---- Update Crops ----
+    cropDropdown.innerHTML = "";
+    if (data.crops.length > 0) {
+      data.crops.forEach(c => {
+        let opt = document.createElement("option");
+       opt.value = c.crop_name;   
+opt.textContent = c.crop_name;
+        cropDropdown.appendChild(opt);
+      });
+    } else {
+      cropDropdown.innerHTML = `<option>-- No crops available --</option>`;
+    }
+
   } catch (err) {
-    console.error("Error fetching products:", err);
+    console.error("Error fetching products/types/crops:", err);
   }
 }
+
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   updateLanguageAndProducts(); 

@@ -13,10 +13,10 @@
         </div>
         
         <div class="hero-content">
-            <h1 class="hero-heading">Empowering Farmers, Growing Futures</h1>
+            <h1 class="hero-heading"><%=translations.home_page.Heading%></h1>
             <div class="accent-line"></div>
-            <p class="hero-subheading">Seeds, fertilizers, and modern agri solutions — all in one place.</p>
-            <a href="#" class="cta-button">Explore Services</a>
+            <p class="hero-subheading"><%=translations.home_page.Details%></p>
+            <!-- <a href="#" class="cta-button">Explore Services</a> -->
         </div>
     </section>
     <!-- Category Carousel -->
@@ -132,41 +132,20 @@
         <h2 class="section-title"><%=translations.home_page.why_choose%></h2>
         
         <div class="features-grid">
-            <!-- Feature 1 -->
-            <div class="feature-card">
-                <div class="icon-container">
-                    <i class="fas fa-shopping-basket feature-icon"></i>
-                </div>
-                <h3 class="feature-title">Wide Range</h3>
-                <p class="feature-description">Choose from thousands of quality products carefully selected for your needs.</p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="feature-card">
-                <div class="icon-container">
-                    <i class="fas fa-shipping-fast feature-icon"></i>
-                </div>
-                <h3 class="feature-title">Fast Delivery</h3>
-                <p class="feature-description">Lightning speed doorstep service. Get your orders delivered when you need them.</p>
-            </div>
-            
-            <!-- Feature 3 -->
-            <div class="feature-card">
-                <div class="icon-container">
-                    <i class="fas fa-shield-alt feature-icon"></i>
-                </div>
-                <h3 class="feature-title">Secure Payments</h3>
-                <p class="feature-description">100% safe and trusted transactions with advanced encryption technology.</p>
-            </div>
-            
-            <!-- Feature 4 -->
-            <div class="feature-card">
-                <div class="icon-container">
-                    <i class="fas fa-leaf feature-icon"></i>
-                </div>
-                <h3 class="feature-title">Fresh & Authentic</h3>
-                <p class="feature-description">Handpicked with guaranteed freshness and authenticity for premium quality.</p>
-            </div>
+            <% if(choose && choose.length > 0 ){ %>
+                <%choose.forEach(function(i){%>
+
+                    <div class="feature-card">
+                        <div class="icon-container">
+                            <i class="fas fa-shopping-basket feature-icon"></i>
+                        </div>
+                        <h3 class="feature-title"><%=i.title%></h3>
+                        <p class="feature-description"><%=i.description%></p>
+                    </div>
+
+                <%})%>
+            <%}%>
+          
         </div>
     </section>
 
@@ -179,64 +158,29 @@
         <h2 class="section-title"><%=translations.home_page.services%></h2>
         <div class="container position-relative">
             <!-- <h2 class="section-title2">Our Services</h2> -->
-            <div class="row g-4">
-                <div class="col-md-3">
-                    <div class="krushi-card" data-animation="slideUp">
-                        <div class="service-icon">
-                            <i class="fas fa-flask"></i>
-                        </div>
-                        <h3>Soil Testing</h3>
-                        <p>Comprehensive soil analysis to determine nutrient levels and recommend appropriate fertilizers for optimal crop growth.</p>
-                        <ul class="krushi-features">
-                            <li>Nutrient level analysis</li>
-                            <li>pH balance testing</li>
-                            <li>Custom fertilizer recommendations</li>
-                        </ul>
-                    </div>
+<% if(services && services.length > 0){%>
+<%services.forEach(function(i){%>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="krushi-card" data-animation="slideUp">
+                <div class="service-icon">
+                    <i class="fas fa-flask"></i>
                 </div>
-                <div class="col-md-3">
-                    <div class="krushi-card" data-animation="slideUp" data-delay="0.2">
-                        <div class="service-icon">
-                            <i class="fas fa-seedling"></i>
-                        </div>
-                        <h3>Crop Consultation</h3>
-                        <p>Expert advice on crop selection, planting techniques, and cultivation practices tailored to your specific conditions.</p>
-                        <ul class="krushi-features">
-                            <li>Personalized crop planning</li>
-                            <li>Seasonal guidance</li>
-                            <li>Pest management strategies</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="krushi-card" data-animation="slideUp" data-delay="0.4">
-                        <div class="service-icon">
-                            <i class="fas fa-tractor"></i>
-                        </div>
-                        <h3>Equipment Supply</h3>
-                        <p>Access to modern farming equipment and tools for efficient agricultural operations and increased productivity.</p>
-                        <ul class="krushi-features">
-                            <li>Equipment rental options</li>
-                            <li>Maintenance support</li>
-                            <li>Operator training</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="krushi-card" data-animation="slideUp" data-delay="0.4">
-                        <div class="service-icon">
-                            <i class="fas fa-water"></i>
-                        </div>
-                        <h3>Irrigation Solutions</h3>
-                        <p>Advanced irrigation systems designed to save water and ensure crops receive the right amount of hydration at the right time.</p>
-                        <ul class="krushi-features">
-                             <li>Drip irrigation setup</li>
-                             <li>Sprinkler systems</li>
-                             <li>Water conservation methods</li>
-                        </ul>
-                    </div>
-                </div>
+                <h3><%=i.title%></h3>
+                <p><%=i.description%></p>
+                <ul class="krushi-features">
+                    <li><%=i.point1%></li>
+                    <li><%=i.point2%></li>
+                    <li><%=i.point3%></li>
+                </ul>
             </div>
+        </div>
+      
+    </div>
+
+<%})%>
+<%}%>
+
             
         </div>
         <div class="text-center mt-5">
@@ -245,54 +189,33 @@
     </section>
 
     <!-- Recommendations Section -->    
-    <section class="krushi-section py-5">
-        <h2 class="section-title">Farming Recommendations</h2>
-        <div class="container">
-            
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn">
-                        <div class="krushi-image">
-                            <img src="https://fazlaninaturesnest.com/wp-content/uploads/2022/10/Exploring-the-Benefits-of-Organic-Farming_Putting-Wellness-and-Sustainability-Ahead_1-1.jpg" alt="Organic Farming">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Organic Farming Techniques</h3>
-                            <p>Learn how to implement sustainable organic farming practices that improve soil health and yield chemical-free produce.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.2">
-                        <div class="krushi-image">
-                            <img src="https://www.rainyfilters.com/static/images/blogs/highlighting_sustainable_practices_water_conservation_agriculture_inner2.png" alt="Water Management">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Efficient Water Management</h3>
-                            <p>Discover modern irrigation techniques that can help conserve water while ensuring optimal crop hydration.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="0.4">
-                        <div class="krushi-image">
-                            <img src="https://tse4.mm.bing.net/th/id/OIP.QiL3CFcagXNJvkIE5JIilwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Crop Rotation">
-                        </div>
-                        <div class="krushi-content">
-                            <h3>Smart Crop Rotation</h3>
-                            <p>Understand the benefits of strategic crop rotation for maintaining soil fertility and preventing pest infestations.</p>
-                            <a href="#" class="krushi-read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
+   <section class="krushi-section py-5">
+  <h2 class="section-title">Farming Recommendations</h2>
+  <div class="container">
+    <div class="row g-4">
+      <% for(var i=0; i < h_recommendations.length; i++){ %>
+        <div class="col-md-4">
+          <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="<%= i * 0.2 %>">
+            <div class="krushi-image">
+              <img src="/uploads/<%= h_recommendations[i].image %>" alt="<%= h_recommendations[i].heading %>">
             </div>
-           
+            <div class="krushi-content">
+              <h3><%= h_recommendations[i].heading %></h3>
+              <p><%= h_recommendations[i].description %></p>
+              <a href="#" class="krushi-read-more">
+                Read More <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
         </div>
-         <div class="text-center mt-5">
-                <a href="#" class="krushi-btn">Explore All Recommendations</a>
-            </div>
-    </section>
+      <% } %>
+    </div>
+  </div>
+  <div class="text-center mt-5">
+    <a href="#" class="krushi-btn">Explore All Recommendations</a>
+  </div>
+</section>
+
 
 
 

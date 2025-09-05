@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 
 
 
-router.get('/', async function(req, res) {
+router.get('/',CheckLogin, async function(req, res) {
   var pendingCount = await exe(`SELECT COUNT(*) AS cnt FROM orders WHERE status = 'Pending'`);
   var ShippedCount = await exe(`SELECT COUNT(*) As cnt FROM orders WHERE status = 'Shipped'`);
   var allCount = await exe(`SELECT COUNT(*) AS cnt FROM orders`);
@@ -22,7 +22,7 @@ router.get('/', async function(req, res) {
     });
 });
 
-router.get('/profile',function(req,res){
+router.get('/profile',CheckLogin,function(req,res){
     res.render("admin/profile");
 })
 
@@ -438,7 +438,7 @@ const crops = await exe(
       crops,
       selectedCropIds,
       lang,
-      translations // ensure you pass translations object for season dropdown
+      translations 
     });
   } catch (err) {
     console.error(err);
@@ -612,12 +612,14 @@ var result = await exe(sql,[d.shop_name,d.shop_address_line1,
 
 router.get('/recomendation', async (req, res) => {
   try {
-    res.render("admin/recomendation.ejs", { products: [], translations });
+    const type = await exe("SELECT id, type_name FROM recommendation_type WHERE language = ?", ["en"]);
+    res.render("admin/recomendation.ejs", { products: [], type, translations });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading form");
   }
 });
+
 
 
 router.get("/get-products/:lang", async (req, res) => {
@@ -630,13 +632,27 @@ router.get("/get-products/:lang", async (req, res) => {
       [lang]
     );
 
-    console.log("👉 Products fetched:", products);
-    res.json(products);
+    const type = await exe(
+      "SELECT id, type_name FROM recommendation_type WHERE language = ?",
+      [lang]
+    );
+
+    let cropCol = "crop_name_en";
+    if (lang === "hi") cropCol = "crop_name_hi";
+    else if (lang === "mr") cropCol = "crop_name_mr";
+
+    const crops = await exe(
+      `SELECT crop_id, ${cropCol} AS crop_name FROM crops`
+    );
+
+    console.log("👉 Products:", products, "👉 Types:", type, "👉 Crops:", crops);
+    res.json({ products, type, crops });   // send crops also
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).json({ error: "DB Error" });
   }
 });
+
 
 
 
@@ -852,31 +868,6 @@ router.get("/delete_Government_Schemes/:id",async function(req,res){
   var result = await exe(sql,[id]);
   res.redirect("/admin/Government_Scheme_list")
 })
-router.get("/latest_Aaticles",function(req,res){
-  res.render("admin/add_latest_Aaticles.ejs")
-});
-
-router.post("/farming/add",async function(req,res){
-  var d = req.body;
-  var sql = `INSERT INTO LatestArticles (	image,heading,description,language)VALUSE(?,?,?,?)`;
-  var result = await exe(sql,[d.title,d.category,d.filename])
-  res.redirect("admin/latest_Aaticles");
-})
-
-router.get("/latest_Aaticles_list", async function(req, res) {
-  let selectedLang = req.query.lang || "eng";  
-  let sql = "SELECT * FROM articles WHERE language = ?";
-  let articles = await query(sql, [selectedLang]);
-  res.render("admin/LatestAaticles.ejs", {
-    articles: articles,
-    selectedLang: selectedLang
-  });
-});
-
-
-
-
-
 
 
 
@@ -1163,9 +1154,86 @@ router.post("/Values/update/:id", async function(req, res){
   res.redirect("/admin/Values")
 });
 
+router.get("/about_count",async function(req,res){
+  var lang = req.query.lang || 'en'
+  console.log(lang)
+  var sql = `SELECT * FROM about_count WHERE language = ?`;
+  var about_count = await exe(sql,[lang]);
+  res.render("admin/about_count.ejs",{about_count})
+})
+router.get("/about_count/update/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM about_count WHERE id = ?`;
+  var about_count = await exe(sql,[id]);
+  res.render("admin/adit_about_count.ejs",{about_count})
+})
+router.post("/about_count/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d= req.body;
+  var sql = `UPDATE about_count SET 
+  title_1 = ?,
+  count_1 = ?,
+  title_2 = ?,
+  count_2 = ?,
+  title_3 = ?,
+  count_3 = ?
+  WHERE 
+  id = ?`;
+  var result = await exe(sql,[d.title_1,d.count_1,d.title_2,d.count_2,d.title_3,d.count_3,id]);
+  res.redirect("/admin/about_count")
+})
+router.get("/team_members",function(req,res){
+  res.render("admin/add_team_members.ejs")
+})
 
+router.post("/team_members_add", async function(req, res) {
+  var d = req.body;
+  if (req.files && req.files.image) {
+    var file_name = new Date().getTime() + "_" + req.files.image.name;
+    req.files.image.mv("public/uploads/" + file_name);
+  } else {
+    var file_name = "";
+  }
+  var sql = `INSERT INTO team_members(image, name, designation, description, experience_title, language) 
+             VALUES (?,?,?,?,?,?)`;
+  var result = await exe(sql, [
+    file_name,
+    d.name,
+    d.designation,
+    d.description,
+    d.experience_title,
+    d.language
+  ]);
+  res.redirect("/admin/team_members");
+});
 
+router.get("/team_members_list",async function(req,res){
+  var lang = req.query.language || "en";   // इथे बदल
+  console.log(lang)
+  var sql = `SELECT * FROM team_members WHERE language = ?`;
+  var team_members = await exe(sql,[lang]);
+  res.render("admin/team_members.ejs",{team_members, lang})
+})
 
+router.get("/team/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM team_members  WHERE id = ?`;
+  var team_members = await exe(sql,[id]);
+  res.render("admin/edit_team_members.ejs",{team_members})
+})
+
+router.post("/team/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d = req.body;
+  if(req.files && req.files.image){
+    var file_name = new Date().getTime()+"_"+req.files.image.name;
+    req.files.image.mv("public/uploads/"+file_name);
+  }else{
+    var old = await exe("SELECT image FROM team_members WHERE id=?",[id]);
+    var file_name = old[0].image;
+  }
+  var sql = `UPDATE team_members SET image=?, name=?, designation=?, description=?, experience_title=? WHERE id=?`;
+  await exe(sql,[file_name,d.name,d.designation,d.description,d.experience_title,id]);
 
 
 router.get("/soil_testing_bookings",async function(req,res){
@@ -1173,8 +1241,71 @@ router.get("/soil_testing_bookings",async function(req,res){
   var bookings = await exe(sql);
   res.render("admin/soil_testing_bookings.ejs",{bookings})
 })
+  res.redirect("/admin/team_members_list"); 
+});
+router.get("/team/delete/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `DELETE FROM team_members WHERE id = ?`;
+  var result = await exe(sql,[id]);
+  res.redirect("/admin/team_members_list")
+})
 
+router.get("/h_recommendations", async function (req, res) {
+  var lang = req.query.language || "en";
+  var sql = "SELECT * FROM h_recommendations WHERE language = ?";
+  var data = await exe(sql, [lang]);
+  res.render("admin/h_recommendations_list.ejs", { data, lang });
+});
+router.get("/soil_testing_bookings",async function(req,res){
+  var sql = `SELECT * FROM soil_tests`;
+  var bookings = await exe(sql);
+  res.render("admin/soil_testing_bookings.ejs",{bookings})
+})
 
+router.get("/h_recommendations/edit/:id", async function (req, res) {
+  var id = req.params.id;
+  var sql = "SELECT * FROM h_recommendations WHERE id = ?";
+  var row = await exe(sql, [id]);
+  res.render("admin/h_recommendations_edit.ejs", { row: row[0] });
+});
+
+router.post("/h_recommendations/update/:id", async function (req, res) {
+  var id = req.params.id;
+  var d = req.body;
+
+  if (req.files && req.files.image) {
+    var file_name = Date.now() + "_" + req.files.image.name;
+    req.files.image.mv("public/uploads/" + file_name);
+  } else {
+    var old = await exe("SELECT image FROM h_recommendations WHERE id = ?", [id]);
+    var file_name = old[0].image;
+  }
+
+  var sql =
+    "UPDATE h_recommendations SET heading=?, description=?,  image=? WHERE id=?";
+  await exe(sql, [d.name, d.description, file_name, id]);
+
+  res.redirect("/admin/h_recommendations?language=" + d.language);
+});
+
+router.get("/recomendation_type",async function(req,res){
+  var type = await exe("SELECT * FROM recommendation_type ")
+  res.render("admin/recomendation_type.ejs",{type})
+});
+
+router.post("/add-recommendation-type",async function(req,res){
+  // res.send(req.body);
+  var d= req.body;
+var sql = `INSERT INTO recommendation_type (language, type_name) VALUES (?, ?)`;
+var data = await exe(sql,[d.language,d.type]);
+res.redirect("/admin/recomendation_type");
+});
+
+router.get("/delete_type/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = await exe("DELETE  FROM recommendation_type WHERE id = ?",[id]);
+  res.redirect("admin/recomendation_type");
+})
 
 
 
