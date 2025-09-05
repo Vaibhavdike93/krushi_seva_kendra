@@ -1,37 +1,33 @@
 <%-include("navbar")%>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Orders - Krushi Seva Kendra</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    
     .filters {
       background: #fff;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       animation: fadeInLeft 0.8s ease-in-out;
     }
+
     .filters h5 {
       color: #2e7d32;
     }
+
     .order-card {
       background: #fff;
       border-radius: 12px;
       padding: 15px;
       margin-bottom: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       transition: transform 0.3s, box-shadow 0.3s;
       animation: slideUp 0.9s ease-in-out;
     }
+
     .order-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
     }
+
     .status-dot {
       height: 12px;
       width: 12px;
@@ -39,10 +35,23 @@
       display: inline-block;
       margin-right: 6px;
     }
-    .status-cancelled { background: red; }
-    .status-delivered { background: green; }
-    .status-onway { background: orange; }
-    .status-returned { background: gray; }
+
+    .status-cancelled {
+      background: red;
+    }
+
+    .status-delivered {
+      background: green;
+    }
+
+    .status-onway {
+      background: orange;
+    }
+
+    .status-returned {
+      background: gray;
+    }
+
     .order-img {
       width: 70px;
       height: 70px;
@@ -50,159 +59,171 @@
       border-radius: 8px;
       transition: transform 0.3s;
     }
+
     .order-card:hover .order-img {
       transform: scale(1.05);
     }
+
     .input-group input {
       border-radius: 25px 0 0 25px;
       transition: all 0.3s;
     }
+
     .input-group input:focus {
-      box-shadow: 0 0 8px rgba(46,125,50,0.4);
+      box-shadow: 0 0 8px rgba(46, 125, 50, 0.4);
     }
+
     .input-group button {
       border-radius: 0 25px 25px 0;
     }
 
     .btn-cancel {
-    display: inline-block;
-    margin-left: 0; 
-}
+      display: inline-block;
+      margin-left: 0;
+    }
 
 
     /* Animations */
     @keyframes fadeInLeft {
-      from { opacity: 0; transform: translateX(-30px); }
-      to { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
+
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
-</head>
-<body>
-<div class="container mt-4">
- 
-  <div class="row">
-    
-    <!-- Sidebar Filters -->
-    <div class="col-md-3">
-      <div class="filters">
-        <h5>Filters</h5>
-        <hr>
-        <p class="fw-bold text-success">ORDER STATUS</p>
-        <div class="form-check"><input class="form-check-input" type="checkbox" id="onway"><label class="form-check-label" for="onway">On the way</label></div>
-        <div class="form-check"><input class="form-check-input" type="checkbox" id="delivered"><label class="form-check-label" for="delivered">Delivered</label></div>
-        <div class="form-check"><input class="form-check-input" type="checkbox" id="cancelled"><label class="form-check-label" for="cancelled">Cancelled</label></div>
-        <div class="form-check"><input class="form-check-input" type="checkbox" id="returned"><label class="form-check-label" for="returned">Returned</label></div>
-        
-        <hr>
-        <p class="fw-bold text-success">ORDER TIME</p>
-        <div class="form-check"><input class="form-check-input" type="checkbox" id="last30"><label class="form-check-label" for="last30">Last 30 days</label></div>
-        <div class="form-check"><input class="form-check-input" type="checkbox"> 2024</div>
-        <div class="form-check"><input class="form-check-input" type="checkbox"> 2023</div>
-        <div class="form-check"><input class="form-check-input" type="checkbox"> 2022</div>
-        <div class="form-check"><input class="form-check-input" type="checkbox"> 2021</div>
-      </div>
-    </div>
-    
-    <!-- Orders Section -->
-    <div class="col-md-9">
-      <!-- Search -->
-      <!-- Orders Search -->
-<form action="/orders" method="get" class="mb-3">
-  <div class="input-group">
-    <input 
-      type="text" 
-      class="form-control" 
-      name="q" 
-      placeholder="Search your orders here"
-      value="<%= orderSearch %>"
-    >
-    <button class="btn btn-success" type="submit">
-      <i class="bi bi-search me-1"></i> Search
-    </button>
-  </div>
-</form>
 
-      
-      <!-- Order 1 -->
-       <% if(order && order.length > 0 ) { %>
-    <% order.forEach(function(order){ %>
+  <div class="container mt-4">
+    <div class="row">
 
-        <div class="order-card d-flex align-items-center">
-            <a href="/order_details/<%=order.order_id%>" class="text-decoration-none">
-          <img src="/uploads/<%=order.main_image%>" class="order-img me-3" alt="<%=order.product_name%>">
-          <div class="flex-grow-1">
-            <h6><%=order.product_name%></h6>
-            <p class="mb-1 text-muted">₹<%=order.order_total%></p>
-        <% if (order.status === 'Pending') { %>
-    <small>
-        <span class="status-dot bg-warning"></span> <%= order.status %>
-    </small><br>
+      <!-- Sidebar Filters -->
+      <div class="col-md-3">
+        <div class="filters">
+          <h5>Filters</h5>
+          <hr>
+          <p class="fw-bold text-success">ORDER STATUS</p>
+          <div class="form-check"><input class="form-check-input" type="checkbox" id="onway"><label
+              class="form-check-label" for="onway">On the way</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" id="delivered"><label
+              class="form-check-label" for="delivered">Delivered</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" id="cancelled"><label
+              class="form-check-label" for="cancelled">Cancelled</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" id="returned"><label
+              class="form-check-label" for="returned">Returned</label></div>
 
-<% } else if (order.status === 'Shipped') { %>
-    <small>
-        <span class="status-dot bg-primary"></span> <%= order.status %>
-    </small><br>
-
-<% } else if (order.status === 'Completed') { %>
-    <small>
-        <span class="status-dot bg-success"></span> <%= order.status %>
-    </small><br>
-
-<% } else if (order.status === 'Cancelled') { %>
-    <small class="text-danger">
-      <span class="status-dot bg-danger"></span> 
-      You cancelled this order 
-      <% if (order.cancelled_at) { %>
-         on <%= new Date(order.cancelled_at).toLocaleString() %>
-      <% } %>
-   </small>
-
-<% } else { %>
-    <small><%= order.status %></small><br>
-<% } %>
-</a>
-<div class="d-flex align-items-center justify-content-between mt-2">
-    <div class="d-flex align-items-center">
-        <% if (order.status === 'Completed' || order.status === 'Cancelled') { %>
-            <a href="/canceled_order/<%= order.order_id %>" 
-               class="d-none btn btn-danger btn-sm rounded-pill px-3 shadow-sm">
-               <i class="bi bi-x-circle me-1"></i> Cancel Order
-            </a>
-        <% } else { %>
-            <a href="/canceled_order/<%= order.order_id %>" 
-               class="btn btn-danger btn-sm rounded-pill btn-cancel px-3 shadow-sm">
-               <i class="bi bi-x-circle me-1"></i> Cancel Order
-            </a>
-        <% } %>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-          </div>
+          <hr>
+          <p class="fw-bold text-success">ORDER TIME</p>
+          <div class="form-check"><input class="form-check-input" type="checkbox" id="last30"><label
+              class="form-check-label" for="last30">Last 30 days</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox"> 2024</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox"> 2023</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox"> 2022</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox"> 2021</div>
         </div>
+      </div>
 
-  <%  }) %>
-   <% } else { %>
-  <div class="alert alert-warning">
-    No orders found for "<%= orderSearch %>"
-  </div>
-<% } %>
-      
-    
+      <!-- Orders Section -->
+      <div class="col-md-9">
+        <!-- Search -->
+        <!-- Orders Search -->
+        <form action="/orders" method="get" class="mb-3">
+          <div class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="Search your orders here"
+              value="<%= orderSearch %>">
+            <button class="btn btn-success" type="submit">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+          </div>
+        </form>
+        <!-- Order 1 -->
+        <% if(order && order.length> 0 ) { %>
+          <% order.forEach(function(order){ %>
+
+            <div class="order-card d-flex align-items-center">
+              <a href="/order_details/<%=order.order_id%>" class="text-decoration-none">
+                <img src="/uploads/<%=order.main_image%>" class="order-img me-3" alt="<%=order.product_name%>">
+                <div class="flex-grow-1">
+                  <h6>
+                    <%=order.product_name%>
+                  </h6>
+                  <p class="mb-1 text-muted">₹<%=order.order_total%>
+                  </p>
+                  <% if (order.status==='Pending' ) { %>
+                    <small>
+                      <span class="status-dot bg-warning"></span>
+                      <%= order.status %>
+                    </small><br>
+
+                    <% } else if (order.status==='Shipped' ) { %>
+                      <small>
+                        <span class="status-dot bg-primary"></span>
+                        <%= order.status %>
+                      </small><br>
+
+                      <% } else if (order.status==='Completed' ) { %>
+                        <small>
+                          <span class="status-dot bg-success"></span>
+                          <%= order.status %>
+                        </small><br>
+
+                        <% } else if (order.status==='Cancelled' ) { %>
+                          <small class="text-danger">
+                            <span class="status-dot bg-danger"></span>
+                            You cancelled this order
+                            <% if (order.cancelled_at) { %>
+                              on <%= new Date(order.cancelled_at).toLocaleString() %>
+                                <% } %>
+                          </small>
+
+                          <% } else { %>
+                            <small>
+                              <%= order.status %>
+                            </small><br>
+                            <% } %>
+              </a>
+              <div class="d-flex align-items-center justify-content-between mt-2">
+                <div class="d-flex align-items-center">
+                  <% if (order.status==='Completed' || order.status==='Cancelled' ) { %>
+                    <a href="/canceled_order/<%= order.order_id %>"
+                      class="d-none btn btn-danger btn-sm rounded-pill px-3 shadow-sm">
+                      <i class="bi bi-x-circle me-1"></i> Cancel Order
+                    </a>
+                    <% } else { %>
+                      <a href="/canceled_order/<%= order.order_id %>"
+                        class="btn btn-danger btn-sm rounded-pill btn-cancel px-3 shadow-sm">
+                        <i class="bi bi-x-circle me-1"></i> Cancel Order
+                      </a>
+                      <% } %>
+                </div>
+              </div>
+            </div>
+      </div>
+
+      <% }) %>
+        <% } else { %>
+          <div class="alert alert-warning">
+            No orders found for "<%= orderSearch %>"
+          </div>
+          <% } %>
     </div>
   </div>
-</div>
-</body>
-</html>
+  </div>
 
-<%-include("footer")%>
+
+  <%-include("footer")%>
