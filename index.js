@@ -7,6 +7,7 @@ var userroute = require('./routes/user');
 var accounts = require("./routes/accounts");
 var forgot = require('./routes/forgot');
 const translations = require("./translation");
+require('dotenv').config();
 var app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(upload());
@@ -41,6 +42,4 @@ app.use('/admin', adminroute);
 app.use("/accounts",accounts);
 app.use('/forgot',forgot);
 
-app.listen(1000, function() {
-  console.log('Server is running on port 1000');
-});
+app.listen(process.env.PORT || 1000);
