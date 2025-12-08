@@ -1,13 +1,23 @@
 {
   "name": "water_purifier_api",
   "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Vaibhavdike93/krushi_seva_kendra#readme",
+  "bugs": {
+    "url": "https://github.com/Vaibhavdike93/krushi_seva_kendra/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vaibhavdike93/krushi_seva_kendra.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "ejs": "^3.1.10",
@@ -21,5 +31,6 @@
     "nodemailer": "^7.0.5",
     "pdfkit": "^0.17.1",
     "razorpay": "^2.9.6"
-  }
+  },
+  "devDependencies": {}
 }
