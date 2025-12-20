@@ -42,4 +42,8 @@ app.use('/admin', adminroute);
 app.use("/accounts",accounts);
 app.use('/forgot',forgot);
 
-app.listen(process.env.PORT || 1000);
+const PORT = Number(process.env.PORT) || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
