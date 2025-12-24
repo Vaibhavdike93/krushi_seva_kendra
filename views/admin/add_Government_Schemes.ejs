@@ -1,34 +1,46 @@
 <%- include('navbar') %>
 
 <div class="container mt-4">
-  <h2 class="text-center mb-4">Our Story</h2>
+  <h2 class="text-center mb-4">Add Government Scheme</h2>
 
-  <!-- Language select -->
-  <form method="GET" action="/admin/ourstory" class="mb-4">
-    <select name="lang" class="form-select w-auto d-inline-block">
-      <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
-      <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>Marathi</option>
-      <option value="mr" <%= lang === 'hi' ? 'selected' : '' %>>hindi</option>
-    </select>
-    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-  </form>
-
-  <% ourStoryData.forEach(function(story){ %>
-    <div class="story-card" style="border:1px solid #ccc; padding:15px; margin-bottom:15px; border-radius:5px;">
-      <h4><%= story.title %></h4>
+  <div class="card p-4">
+    <form method="POST" action="/admin/add_Government_Schemes" enctype="multipart/form-data">
       
-      <p><strong>Paragraph 1:</strong> <%= story.parag_1 %></p>
-      <p><strong>Paragraph 2:</strong> <%= story.parag_2 %></p>
-      <p><strong>Paragraph 3:</strong> <%= story.parag_3 %></p>
+      <div class="mb-3">
+        <label for="language" class="form-label">Language</label>
+        <select name="language" id="language" class="form-select" required>
+          <option value="en">English</option>
+          <option value="mr">Marathi</option>
+          <option value="hi">Hindi</option>
+        </select>
+      </div>
 
-      <% if(story.img){ %>
-        <img src="/uploads/<%= story.img %>" alt="story image" style="max-width:100%; height:auto; margin-bottom:10px;">
-      <% } %>
+      <div class="mb-3">
+        <label for="heading" class="form-label">Scheme Heading</label>
+        <input type="text" name="heading" id="heading" class="form-control" required>
+      </div>
 
-      <!-- Update button -->
-      <a href="/ourstory/update/<%= story.id %>" class="btn btn-warning btn-sm">Update</a>
-    </div>
-  <% }); %>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="image" class="form-label">Scheme Image</label>
+        <input type="file" name="image" id="image" class="form-control" accept="image/*">
+      </div>
+
+      <div class="mb-3">
+        <label for="link" class="form-label">Application Link</label>
+        <input type="url" name="link" id="link" class="form-control" placeholder="https://example.com" required>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Add Scheme</button>
+        <a href="/admin/Government_Scheme_list" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
 </div>
 
 <%- include('footer') %>
