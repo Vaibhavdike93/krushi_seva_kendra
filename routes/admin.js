@@ -164,16 +164,16 @@ router.get("/crops_list", async function (req, res) {
     }
 });
 
-router.get("/delete_crop", async function (req, res) {
-    var id = req.params.id;
-    try {
-        var sql = `DELETE FROM crops WHERE crop_id = ?`;
-        var result = await exe(sql, [id]);
-        res.redirect("/admin/crops_list");
-    } catch (err) {
-        console.error("Error deleting crop:", err);
-        res.status(500).send("Something went wrong!");
-    }
+router.get("/delete_crop/:id", async function (req, res) {
+  var id = req.params.id;
+  try {
+    var sql = `DELETE FROM crops WHERE crop_id = ?`;
+    await exe(sql, [id]);
+    res.redirect("/admin/crops_list");
+  } catch (err) {
+    console.error("Error deleting crop:", err);
+    res.status(500).send("Something went wrong!");
+  }
 });
 
 router.get("/add_product", async (req, res) => {
@@ -298,15 +298,22 @@ router.post("/add_product", async (req, res) => {
       }
     }
 
- const weights = req.body["weight[]"];
-const prices = req.body["price[]"];
+    const weights = req.body["weight[]"];
+    const prices = req.body["price[]"];
  
     if (weights && prices) {
-      for (let i = 0; i < weights.length; i++) {
-        if (weights[i] && prices[i]) {
+      const weightArray = Array.isArray(weights) ? weights : [weights];
+      const priceArray = Array.isArray(prices) ? prices : [prices];
+      
+      for (let i = 0; i < weightArray.length; i++) {
+        const weight = weightArray[i] ? weightArray[i].trim() : null;
+        const price = priceArray[i] ? parseInt(priceArray[i]) : null;
+        
+        if (weight && price) {
+          console.log(`Inserting variant: weight=${weight}, price=${price}`);
           await exe(
             `INSERT INTO product_variants (product_id, weight, price) VALUES (?, ?, ?)`,
-            [product_id, weights[i], prices[i]]
+            [product_id, weight, price]
           );
         }
       }
@@ -374,10 +381,6 @@ router.get("/product_list", async function (req, res) {
     res.status(500).send("Server Error");
   }
 });
-
-
-
-
 
 
 
@@ -466,7 +469,8 @@ router.post("/product_update/:id", async (req, res) => {
          season = ?,
          description = ?,
          features = ?,
-         language = ?
+         language = ?,
+         updated_at = NOW()
        WHERE product_id = ?`,
       [
         data.product_name,
@@ -548,15 +552,13 @@ const prices = Array.isArray(data['price[]']) ? data['price[]'] : (data['price[]
   }
 });
 
-
-
 router.get("/product_delete/:id", async (req, res) => {
   try {
     const productId = req.params.id;
 
     await exe("DELETE FROM product_variants WHERE product_id = ?", [productId]);
 
-    await exe("DELETE FROM products WHERE product_id = ?", [productId]);
+    await exe("DELETE FROM product WHERE product_id = ?", [productId]);
 
     res.redirect("/admin/product_list");
   } catch (err) {

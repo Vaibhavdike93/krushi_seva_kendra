@@ -3,7 +3,7 @@
     <section class="hero-banner">
         <div class="hero-background"></div>
         <div class="overlay"></div>
-        
+
         <div class="floating-elements">
             <div class="floating-element"><i class="fas fa-leaf"></i></div>
             <div class="floating-element"><i class="fas fa-seedling"></i></div>
@@ -11,26 +11,30 @@
             <div class="floating-element"><i class="fas fa-apple-alt"></i></div>
             <div class="floating-element"><i class="fas fa-tractor"></i></div>
         </div>
-        
+
         <div class="hero-content">
-            <h1 class="hero-heading"><%=translations.home_page.Heading%></h1>
+            <h1 class="hero-heading">
+                <%=translations.home_page.Heading%>
+            </h1>
             <div class="accent-line"></div>
-            <p class="hero-subheading"><%=translations.home_page.Details%></p>
+            <p class="hero-subheading">
+                <%=translations.home_page.Details%>
+            </p>
             <!-- <a href="#" class="cta-button">Explore Services</a> -->
         </div>
     </section>
     <!-- Category Carousel -->
     <div class="container-fluid  py-5" data-aos="zoom-in-up">
-        <div class="offer_header">
-            <h1 class="text-center mb-4 category_title" data-aos="fade-up-left"><b>Categories</b></h1>
+        <div class="offer_header text-center">
+            <h1 class="mb-4 category_title" data-aos="fade-up-left"><b>Categories</b></h1>
         </div>
 
-        <div class="d-flex align-items-center" data-aos="fade-up-left">
-            <button id="previousBtn" class="slider_btn_orange align-items-center">
+        <div class="d-flex align-items-center justify-content-between" data-aos="fade-up-left">
+            <button id="previousBtn" class="slider_btn_orange align-items-center me-3">
                 <span class="me-1">&#10094;</span>
             </button>
 
-            <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-track flex-grow-1" id="carouselTrack">
                 <% for(var i=0; i < categories.length; i++){ %>
                     <div class="category-item">
                         <a href="/category/<%= categories[i].category_id %>" class="text-decoration-none">
@@ -47,75 +51,80 @@
                     <% } %>
             </div>
 
-
-            <button id="nextBtn" class="slider_btn_orange align-items-center">
+            <button id="nextBtn" class="slider_btn_orange align-items-center ms-3">
                 <span class="me-1">&#10095;</span>
             </button>
         </div>
     </div>
 
 
-<br><br>
+    <br><br>
     <!-- today's offers section  -->
 
-      <h2 class="section-title"><%=translations.home_page.product%></h2>
-    
+    <h2 class="section-title">
+        <%=translations.home_page.product%>
+    </h2>
+
     <div class="carousel-container py-3" id="agriculturalCarousel">
         <button class="carousel-btn prev">
             <i class="fas fa-chevron-left"></i>
         </button>
-        
+
         <div class="carousel">
             <!-- Product Card 1 -->
-             <% if(popularProducts && popularProducts.length > 0){
+            <% if(popularProducts && popularProducts.length> 0){
                 popularProducts.forEach(product => { %>
 
-                    <div class="product-card">
-                        <div class="offer-badge"><%=product.discount%> % OFF</div>
-                      <a href="<%= product.inWishlist ? '/remove_wishlist/' + product.wishlist_id : '/wishlist/' + product.product_id %>" 
-   class="wishlist-icon text-decoration-none">
-  <% if(product.inWishlist) { %>
-    <i class="fas fa-heart text-danger"></i> 
-  <% } else { %>
-    <i class="far fa-heart"></i> 
-  <% } %>
-</a>
-                        <div class="product-image">
-                            <img src="/uploads/<%=product.main_image%>" alt="Hybrid Seeds">
-                        </div>
-                        <a href="/product_details/<%=product.product_id%>" class="text-decoration-none">
-                        <h3 class="product-title"><%=product.product_name%></h3>
+                <div class="product-card">
+                    <div class="offer-badge">
+                        <%=product.discount%> % OFF
+                    </div>
+                    <a href="<%= product.inWishlist ? '/remove_wishlist/' + product.wishlist_id : '/wishlist/' + product.product_id %>"
+                        class="wishlist-icon text-decoration-none">
+                        <% if(product.inWishlist) { %>
+                            <i class="fas fa-heart text-danger"></i>
+                            <% } else { %>
+                                <i class="far fa-heart"></i>
+                                <% } %>
+                    </a>
+                    <div class="product-image">
+                        <img src="/uploads/<%=product.main_image%>" alt="Hybrid Seeds">
+                    </div>
+                    <a href="/product_details/<%=product.product_id%>" class="text-decoration-none">
+                        <h3 class="product-title">
+                            <%=product.product_name%>
+                        </h3>
                         <!-- <p class="product-subtitle">Premium Quality</p> -->
                         <div class="pricing">
                             <span class="current-price">₹<%=product.discount_price%></span>
                             <span class="original-price">₹<%=product.original_price%></span>
                             <span class="savings">Save ₹<%=product.you_save%></span>
                         </div>
-                      </a>
-                        <a href="/product_details/<%=product.product_id%>" class="add-to-cart text-decoration-none">
-                            <i class="fas fa-shopping-cart"></i> Add to Cart
-                        </a>
-                        <div class="rating">
-                            <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                            <span class="review-count">(128)</span>
+                    </a>
+                    <a href="/product_details/<%=product.product_id%>" class="add-to-cart text-decoration-none">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </a>
+                    <div class="rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
                         </div>
+                        <span class="review-count">(128)</span>
                     </div>
-           <%  }) } else { %>
-                <p>No popular products available at the moment.</p>
-                <% } %>
-            
+                </div>
+                <% }) } else { %>
+                    <p>No popular products available at the moment.</p>
+                    <% } %>
+
         </div>
-        
+
         <button class="carousel-btn next">
             <i class="fas fa-chevron-right"></i>
         </button>
-        
+
         <!-- <div class="carousel-nav">
             <div class="nav-dot active"></div>
             <div class="nav-dot"></div>
@@ -123,29 +132,35 @@
         </div> -->
     </div>
 
-  
+
     <!-- today's offers section end  -->
 
     <!-- why choose us section start -->
 
-     <section class="why-choose-us">
-        <h2 class="section-title"><%=translations.home_page.why_choose%></h2>
-        
+    <section class="why-choose-us">
+        <h2 class="section-title">
+            <%=translations.home_page.why_choose%>
+        </h2>
+
         <div class="features-grid">
-            <% if(choose && choose.length > 0 ){ %>
+            <% if(choose && choose.length> 0 ){ %>
                 <%choose.forEach(function(i){%>
 
                     <div class="feature-card">
                         <div class="icon-container">
                             <i class="fas fa-shopping-basket feature-icon"></i>
                         </div>
-                        <h3 class="feature-title"><%=i.title%></h3>
-                        <p class="feature-description"><%=i.description%></p>
+                        <h3 class="feature-title">
+                            <%=i.title%>
+                        </h3>
+                        <p class="feature-description">
+                            <%=i.description%>
+                        </p>
                     </div>
 
-                <%})%>
-            <%}%>
-          
+                    <%})%>
+                        <%}%>
+
         </div>
     </section>
 
@@ -155,76 +170,87 @@
 
     <!-- Services Section -->
     <section class="krushi-section py-5">
-        <h2 class="section-title"><%=translations.home_page.services%></h2>
+        <h2 class="section-title">
+            <%=translations.home_page.services%>
+        </h2>
         <div class="container position-relative">
-            <!-- <h2 class="section-title2">Our Services</h2> -->
-<% if(services && services.length > 0){%>
-<%services.forEach(function(i){%>
-    <div class="row g-4">
-        <div class="col-md-3">
-            <div class="krushi-card" data-animation="slideUp">
-                <div class="service-icon">
-                    <i class="fas fa-flask"></i>
+            <% if(services && services.length> 0){%>
+                <div class="row g-4">
+                    <%services.forEach(function(i){%>
+                        <div class="col-md-4">
+                            <div class="krushi-card" data-animation="slideUp">
+                                <div class="service-icon">
+                                    <i class="fas fa-flask"></i>
+                                </div>
+                                <h3>
+                                    <%=i.title%>
+                                </h3>
+                                <p>
+                                    <%=i.description%>
+                                </p>
+                                <ul class="krushi-features">
+                                    <li>
+                                        <%=i.point1%>
+                                    </li>
+                                    <li>
+                                        <%=i.point2%>
+                                    </li>
+                                    <li>
+                                        <%=i.point3%>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    <%})%>
                 </div>
-                <h3><%=i.title%></h3>
-                <p><%=i.description%></p>
-                <ul class="krushi-features">
-                    <li><%=i.point1%></li>
-                    <li><%=i.point2%></li>
-                    <li><%=i.point3%></li>
-                </ul>
-            </div>
-        </div>
-      
-    </div>
+                <%}%>
 
-<%})%>
-<%}%>
 
-            
         </div>
-        <div class="text-center mt-5">
-                <a href="#" class="krushi-btn">Explore All Services</a>
-            </div>
     </section>
 
-    <!-- Recommendations Section -->    
-   <section class="krushi-section py-5">
-  <h2 class="section-title">Farming Recommendations</h2>
-  <div class="container">
-    <div class="row g-4">
-      <% for(var i=0; i < h_recommendations.length; i++){ %>
-        <div class="col-md-4">
-          <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="<%= i * 0.2 %>">
-            <div class="krushi-image">
-              <img src="/uploads/<%= h_recommendations[i].image %>" alt="<%= h_recommendations[i].heading %>">
+    <!-- Recommendations Section -->
+    <section class="krushi-section py-5">
+        <h2 class="section-title">Farming Recommendations</h2>
+        <div class="container">
+            <div class="row g-4">
+                <% for(var i=0; i < h_recommendations.length; i++){ %>
+                    <div class="col-md-4">
+                        <div class="krushi-card recommendation" data-animation="zoomIn" data-delay="<%= i * 0.2 %>">
+                            <div class="krushi-image">
+                                <img src="/uploads/<%= h_recommendations[i].image %>"
+                                    alt="<%= h_recommendations[i].heading %>">
+                            </div>
+                            <div class="krushi-content">
+                                <h3>
+                                    <%= h_recommendations[i].heading %>
+                                </h3>
+                                <p>
+                                    <%= h_recommendations[i].description %>
+                                </p>
+                                <a href="/recommendation?lang=<%= lang %>" class="krushi-read-more">
+                                    Read More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
             </div>
-            <div class="krushi-content">
-              <h3><%= h_recommendations[i].heading %></h3>
-              <p><%= h_recommendations[i].description %></p>
-              <a href="#" class="krushi-read-more">
-                Read More <i class="fas fa-arrow-right"></i>
-              </a>
-            </div>
-          </div>
         </div>
-      <% } %>
-    </div>
-  </div>
-  <div class="text-center mt-5">
-    <a href="#" class="krushi-btn">Explore All Recommendations</a>
-  </div>
-</section>
+        <div class="text-center mt-5">
+            <a href="/recommendation?lang=<%= lang %>" class="krushi-btn">Explore All Recommendations</a>
+        </div>
+    </section>
 
 
 
 
 
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const featureCards = document.querySelectorAll('.feature-card');
-            
+
             // Create an intersection observer
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
@@ -233,7 +259,7 @@
                         setTimeout(() => {
                             entry.target.classList.add('visible');
                         }, index * 200);
-                        
+
                         // Stop observing after animation
                         observer.unobserve(entry.target);
                     }
@@ -242,7 +268,7 @@
                 threshold: 0.2,
                 rootMargin: '0px 0px -50px 0px'
             });
-            
+
             // Observe each feature card
             featureCards.forEach(card => {
                 observer.observe(card);

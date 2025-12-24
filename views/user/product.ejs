@@ -114,7 +114,7 @@
 
   <div class="rating">
   <% 
-    let fullStars = Math.floor(product.avg_rating);
+    let fullStars = Math.floor(product.avg_rating); 
     let halfStar = product.avg_rating % 1 >= 0.5;
     let emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
   %>
