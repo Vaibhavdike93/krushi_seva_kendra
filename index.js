@@ -2,6 +2,7 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var upload = require('express-fileupload');
 var session = require('express-session');
+var path = require('path');
 var adminroute = require('./routes/admin');
 var userroute = require('./routes/user');
 var accounts = require("./routes/accounts");
@@ -17,7 +18,10 @@ app.use(session({
     saveUninitialized: true
 }));
 app.use(express.json());
-app.use(express.static('public/'));
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+app.use('/admin-assets', express.static(path.join(__dirname, 'public', 'admin')));
+app.use('/user-assets', express.static(path.join(__dirname, 'public', 'user')));
+app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 app.use((req,res,next)=>{
 res.locals.admin = req.session.admin;

@@ -1,20 +1,13 @@
 var mysql = require('mysql2/promise');
 
-
 var pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'aviraj',
-  database: 'krushi_seva_kendra'
-
-var util = require('util');
-
-var conn = mysql.createConnection({
-  host: 'b3gc1pmw5xfvxj8fdgpe-mysql.services.clever-cloud.com', 
-  user:'uj6c7bdmvryfdufk',
-    password:'mmOa34mfLrVTBfy7FrJg',
-    database:'b3gc1pmw5xfvxj8fdgpe'
-
+  host: 'b3gc1pmw5xfvxj8fdgpe-mysql.services.clever-cloud.com',
+  user: 'uj6c7bdmvryfdufk',
+  password: 'mmOa34mfLrVTBfy7FrJg',
+  database: 'b3gc1pmw5xfvxj8fdgpe',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 async function exe(sql, params) {
@@ -24,4 +17,3 @@ async function exe(sql, params) {
 }
 
 module.exports = exe;
-  
