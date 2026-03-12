@@ -5,7 +5,7 @@
                     <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
                         <div class="d-flex align-items-center justify-content-center justify-content-md-start">
                             <!-- <i class="bi bi-droplet-fill text-primary me-2"></i> -->
-                             <img src="/uploads/logo.png" width="70px" alt="">
+                             <img src="/Krushi_logo.png" width="70px" alt="">
                             <span class="fw-bold"> Janmitra Krushi Seva Kendra </span>
                         </div>
                         <div class="small text-muted">
@@ -132,54 +132,33 @@
                 });
             });
             
-            // Initialize Chart
-            const ctx = document.getElementById('waterQualityChart').getContext('2d');
-            const waterQualityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [
-                        {
-                            label: 'TDS Level',
-                            data: [120, 135, 125, 130, 110, 105, 115],
-                            borderColor: '#0891B2',
-                            backgroundColor: 'rgba(8, 145, 178, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'pH Level',
-                            data: [7.2, 7.1, 7.3, 7.4, 7.2, 7.0, 7.1],
-                            borderColor: '#10B981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Chlorine',
-                            data: [0.5, 0.6, 0.4, 0.5, 0.7, 0.6, 0.5],
-                            borderColor: '#F59E0B',
-                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
+            // Initialize Chart only if the canvas element exists on this page
+            const chartCanvas = document.getElementById('waterQualityChart');
+            if (chartCanvas) {
+                const ctx = chartCanvas.getContext('2d');
+                const waterQualityChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [
+                            {
+                                label: 'Sales',
+                                data: [120, 135, 125, 130, 110, 105, 115],
+                                borderColor: '#28a745',
+                                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }
+                        ]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: false
-                        }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: false } }
                     }
-                }
-            });
+                });
+            }
             
             // Handle Bootstrap dropdowns in mobile view
             if (window.innerWidth < 768) {

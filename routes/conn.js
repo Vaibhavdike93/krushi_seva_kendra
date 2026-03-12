@@ -1,16 +1,17 @@
-var express = require('express');
-var mysql = require('mysql');
+var mysql = require('mysql2/promise');
 
-var util = require('util');
-
-var conn = mysql.createConnection({
-  host: 'localhost', 
-  user:'root',
-    password:'',
-    database:'krushi_seva_kendra'
+var pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'aviraj',
+  database: 'krushi_seva_kendra'
 });
 
-var exe = util.promisify(conn.query).bind(conn);
+async function exe(sql, params) {
+  var values = params || [];
+  var result = await pool.execute(sql, values);
+  return result[0];
+}
 
-module.exports = exe
+module.exports = exe;
   
