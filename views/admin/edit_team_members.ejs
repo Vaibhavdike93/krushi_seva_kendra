@@ -1,0 +1,55 @@
+<%- include("navbar") %>
+
+<div class="container mt-4">
+  <h3 class="mb-3">Edit Team Member</h3>
+
+  <form action="/admin/team/update/<%= team_members[0].id %>" method="POST" enctype="multipart/form-data">
+    
+    <!-- Image -->
+    <div class="mb-3">
+      <label>Current Image:</label><br>
+      <% if(team_members[0].image){ %>
+        <img src="/uploads/<%= team_members[0].image %>" width="100" height="100" style="object-fit:cover; border-radius:8px;">
+      <% }else{ %>
+        <p>No Image Uploaded</p>
+      <% } %>
+    </div>
+
+    <div class="mb-3">
+      <label>Change Image:</label>
+      <input type="file" class="form-control" name="image">
+    </div>
+
+    <!-- Name -->
+    <div class="mb-3">
+      <label>Name</label>
+      <input type="text" class="form-control" name="name" value="<%= team_members[0].name %>" required>
+    </div>
+
+    <!-- Designation -->
+    <div class="mb-3">
+      <label>Designation</label>
+      <input type="text" class="form-control" name="designation" value="<%= team_members[0].designation %>" required>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label>Description</label>
+      <textarea class="form-control" name="description" rows="4"><%= team_members[0].description %></textarea>
+    </div>
+
+    <!-- Experience Title -->
+    <div class="mb-3">
+      <label>Experience Title</label>
+      <input type="text" class="form-control" name="experience_title" value="<%= team_members[0].experience_title %>">
+    </div>
+
+
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a href="/admin/team_members" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<%- include("footer") %>

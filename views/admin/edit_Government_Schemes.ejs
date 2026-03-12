@@ -1,0 +1,42 @@
+<%- include("navbar") %>
+
+<div class="container my-5">
+  <h2 class="text-center mb-4">Edit Government Scheme</h2>
+
+  <!-- enctype="multipart/form-data" file upload साठी -->
+  <form method="post" action="/admin/update_Government_Schemes/<%= info[0].id %>" enctype="multipart/form-data">
+    
+    <div class="mb-3">
+      <label class="form-label">Heading</label>
+      <input type="text" name="heading" value="<%= info[0].heading %>" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea name="description" class="form-control" rows="4" required><%= info[0].description %></textarea>
+    </div>
+
+    <!-- जुनी image preview -->
+    <div class="mb-3">
+      <label class="form-label">Current Image</label><br>
+      <img src="/uploads/<%= info[0].image %>" alt="Scheme Image" style="width: 200px; height:auto; border:1px solid #ccc; border-radius:8px;">
+    </div>
+
+    <!-- नवीन image upload -->
+    <div class="mb-3">
+      <label class="form-label">Upload New Image</label>
+      <input type="file" name="new_image" class="form-control">
+      
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Link</label>
+      <input type="text" name="link" value="<%= info[0].button_link	 %>" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-success">Update Scheme</button>
+    <a href="/admin/Government_Schemes" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<%- include("footer") %>

@@ -1,0 +1,46 @@
+<%- include('navbar') %>
+
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Add Government Scheme</h2>
+
+  <div class="card p-4">
+    <form method="POST" action="/admin/add_Government_Schemes" enctype="multipart/form-data">
+      
+      <div class="mb-3">
+        <label for="language" class="form-label">Language</label>
+        <select name="language" id="language" class="form-select" required>
+          <option value="en">English</option>
+          <option value="mr">Marathi</option>
+          <option value="hi">Hindi</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="heading" class="form-label">Scheme Heading</label>
+        <input type="text" name="heading" id="heading" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="image" class="form-label">Scheme Image</label>
+        <input type="file" name="image" id="image" class="form-control" accept="image/*">
+      </div>
+
+      <div class="mb-3">
+        <label for="link" class="form-label">Application Link</label>
+        <input type="url" name="link" id="link" class="form-control" placeholder="https://example.com" required>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Add Scheme</button>
+        <a href="/admin/Government_Scheme_list" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('footer') %>

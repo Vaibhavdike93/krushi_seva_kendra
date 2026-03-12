@@ -1,0 +1,345 @@
+<%- include("navbar.ejs") %>
+
+<style>
+  /* product_details page start */
+  .pd-img {
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    height: 300px;
+    width: 300px;
+    align-items: center;
+  }
+  .pd-img:hover {
+    transform: scale(1.05);
+  }
+  .pd-stars {
+    color: #ffc107;
+    font-size: 20px;
+  }
+  .pd-review-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  .pd-usage-list li {
+    margin-bottom: 8px;
+  }
+  .pd-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ff6f00;
+    color: #fff;
+    padding: 11px 15px;
+    border-radius: 999px;
+    font-size: 15px;
+  }
+  /* ratings css */
+  .pd-star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 8px;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  .pd-star {
+    color: lightgray;
+    transition: color 0.3s;
+  }
+  .pd-star.active {
+    color: gold;
+  }
+  .pd-reviews-text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #444;
+  }
+  .select{
+    width: 180px;
+  }
+  /* product_details page end */
+</style>
+
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- Product Images -->
+    <div class="col-md-5">
+      <div class="card shadow-sm p-3 position-relative">
+        <span class="pd-badge"><%= product.discount %>% OFF</span>
+        <img src="/uploads/<%= product.main_image %>" class="pd-img ms-5 mt-5" id="mainImage" alt="<%= product.product_name %>">
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-md-7">
+      <h3 class="fw-bold"><%= product.product_name %></h3>
+      <h5 class="text-muted">
+        Category: <%= lang === 'mr' ? product.category_name_mr : lang === 'hi' ? product.category_name_hi : product.category_name_en %>
+      </h5>
+      <h5 class="text-muted">
+        Brand: <%= lang === 'mr' ? product.brand_name_mr : lang === 'hi' ? product.brand_name_hi : product.brand_name_en %>
+      </h5>
+
+      <!-- Variant Selection -->
+      <div class="mb-3">
+        <label for="variantSelect" class="form-label">Select Weight / Variant:</label>
+        <select id="variantSelect" class="form-select select">
+          <% product.variants.forEach(variant => { %>
+            <option value="<%= variant.variant_id %>" 
+                    data-original="<%= variant.original_price %>" 
+                    data-final="<%= variant.final_price %>" 
+                    data-save="<%= variant.discount_amount %>" 
+                    <%= variant.variant_id === product.selectedVariant.variant_id ? 'selected' : '' %>>
+              <%= variant.weight %> - ₹<%= variant.original_price %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="mb-3 d-flex align-items-center">
+  <label class="me-3 fw-bold">Quantity:</label> 
+  <div class="input-group" style="width: 120px;">
+    <button type="button" class="btn btn-outline-secondary" id="decreaseQty">-</button>
+    <input type="text" class="form-control text-center" id="quantityInput" name="quantity" value="1" min="1">
+    <button type="button" class="btn btn-outline-secondary" id="increaseQty">+</button>
+  </div>
+</div>
+
+      <!-- Price -->
+      <h4 class="text-warning fw-bold mt-3">
+        Price: ₹<span id="finalPrice"><%= product.selectedVariant.final_price %></span>
+        <del class="text-muted" id="originalPrice">₹<%= product.selectedVariant.original_price %></del>
+        <small class="text-success" id="savePrice">You save ₹<%= product.selectedVariant.discount_amount %></small>
+      </h4>
+
+      <p><strong>Availability:</strong> <%= product.stock_quantity <= 10 ? 'Low Stock' : 'In Stock' %></p>
+   <form action="/add_tocart" method="post">
+  <input type="hidden" name="product_id" value="<%= product.product_id %>">
+  <input type="hidden" name="variant_id" id="variantInput" value="<%= product.selectedVariant.variant_id %>">
+  <input type="hidden" id="finalQty" name="quantity" value="1">
+
+  <% if (alreadyInCart) { %>
+    <a href="/add_tocart" class="btn btn-secondary btn-lg">Already in Cart</a>
+  <% } else { %>
+    <button type="submit" class="btn btn-warning btn-lg">Add to Cart</button>
+  <% } %>
+</form>
+
+
+
+      <!-- <a href="/add_tocart/<%=product.product_id%>" class="btn btn-warning btn-lg">Add to Cart</a> -->
+      <!-- <a href="/checkout/<%=product.product_id%>" class="btn btn-outline-success btn-lg">Buy Now</a> -->
+
+      <hr>
+      <h5>Description</h5>
+      <p><%= product.description %></p>
+
+   
+      <h5>Dosage & Uses Intructions</h5>
+      <ul class="pd-usage-list">
+        <% product.dosage.forEach(d => { %>
+          <li><%= d %></li>
+        <% }) %>
+      </ul>
+
+      <h5>Features & Benefits</h5>
+      <h6>Features</h6>
+      <ul>
+        <% product.features.forEach(f => { %>
+          <li><%= f %></li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="my-5">
+
+  <!-- Review Box -->
+  <% if (review && review.length > 0) { %>
+  <% review.forEach(function(r) { %>
+    <div class="pd-review-box">
+      <div class="d-flex justify-content-between">
+        <div class="d-flex align-items-center mb-2">
+          <h6 class="mb-0 fw-bold"><%= r.name %></h6>
+        </div>
+        <span>
+          <% for (var i = 1; i <= 5; i++) { %>
+            <% if (i <= r.rating) { %>
+              <i class="pd-stars">&#9733;</i>
+            <% } else { %>
+              <i class="pd-stars">&#9734;</i>
+            <% } %>
+          <% } %>
+        </span>
+      </div>
+      <p class="mt-2"><%= r.review %></p>
+    </div>
+  <% }); %>
+<% } else { %>
+  <p>No Reviews Found</p>
+<% } %>
+
+
+
+
+  <!-- Add Review -->
+  <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal">Write a Review</button>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" action="/submit_review" method="post">
+      <div class="modal-header">
+        <h5 class="modal-title">Write a Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Your Name</label>
+          <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Rating</label>
+          <div class="pd-star-rating" id="stars">
+            <span class="pd-star" data-value="1">&#9733;</span>
+            <span class="pd-star" data-value="2">&#9733;</span>
+            <span class="pd-star" data-value="3">&#9733;</span>
+            <span class="pd-star" data-value="4">&#9733;</span>
+            <span class="pd-star" data-value="5">&#9733;</span>
+          </div>
+          <!-- Hidden input for storing rating -->
+          <input type="hidden" name="rating" id="rating" required>
+          <input type="hidden" name="product_id" value="<%=product.product_id%>" id="">
+          <div class="pd-reviews-text" id="reviews">Select stars to rate</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Review</label>
+          <textarea class="form-control" name="review" rows="3" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit Review</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-transparent border-0">
+      <div class="modal-body p-0 text-center">
+        <img id="modalImage" src="" class="img-fluid rounded" alt="Product Image">
+      </div>
+      <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Reviews Script -->
+<script>
+  const stars = document.querySelectorAll(".pd-star");
+  const ratingInput = document.getElementById("rating");
+  const reviewText = document.getElementById("reviews");
+
+  stars.forEach(star => {
+    star.addEventListener("click", () => {
+      const value = star.getAttribute("data-value");
+      ratingInput.value = value; // hidden input update
+
+      // Reset all stars
+      stars.forEach(s => s.style.color = "#ccc");
+      // Highlight selected stars
+      for (let i = 0; i < value; i++) {
+        stars[i].style.color = "gold";
+      }
+
+      reviewText.textContent = `You selected ${value} star(s)`;
+    });
+  });
+</script>
+
+<%- include("footer.ejs") %>
+<script>
+document.getElementById("variantSelect").addEventListener("change", function() {
+    const selectedOption = this.options[this.selectedIndex];
+    document.getElementById("finalPrice").innerText = selectedOption.getAttribute("data-final");
+    document.getElementById("originalPrice").innerText = selectedOption.getAttribute("data-original");
+    document.getElementById("savePrice").innerText = "You save ₹" + selectedOption.getAttribute("data-save");
+
+    document.getElementById("variantInput").value = selectedOption.value;
+});
+
+    document.getElementById("mainImage").addEventListener("click", function() {
+        const images = document.querySelectorAll(".product-card-img img");
+        images.forEach(img => {
+        img.addEventListener("click", function() {
+            changeImage(this);
+        });
+        });
+    });
+</script>
+
+<script>
+  // Main image click
+  const mainImage = document.getElementById("mainImage");
+  const modalImage = document.getElementById("modalImage");
+  const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+
+  mainImage.addEventListener("click", () => {
+    modalImage.src = mainImage.src;
+    imageModal.show();
+  });
+
+  // Gallery images click (जर असतील तर)
+  const galleryImages = document.querySelectorAll(".product-card-img img");
+  galleryImages.forEach(img => {
+    img.addEventListener("click", function() {
+      modalImage.src = this.src;
+      imageModal.show();
+    });
+  });
+</script>
+
+
+<script>
+  const qtyInput = document.getElementById("quantityInput");
+  const finalQty = document.getElementById("finalQty");
+  const decreaseBtn = document.getElementById("decreaseQty");
+  const increaseBtn = document.getElementById("increaseQty");
+
+  increaseBtn.addEventListener("click", () => {
+    let qty = parseInt(qtyInput.value) || 1;
+    qty++;
+    qtyInput.value = qty;
+    finalQty.value = qty;
+  });
+
+  decreaseBtn.addEventListener("click", () => {
+    let qty = parseInt(qtyInput.value) || 1;
+    if (qty > 1) qty--;
+    qtyInput.value = qty;
+    finalQty.value = qty;
+  });
+
+  qtyInput.addEventListener("input", () => {
+    let qty = parseInt(qtyInput.value) || 1;
+    if (qty < 1) qty = 1;
+    qtyInput.value = qty;
+    finalQty.value = qty;
+  });
+</script>
+

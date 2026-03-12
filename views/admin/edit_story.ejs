@@ -1,0 +1,61 @@
+<%- include('navbar') %>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Edit Story</h2>
+
+  <form action="/admin/story/update/<%= story[0].id %>" method="POST" enctype="multipart/form-data">
+    
+   
+
+    <!-- Paragraph 1 -->
+    <div class="mb-3">
+      <label class="form-label">Paragraph 1</label>
+      <textarea name="parag_1" class="form-control" rows="3"><%= story[0].parg_1 %></textarea>
+    </div>
+
+    <!-- Paragraph 2 -->
+    <div class="mb-3">
+      <label class="form-label">Paragraph 2</label>
+      <textarea name="parag_2" class="form-control" rows="3"><%= story[0].parg_2 %></textarea>
+    </div>
+
+    <!-- Paragraph 3 -->
+    <div class="mb-3">
+      <label class="form-label">Paragraph 3</label>
+      <textarea name="parag_3" class="form-control" rows="3"><%= story[0].parg_3 %></textarea>
+    </div>
+
+    <!-- Existing Image Preview -->
+    
+    <div class="mb-3">
+      <label class="form-label">Current Image</label>
+      <div>
+        <img src="/uploads/<%=story[0].image_url%>" alt="story image" style="width:200px; border-radius:10px; margin-bottom:10px;">
+      </div>
+    </div>
+
+
+    <!-- Upload New Image -->
+    <div class="mb-3">
+      <label class="form-label">Change Image</label>
+      <input type="file" name="img" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-success">Update Story</button>
+  </form>
+</div>
+
+<%- include('footer') %>
+
+
+parg_1
+parg_2
+parg_3
+image_url
+
+Edit Edit
+Copy Copy
+Delete Delete
+1
+en
+Founded in 

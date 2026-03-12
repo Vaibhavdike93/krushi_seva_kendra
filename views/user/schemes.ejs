@@ -1,0 +1,81 @@
+<%- include("navbar.ejs") %>
+
+  <style>
+    :root {
+      --navbar-bg: #FAFAF5;
+      --page-bg: #FAF8F0;
+      --button-color: #f38020;
+      --footer-bg: #8B5E3C;
+    }
+    body { background-color: var(--page-bg); }
+    .gov-title { text-align: center; margin-bottom: 30px; font-weight: bold; color: #8B5E3C; }
+    .scheme-card {
+      border: none;
+      border-radius: 12px;
+      background-color: var(--navbar-bg);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }   
+    .scheme-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    .scheme-icon { font-size: 40px; color: var(--button-color); }
+    .apply-btn {
+      background-color: var(--button-color);
+      color: white;
+      border-radius: 20px;
+      padding: 5px 15px;
+      border: none;
+    }
+    .apply-btn:hover { background-color: #f6b94d; color: white; }
+  </style>
+
+
+<div class="container py-5">
+  <h2 class="gov-title"><i class="fa-solid fa-seedling"></i><%=translations.shemes.heading%></h2>
+
+ 
+
+  <!-- Schemes List -->
+  <div class="row g-4" id="schemesList">
+<% if(data && data.length > 0 ) { %>
+  <% data.forEach(function(i){%>
+  
+    <div class="col-md-4 scheme-item" data-aos="fade-up">
+      <div class="card scheme-card h-100 p-3 text-center">
+        <img src="/uploads/<%=i.image%>" width="300px"  alt="">
+        <!-- <i class="fa-solid fa-tractor scheme-icon"></i> -->
+        <h5 class="mt-3"><%=i.heading%></h5>
+        <p class="text-muted"><%=i.description%></p>
+        <a href="<%=i.button_link%>" target="_blank" class="btn apply-btn btn-sm mt-3">Apply Now</a>
+      </div>
+    </div>
+  <%})%>
+<%}%>
+
+   
+  </div>
+</div>
+
+<script>
+  // Search filter
+  function searchSchemes() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let schemes = document.getElementsByClassName("scheme-item");
+    for (let i = 0; i < schemes.length; i++) {
+      let schemeText = schemes[i].innerText.toLowerCase();
+      schemes[i].style.display = schemeText.includes(input) ? "" : "none";
+    }
+  }
+  document.getElementById("searchInput").addEventListener("keyup", searchSchemes);
+
+  // Redirect to link directly
+  function redirectToLink(button) {
+    let link = button.getAttribute("data-link");
+    window.open(link, "_blank"); // new tab
+  }
+</script>
+
+
+<%- include("footer.ejs") %>

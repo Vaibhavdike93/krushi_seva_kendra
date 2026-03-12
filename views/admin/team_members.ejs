@@ -1,0 +1,56 @@
+<%- include("navbar") %>
+
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Our Team</h2>
+
+  <!-- Language Select -->
+<form method="GET" action="/admin/team_members_list" class="text-center mb-4">
+  <select name="language" onchange="this.form.submit()" class="form-select w-25 d-inline">
+    <option value="en" <%= lang === "en" ? "selected" : "" %>>English</option>
+    <option value="mr" <%= lang === "mr" ? "selected" : "" %>>Marathi</option>
+    <option value="hi" <%= lang === "hi" ? "selected" : "" %>>Hindi</option>
+  </select>
+</form>
+
+
+  <div class="row">
+    <% for(var i=0; i < team_members.length; i++){ %>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm text-center p-3">
+          <!-- Image -->
+          <% if(team_members[i].image){ %>
+            <img src="/uploads/<%= team_members[i].image %>" class="card-img-top" alt="<%= team_members[i].name %>" style="height:200px;object-fit:cover;">
+          <% } else { %>
+            <i class="fa fa-user fa-5x mb-3"></i>
+          <% } %>
+
+          <!-- Name & Designation -->
+          <div class="card-body">
+            <h5 class="card-title"><%= team_members[i].name %></h5>
+            <p class="text-muted"><%= team_members[i].designation %></p>
+
+            <!-- Description -->
+            <p><%= team_members[i].description %></p>
+
+            <!-- Experience -->
+            <% if(team_members[i].experience_title){ %>
+              <span class="badge bg-success"><%= team_members[i].experience_title %></span>
+            <% } %>
+
+            <!-- Update Button -->
+            <div class="mt-3 d-flex justify-content-center gap-2">
+  <a href="/admin/team/edit/<%= team_members[i].id %>" class="btn btn-warning btn-sm">Update</a>
+  <a href="/admin/team/delete/<%= team_members[i].id %>" class="btn btn-danger btn-sm"
+     onclick="return confirm('तुला नक्की delete करायचं आहे का?');">
+     Delete
+  </a>
+</div>
+
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include("footer") %>

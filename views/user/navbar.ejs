@@ -5,9 +5,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Krushi Seva Kendra</title>
-    <script src="https://kit.fontawesome.com/3841ba2abd.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/user/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+ <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 
     <style>
         .bg-topbar {
@@ -37,7 +67,7 @@
         }
 
         .logo_img {
-            height: 80px;
+            height: 60px;
             width: auto;
         }
 
@@ -86,10 +116,14 @@
             text-decoration: none;
             color: inherit;
         }
+        .navbar{
+            z-index: 99999;
+        }
 
         .category-menu a:hover {
             color: #f38020;
         }
+    
 
         /* Sticky Category Menu on Desktop */
         @media (min-width: 992px) {
@@ -129,6 +163,39 @@
                 margin: 0.5rem 0;
             }
 
+            /* Marquee Base (works on desktop and mobile) */
+            .marquee-container {
+                flex: 1;
+                overflow: hidden;
+                white-space: nowrap;
+                margin: 0 20px;
+            }
+
+            .marquee-text {
+                display: inline-block;
+                animation: scroll 15s linear infinite;
+                font-size: 0.875rem;
+                color: #d1d5db;
+            }
+
+            @keyframes scroll {
+                0% {
+                    transform: translateX(100%);
+                }
+
+                100% {
+                    transform: translateX(-100%);
+                }
+            }
+
+            /* Hide marquee on mobile if you want */
+            @media (max-width: 768px) {
+                .marquee-container {
+                    display: none;
+                }
+            }
+
+
             /* Category menu wrap in mobile */
             .category-menu {
                 display: flex;
@@ -149,18 +216,35 @@
     </style>
 </head>
 
-<body class="bg-white">
+<body>
 
     <!-- Top Bar -->
     <div class="bg-topbar text-white px-3 py-1">
-        <div class="d-flex flex-wrap justify-content-center justify-content-md-end align-items-center gap-3">
-            <a href="#" class="topbar-link"><i class="fa-brands fa-instagram"></i></a>
-            <span>|</span>
-            <a href="#" class="topbar-link"><i class="fa-brands fa-square-facebook"></i></a>
-            <span>|</span>
-            <a href="#" class="topbar-link"><i class="fa-brands fa-youtube"></i></a>
-            <div class="px-3 py-1 rounded text-white fw-semibold small bg-call-btn">
-                Call To Order: 1800-0000-0000
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+
+            <!-- Marquee on the left -->
+            <div class="marquee-container d-none d-md-block">
+                <marquee behavior="scroll" direction="left">
+                    🎉 Welcome to our store! • Free shipping on orders over 1 • New arrivals every week • 24/7
+                    customer support available
+                </marquee>
+            </div>
+
+
+
+
+
+            <!-- Social Media Links and Call Button -->
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="topbar-link"><i class="fa-brands fa-instagram"></i></a>
+                <span>|</span>
+                <a href="#" class="topbar-link"><i class="fa-brands fa-square-facebook"></i></a>
+                <span>|</span>
+                <a href="#" class="topbar-link"><i class="fa-brands fa-youtube"></i></a>
+
+                <div class="px-3 py-1 rounded text-white fw-semibold small bg-call-btn ms-3">
+                   <%= translations.buttons.Call_To_Order %>
+                </div>
             </div>
         </div>
     </div>
@@ -170,22 +254,64 @@
         <div class="container-fluid px-3 px-md-5">
             <!-- Logo -->
             <a class="navbar-brand" href="#">
-                <img src="logo.png" alt="Krushi Seva Kendra" class="logo_img">
+                <img src="/krushi.png" alt="Krushi Seva Kendra" class="logo_img">
             </a>
 
             <!-- Right Links -->
             <ul class="navbar-nav flex-row gap-3 order-lg-3">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">😊 English</a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item active" href="#">English</a></li>
-                        <li><a class="dropdown-item" href="#">Hindi</a></li>
-                        <li><a class="dropdown-item" href="#">Marathi</a></li>
-                    </ul>
+                <li class="nav-item dropdown m-2">
+                    <form method="get" action="/" class="d-inline">
+                        <select class="form-select form-select-sm fw-semibold" style="width:auto;" name="lang"
+                            onchange="this.form.submit()">
+                            <option value="en" <%=lang==='en' ? 'selected' : '' %>>🇬🇧 English</option>
+                            <option value="hi" <%=lang==='hi' ? 'selected' : '' %>>🇮🇳 Hindi</option>
+                            <option value="mr" <%=lang==='mr' ? 'selected' : '' %>>🇮🇳 Marathi</option>
+                        </select>
+                    </form>
                 </li>
-                <li><a class="nav-link" href="#"><i class="fa-regular fa-heart"></i></a></li>
-                <li><a class="nav-link" href="#"><i class="fa-regular fa-user"></i></a></li>
-                <li><a class="nav-link" href="#"><i class="fa-solid fa-cart-shopping"></i></a></li>
+
+                <% if (!user) { %>
+                    <!-- Guest / Not logged in -->
+                    <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-regular fa-heart"></i></a></li>
+                    <li><a class="nav-link" onclick="showAlert()" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                    </li>
+                    <li><a class="nav-link" href="/registration?lang=<%= lang %>"><i class="fa-solid fa-user"></i>
+                            <%= translations.buttons.Register %>
+                        </a></li>
+                    <% } else { %>
+                        <!-- Logged in user -->
+                      <li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fa-solid fa-user"></i> <%= translations.buttons.Profile %>
+  </a>
+  <ul class="dropdown-menu profile" aria-labelledby="profileDropdown">
+    <li>
+      <a class="dropdown-item" href="/profile?lang=<%= lang %>">
+        <i class="fa-solid fa-id-card me-2"></i> My Profile
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="/orders?lang=<%= lang %>">
+        <i class="fa-solid fa-box me-2"></i> My Orders
+      </a>
+    </li>
+  </ul>
+</li>
+
+
+                        <li><a class="nav-link" href="/wishlist?lang=<%= lang %>"><i
+                                    class="fa-regular fa-heart"></i></a></li>
+                        <li><a class="nav-link" href="/add_tocart?lang=<%= lang %>"><i
+                                    class="fa-solid fa-cart-shopping"></i></a></li>
+                        <li><a class="nav-link" href="/logout?lang=<%= lang %>"><i
+                                    class="fa-solid fa-right-from-bracket"></i>
+                                <%= translations.buttons.logout %>
+                            </a>
+
+                        </li>
+                        <% } %>
+
+
             </ul>
 
             <!-- Toggle Button -->
@@ -197,27 +323,39 @@
             <!-- Collapsible Search + Category -->
             <div class="collapse navbar-collapse order-lg-1" id="mainNavbar">
                 <!-- Search -->
-                <form class="search-form mx-lg-auto my-2 my-lg-0">
+                <form class="search-form mx-lg-auto my-2 my-lg-0" method="GET" action="/product">
                     <div class="search-container">
-                        <input type="search" class="search-input" placeholder="Search products..." aria-label="Search">
+                        <input type="hidden" name="lang" value="<%= lang %>">
+                        <input type="search" name="search" class="search-input" value="<%= search || '' %>"
+                            placeholder="Search products...">
                         <button class="search-button" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
                 </form>
 
+
                 <!-- Category Menu (Mobile) -->
                 <div class="category-menu mt-2 d-lg-none text-center fw-semibold small">
-                    <a href="#">BRANDS</a>
-                    <a href="#">SEEDS</a>
-                    <a href="#">CROP PROTECTION</a>
-                    <a href="#">CROP NUTRITION</a>
-                    <a href="#">EQUIPMENTS</a>
-                    <a href="#">ANIMAL HUSBANDRY</a>
-                    <a href="#">ORGANIC</a>
-                    <a href="#">TAPAS</a>
-                    <a href="#">SERVICES</a>
-                    <a href="#">KNOWLEDGE</a>
+
+                    <a href="/?lang=<%= lang %>">
+                        <%= translations.pages_name.Home %>
+                    </a>
+                    <a href="/about?lang=<%= lang %>">
+                        <%= translations.pages_name.ABOUT_US %>
+                    </a>
+                    <a href="/product?lang=<%= lang %>">
+                        <%= translations.pages_name.Product %>
+                    </a>
+                    <!-- <a href="/soil_testing?lang=<%= lang %>">
+                        <%= translations.pages_name.Soil_Testing %>
+                    </a> -->
+                    <a href="/recommendation?lang=<%= lang %>">
+                        <%= translations.pages_name.Recomendation %>
+                    </a>
+                    <a href="/schemes?lang=<%= lang %>">
+                        <%= translations.pages_name.Goverment_Schemes %>
+                    </a>
                 </div>
             </div>
         </div>
@@ -225,16 +363,22 @@
 
     <!-- Category Menu (Desktop Sticky) -->
     <div class="category-menu sticky-desktop d-none d-lg-block text-center fw-semibold small">
-        <a href="#">BRANDS</a>
-        <a href="#">SEEDS</a>
-        <a href="#">CROP PROTECTION</a>
-        <a href="#">CROP NUTRITION</a>
-        <a href="#">EQUIPMENTS</a>
-        <a href="#">ANIMAL HUSBANDRY</a>
-        <a href="#">ORGANIC</a>
-        <a href="#">TAPAS</a>
-        <a href="#">SERVICES</a>
-        <a href="#">KNOWLEDGE</a>
+        <a href="/?lang=<%= lang %>">
+            <%= translations.pages_name.Home %>
+        </a>
+        <a href="/about?lang=<%= lang %>">
+            <%= translations.pages_name.ABOUT_US %>
+        </a>
+        <a href="/product?lang=<%= lang %>">
+            <%= translations.pages_name.Product %>
+        </a>
+        <!-- <a href="/soil_testing?lang=<%= lang %>">
+            <%= translations.pages_name.Soil_Testing %>
+        </a> -->
+        <a href="/recommendation?lang=<%= lang %>">
+            <%= translations.pages_name.Recomendation %>
+        </a>
+        <a href="/schemes?lang=<%= lang %>">
+            <%= translations.pages_name.Goverment_Schemes %>
+        </a>
     </div>
-
-

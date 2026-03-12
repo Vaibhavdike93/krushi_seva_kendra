@@ -1,16 +1,31 @@
 var express = require('express');
+var path = require('path');
 var router = express.Router();
 var exe = require('./conn');
 var CheckLogin = require("./CheckLogin");
 var translations = require('../translation');
 
+var uploadDir = path.join(__dirname, '..', 'public', 'uploads');
+const nodemailer = require("nodemailer");
 
 
-router.get('/', function(req, res) {
-  res.render('admin/index.ejs');
+
+
+router.get('/',CheckLogin, async function(req, res) {
+  var pendingCount = await exe(`SELECT COUNT(*) AS cnt FROM orders WHERE status = 'Pending'`);
+  var ShippedCount = await exe(`SELECT COUNT(*) As cnt FROM orders WHERE status = 'Shipped'`);
+  var allCount = await exe(`SELECT COUNT(*) AS cnt FROM orders`);
+  var completedCount = await exe(`SELECT COUNT(*) AS cnt FROM orders WHERE status = 'Completed'`);
+  console.log(pendingCount);
+  res.render('admin/index.ejs',
+    {pendingCount: pendingCount[0].cnt,
+      ShippedCount:ShippedCount[0].cnt,
+      allCount:allCount[0].cnt,
+      completedCount:completedCount[0].cnt
+    });
 });
 
-router.get('/profile',function(req,res){
+router.get('/profile',CheckLogin,function(req,res){
     res.render("admin/profile");
 })
 
@@ -25,7 +40,7 @@ router.post("/add_brand", async function (req, res) {
 
   if (req.files && req.files.brandImage) {
     filename = new Date().getTime() + req.files.brandImage.name;
-    await req.files.brandImage.mv("public/uploads/" + filename);
+    await req.files.brandImage.mv(path.join(uploadDir, filename));
   }
 
   var sql = `
@@ -61,6 +76,7 @@ router.get("/delete_brand/:id",async function(req,res){
   res.redirect("/admin/brand_list");
 });
 
+
 router.get("/add_category",function(req,res){
   res.render("admin/add_category.ejs")
 });
@@ -69,13 +85,10 @@ router.post("/add_category", async function(req, res) {
     var d = req.body;
     let filename = "";
 
-    // Image upload
     if (req.files && req.files.categoryImage) {
         filename = new Date().getTime() + req.files.categoryImage.name;
-        await req.files.categoryImage.mv("public/uploads/" + filename);
+        await req.files.categoryImage.mv(path.join(uploadDir, filename));
     }
-
-    // Insert into DB
     var sql = `INSERT INTO categories 
                (category_name_en, category_name_hi, category_name_mr, category_image) 
                VALUES (?, ?, ?, ?)`;
@@ -120,7 +133,7 @@ router.post("/add_crop", async function (req, res) {
       
         if (req.files && req.files.crop_image) {
             filename = new Date().getTime() + "_" + req.files.crop_image.name;
-            await req.files.crop_image.mv("public/uploads/" + filename);
+            await req.files.crop_image.mv(path.join(uploadDir, filename));
         }
 
         var sql = `
@@ -155,15 +168,15 @@ router.get("/crops_list", async function (req, res) {
 });
 
 router.get("/delete_crop/:id", async function (req, res) {
-    var id = req.params.id;
-    try {
-        var sql = `DELETE FROM crops WHERE crop_id = ?`;
-        var result = await exe(sql, [id]);
-        res.redirect("/admin/crops_list");
-    } catch (err) {
-        console.error("Error deleting crop:", err);
-        res.status(500).send("Something went wrong!");
-    }
+  var id = req.params.id;
+  try {
+    var sql = `DELETE FROM crops WHERE crop_id = ?`;
+    await exe(sql, [id]);
+    res.redirect("/admin/crops_list");
+  } catch (err) {
+    console.error("Error deleting crop:", err);
+    res.status(500).send("Something went wrong!");
+  }
 });
 
 router.get("/add_product", async (req, res) => {
@@ -253,7 +266,7 @@ router.post("/add_product", async (req, res) => {
     let main_image = null;
     if (req.files && req.files.productImage) {
       main_image = Date.now() + "_" + req.files.productImage.name;
-      await req.files.productImage.mv("public/uploads/" + main_image);
+      await req.files.productImage.mv(path.join(uploadDir, main_image));
     }
 
     const productResult = await exe(
@@ -288,25 +301,26 @@ router.post("/add_product", async (req, res) => {
       }
     }
 
- const weights = req.body["weight[]"];
-const prices = req.body["price[]"];
-
-// console.log("weights:", weights);
-// console.log("prices:", prices);
-
+    const weights = req.body["weight[]"];
+    const prices = req.body["price[]"];
+ 
     if (weights && prices) {
-      for (let i = 0; i < weights.length; i++) {
-        if (weights[i] && prices[i]) {
+      const weightArray = Array.isArray(weights) ? weights : [weights];
+      const priceArray = Array.isArray(prices) ? prices : [prices];
+      
+      for (let i = 0; i < weightArray.length; i++) {
+        const weight = weightArray[i] ? weightArray[i].trim() : null;
+        const price = priceArray[i] ? parseInt(priceArray[i]) : null;
+        
+        if (weight && price) {
+          console.log(`Inserting variant: weight=${weight}, price=${price}`);
           await exe(
             `INSERT INTO product_variants (product_id, weight, price) VALUES (?, ?, ?)`,
-            [product_id, weights[i], prices[i]]
+            [product_id, weight, price]
           );
         }
       }
     }
-
-    // console.log(weights)
-    // console.log(prices)
 
     res.redirect("/admin/add_product");
   } catch (error) {
@@ -373,10 +387,6 @@ router.get("/product_list", async function (req, res) {
 
 
 
-
-
-
-
 router.get("/product_edit/:id", async (req, res) => {
   try {
     const productId = req.params.id;
@@ -434,7 +444,7 @@ const crops = await exe(
       crops,
       selectedCropIds,
       lang,
-      translations // ensure you pass translations object for season dropdown
+      translations 
     });
   } catch (err) {
     console.error(err);
@@ -462,7 +472,8 @@ router.post("/product_update/:id", async (req, res) => {
          season = ?,
          description = ?,
          features = ?,
-         language = ?
+         language = ?,
+         updated_at = NOW()
        WHERE product_id = ?`,
       [
         data.product_name,
@@ -482,7 +493,7 @@ router.post("/product_update/:id", async (req, res) => {
     if (req.files && req.files.productImage) {
       const file = req.files.productImage;
       const filename = Date.now() + "_" + file.name;
-      await file.mv("public/uploads/" + filename);
+      await file.mv(path.join(uploadDir, filename));
 
       await exe(
         "UPDATE product SET main_image = ? WHERE product_id = ?",
@@ -544,8 +555,6 @@ const prices = Array.isArray(data['price[]']) ? data['price[]'] : (data['price[]
   }
 });
 
-
-
 router.get("/product_delete/:id", async (req, res) => {
   try {
     const productId = req.params.id;
@@ -565,6 +574,9 @@ router.get("/company_info",async function(req,res){
   var sql = `SELECT * FROM company_info`;
   var records = await exe(sql);
   res.render("admin/company_info.ejs",{records})
+})
+router.get("/soil_testing_report",function(req,res){
+  res.render("admin/soil_testing.ejs")
 })
 
 
@@ -604,8 +616,54 @@ var result = await exe(sql,[d.shop_name,d.shop_address_line1,
 })
 
 router.get('/recomendation', async (req, res) => {
-  res.render('admin/recomendation', { translations });
+  try {
+    const type = await exe("SELECT id, type_name FROM recommendation_type WHERE language = ?", ["en"]);
+    res.render("admin/recomendation.ejs", { products: [], type, translations });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading form");
+  }
 });
+
+
+
+router.get("/get-products/:lang", async (req, res) => {
+  const lang = req.params.lang || "en";
+  console.log("👉 Requested language:", lang);
+
+  try {
+    const products = await exe(
+      "SELECT product_id, product_name FROM product WHERE language = ?",
+      [lang]
+    );
+
+    const type = await exe(
+      "SELECT id, type_name FROM recommendation_type WHERE language = ?",
+      [lang]
+    );
+
+    let cropCol = "crop_name_en";
+    if (lang === "hi") cropCol = "crop_name_hi";
+    else if (lang === "mr") cropCol = "crop_name_mr";
+
+    const crops = await exe(
+      `SELECT crop_id, ${cropCol} AS crop_name FROM crops`
+    );
+
+    console.log("👉 Products:", products, "👉 Types:", type, "👉 Crops:", crops);
+    res.json({ products, type, crops });   // send crops also
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "DB Error" });
+  }
+});
+
+
+
+
+
+
+
 
 router.post('/recommendations/add', async (req, res) => {
   try {
@@ -614,14 +672,14 @@ router.post('/recommendations/add', async (req, res) => {
 
     if (req.files && req.files.image) {
       filename = Date.now() + '_' + req.files.image.name;
-      await req.files.image.mv('public/uploads/' + filename);
+      await req.files.image.mv(path.join(uploadDir, filename));
     }
 
     await exe(`
       INSERT INTO recommendations 
-      (name, type, crop_name, season, soil_type, stage, product_usage, language, image) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [d.name, d.type, d.crop_name, d.season, d.soil_type, d.stage, d.product_usage, d.language, filename]
+      (name, type, crop_name, season, soil_type, stage, product_usage, language, image,product_id) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
+      [d.name, d.type, d.crop_name, d.season, d.soil_type, d.stage, d.product_usage, d.language, filename,d.product_id]
     );
 
     res.redirect('/admin/recomendation');
@@ -652,7 +710,6 @@ router.get('/recomendation_list', async (req, res) => {
   }
 });
 
-// GET Edit form
 router.get('/recommendations_edit/:id', async (req, res) => {
   try {
     const recId = req.params.id;
@@ -678,7 +735,7 @@ router.post('/recommendations_edit/:id', async (req, res) => {
     // Image update
     if (req.files && req.files.image) {
       filename = Date.now() + '_' + req.files.image.name;
-      await req.files.image.mv('public/uploads/' + filename);
+      await req.files.image.mv(path.join(uploadDir, filename));
     }
 
     await exe(`
@@ -708,33 +765,554 @@ router.get('/recommendations_delete/:id', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 router.get("/soil_testing_report",function(req,res){
   res.render("admin/soil_testing.ejs")
+})
+
+router.post("/sendmessage",async function(req,res){
+  var d = req.body;
+  var sql = `INSERT INTO user_message(name, email, phone, subject, message) VALUES (?,?,?,?,?)`;
+  var result = await exe(sql,[d.name,d.email,d.phone,d.subject,d.message]);
+    res.redirect("/conatct");  
+});
+
+
+router.get("/offer_banner",async function(req,res){
+  var sql = `SELECT * FROM offer_banner`;
+  var offer = await exe(sql);
+  res.render("admin/offer_banner.ejs",{offer})
+})
+
+router.get("/edit_banner/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM offer_banner WHERE id = ?`;
+  var offer = await exe(sql,[id]);
+  res.render("admin/edit_banner.ejs",{offer})
+})
+
+router.post("/update_banner/:id", async function(req, res) {
+  var id = req.params.id;
+
+  if (req.files && req.files.newImage) {
+    var file_name = new Date().getTime() + req.files.newImage.name;
+    req.files.newImage.mv(path.join(uploadDir, file_name));
+  } else {
+    var old_image = await exe(`SELECT * FROM offer_banner WHERE id=${id}`);
+    var file_name = old_image[0].banner_image;
+  }
+  var sql = `UPDATE offer_banner SET banner_image=? WHERE id=?`;
+  var result = await exe(sql, [file_name, id]);
+  res.redirect("/admin/offer_banner")
+});
+router.get("/government_Schemes",function(req,res){
+  res.render("admin/add_Government_Schemes.ejs")
+})
+
+router.post("/add_Government_Schemes", async function (req, res) {
+  var d = req.body;
+
+  if (req.files && req.files.image) {
+    var file_name = new Date().getTime() + req.files.image.name;
+    req.files.image.mv(path.join(uploadDir, file_name));
+  } else {
+    var file_name = ""; 
+  }
+
+  var sql = `INSERT INTO government_schemes (image, heading, description, button_link,language) VALUES (?,?,?,?)`;
+  var result = await exe(sql, [file_name, d.heading, d.description, d.link,d.language]);
+  res.redirect("/admin/Government_Schemes"); 
+});
+
+router.get("/Government_Scheme_list", async function(req, res) {
+    let language = req.query.lang || 'en'; 
+
+    try {
+        let sql = `SELECT * FROM government_schemes WHERE language='${language}'`;
+        let info = await exe(sql);
+
+        res.render("admin/government_schemes", { info, language });
+    } catch (err) {
+        console.error("Database error:", err);
+        res.send("Database error. Check console.");
+    }
+});
+
+
+router.get("/edit_Government_Schemes/:id",async function(req,res){
+  var id = req.params.id;
+  var sql =   `SELECT * FROM government_schemes WHERE id = ? `;
+  var info = await exe(sql ,[id]);
+  res.render("admin/edit_Government_Schemes.ejs",{info})
+})
+router.post("/update_Government_Schemes/:id", async function (req, res) {
+  var id = req.params.id;
+  var d = req.body;
+  var file_name;
+
+  if (req.files && req.files.new_image) {
+    file_name = new Date().getTime() + "_" + req.files.new_image.name;
+    await req.files.new_image.mv(path.join(uploadDir, file_name));
+  } else {
+    var old_img = await exe("SELECT image FROM government_schemes WHERE id=?", [id]);
+    file_name = old_img[0].image;
+  }
+
+  var sql = `UPDATE government_schemes SET 
+    image = ?,
+    heading = ?,
+    description = ?,
+    button_link = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [file_name, d.heading, d.description, d.link, id]);
+    res.redirect("/admin/Government_Scheme_list")
+});
+router.get("/delete_Government_Schemes/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `DELETE FROM Government_Schemes WHERE id = ?`;
+  var result = await exe(sql,[id]);
+  res.redirect("/admin/Government_Scheme_list")
+})
+
+
+
+router.get("/all_orders", async function (req, res) {
+  const { status } = req.query;
+
+  let sql;
+  if (status && status !== "All") {
+    sql = await exe(
+      `SELECT * FROM orders 
+       LEFT JOIN order_products ON orders.order_id = order_products.order_id 
+       WHERE orders.status=?`, 
+      [status]
+    );
+  } else {
+    sql = await exe(
+      `SELECT * FROM orders 
+       LEFT JOIN order_products ON orders.order_id = order_products.order_id`
+    );
+  }
+
+  res.render("admin/all_orders.ejs", { orders: sql, selectedStatus: status || "All" });
+});
+
+
+
+
+
+router.post("/all_orders", async function (req, res) {
+  const { order_id, order_status } = req.body;
+
+  try {
+    let timestampField = null;
+    if (order_status === "Shipped") timestampField = "shipped_at";
+    if (order_status === "Delivered") timestampField = "delivered_at";
+    if (order_status === "Cancelled") timestampField = "cancelled_at";
+    if (order_status === "Completed") timestampField = "completed_at"; 
+
+    let query = "UPDATE orders SET status=?";
+    let params = [order_status];
+
+    if (timestampField) {
+      query += `, ${timestampField} = NOW()`;
+    }
+
+    query += " WHERE order_id=?";
+    params.push(order_id);
+
+    await exe(query, params);
+
+    const order = await exe(
+      `SELECT o.order_id, u.email, u.name, op.product_name
+       FROM orders o 
+       JOIN users u ON o.user_id = u.user_id 
+       JOIN order_products op ON o.order_id = op.order_id 
+       WHERE o.order_id=? LIMIT 1`, 
+      [order_id]
+    );
+
+    if (order.length > 0) {
+      const userEmail = order[0].email;
+      const userName = order[0].name;
+      const productName = order[0].product_name;
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "gorakshnathdalavi91@gmail.com",
+          pass: "yydh qpqv vovi fjsm", 
+        },
+      });
+
+      const mailOptions = {
+        from: `"Janmitra Krushi Seva Kendra" <gorakshnathdalavi91@gmail.com>`,
+        to: userEmail,
+        subject: `Your Order #${order_id} Status Update`,
+        html: `
+        <div style="font-family: Arial, sans-serif; background-color:#f9f9f9; padding:30px; text-align:center;">
+          <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:12px; padding:25px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+            
+            <h2 style="color:#007BFF; margin-bottom:10px;">Krushi Seva Kendra</h2>
+            <p style="color:#555; margin-top:0;">Hello <b>${userName}</b>,</p>
+            
+            <p style="font-size:16px; color:#333;">
+              The status of your order <b>#${order_id}</b> 
+              for product <b>${productName}</b> has been updated.
+            </p>
+            
+            <div style="margin:20px 0;">
+              <span style="display:inline-block; padding:12px 25px; font-size:18px; 
+                           background-color:${order_status === "Completed" ? "#28a745" : order_status === "Pending" ? "#ffc107" : order_status === "Shipped" ? "#17a2b8" : order_status === "Delivered" ? "#007BFF" : "#dc3545"};
+                           color:white; border-radius:30px; font-weight:bold;">
+                ${order_status}
+              </span>
+            </div>
+            
+            <p style="color:#555; font-size:15px; line-height:1.6;">
+              Thank you for shopping with us!  
+              We’ll keep you updated about your order progress.
+            </p>
+            
+            <hr style="margin:30px 0; border:none; border-top:1px solid #eee;">
+            <p style="color:#888; font-size:13px;">&copy; ${new Date().getFullYear()} Krushi Seva Kendra. All Rights Reserved.</p>
+          </div>
+        </div>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log("📧 Email sent to", userEmail);
+    }
+
+    res.redirect("/admin/all_orders");
+  } catch (err) {
+    console.error("Status update error:", err);
+    res.status(500).send("Error updating order status");
+  }
+});
+
+router.get("/features", async function (req, res) {
+    let language = req.query.lang || 'en'; 
+
+    let sql = `SELECT * FROM features WHERE language='${language}'`;
+    let item = await exe(sql);
+
+    res.render("admin/features", { item, language });
+});
+
+router.get("/features/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM features WHERE id = ?`;
+  var info = await exe(sql,[id]);
+  res.render("admin/edit_festures.ejs",{info})
+})
+router.post("/features/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d = req.body;
+  var sql = `UPDATE features SET 
+  title = ?,
+  description = ?
+  WHERE id = ?`;
+  var result = await exe(sql,[d.name,d.description,id]);
+  res.redirect("/admin/features")
+})
+
+router.get("/services", async (req, res) => {
+  const lang = req.query.lang || "eg";
+  const services = await exe("SELECT * FROM services WHERE language = ?", [lang]);
+  res.render("admin/services.ejs", { services, lang });
+});
+router.get("/services/update/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM services WHERE id = ?`;
+  var service = await exe(sql,[id]);
+  res.render("admin/edit_services.ejs",{service})
+})
+router.post("/services/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d = req.body;
+  var sql = `UPDATE services SET 
+  title = ?,
+  description = ?,
+  point1 = ?,
+  point2 = ?,
+  point3 = ?,
+  point4 = ?
+  WHERE 
+  id = ?`;
+  var result = await exe(sql ,[d.heading,d.description,d.point1,d.point2,d.point3,d.point4,id]);
+  res.redirect("/admin/services");
+})
+router.get("/story", async (req, res) => {
+    var lang = req.query.language || 'en'; // Default English
+    var sql = `SELECT * FROM about_story WHERE language = ?`;
+    var story = await exe(sql, [lang]);
+    res.render("admin/story.ejs", { story, lang });
+});
+router.get("/story/update/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM about_story WHERE id = ?`;
+  var story = await exe(sql,[id]);
+  res.render("admin/edit_story.ejs",{story})
+})
+
+router.post("/story/update/:id", async function(req, res) {
+    var id = req.params.id;
+    var d = req.body;
+    var file_name;
+
+    if(req.files && req.files.img) {
+        file_name = new Date().getTime() + "_" + req.files.img.name;
+        req.files.img.mv(path.join(uploadDir, file_name));
+    } else {
+        var old_data = await exe("SELECT * FROM about_story WHERE id = ?", [id]);
+        file_name = old_data[0].img; 
+    }
+
+    var sql = `UPDATE about_story SET 
+        parg_1 = ?,
+        parg_2 = ?,
+        parg_3 = ?,
+        image_url = ?
+        WHERE id = ?`;
+    
+    var result = await exe(sql, [d.parag_1, d.parag_2,d.parag_3, file_name, id]);
+    res.redirect("/admin/story"); 
+});
+router.get("/mission",async function(req,res){
+  var lang = req.query.language || 'en'; 
+  var sql = `SELECT * FROM mission WHERE language = ?`;
+  var missions = await exe(sql,[lang]);
+  console.log(missions)
+  res.render("admin/mission.ejs",{missions})
+})
+router.get("/mission/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM mission WHERE id = ?`;
+  var mission = await exe(sql,[id]);
+  res.render("admin/edit_mission.ejs",{mission})
+})
+router.post("/mission/update/:id", async function(req, res){
+  var id = req.params.id;
+  var d = req.body;
+
+  var sql = `UPDATE mission SET 
+    title = ?,
+    description = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [d.title, d.description, id]);
+  res.redirect("/admin/mission")
+});
+
+router.get("/vision",async function(req,res){
+  var lang = req.query.language || 'en'; 
+  var sql = `SELECT * FROM vision WHERE language = ?`;
+  var vision = await exe(sql,[lang]);
+  console.log(vision)
+  res.render("admin/vision.ejs",{vision})
+})
+router.get("/vision/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM vision WHERE id = ?`;
+  var vision = await exe(sql,[id]);
+  res.render("admin/edit_vision.ejs",{vision})
+})
+router.post("/vision/update/:id", async function(req, res){
+  var id = req.params.id;
+  var d = req.body;
+
+  var sql = `UPDATE vision SET 
+    title = ?,
+    description = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [d.title, d.description, id]);
+  res.redirect("/admin/vision")
+});
+
+
+
+router.get("/Values",async function(req,res){
+  var lang = req.query.language || 'en'; 
+  var sql = `SELECT * FROM valuesk WHERE language = ?`;
+  var Values = await exe(sql,[lang]);
+  res.render("admin/Values.ejs",{Values})
+})
+router.get("/Values/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM valuesk WHERE id = ?`;
+  var Values = await exe(sql,[id]);
+  res.render("admin/edit_Values.ejs",{Values})
+})
+router.post("/Values/update/:id", async function(req, res){
+  var id = req.params.id;
+  var d = req.body;
+
+  var sql = `UPDATE valuesk SET 
+    title = ?,
+    description = ?
+    WHERE id = ?`;
+
+  var result = await exe(sql, [d.title, d.description, id]);
+  res.redirect("/admin/Values")
+});
+
+router.get("/about_count",async function(req,res){
+  var lang = req.query.lang || 'en'
+  console.log(lang)
+  var sql = `SELECT * FROM about_count WHERE language = ?`;
+  var about_count = await exe(sql,[lang]);
+  res.render("admin/about_count.ejs",{about_count})
+})
+router.get("/about_count/update/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM about_count WHERE id = ?`;
+  var about_count = await exe(sql,[id]);
+  res.render("admin/adit_about_count.ejs",{about_count})
+})
+router.post("/about_count/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d= req.body;
+  var sql = `UPDATE about_count SET 
+  title_1 = ?,
+  count_1 = ?,
+  title_2 = ?,
+  count_2 = ?,
+  title_3 = ?,
+  count_3 = ?
+  WHERE 
+  id = ?`;
+  var result = await exe(sql,[d.title_1,d.count_1,d.title_2,d.count_2,d.title_3,d.count_3,id]);
+  res.redirect("/admin/about_count")
+})
+router.get("/team_members",function(req,res){
+  res.render("admin/add_team_members.ejs")
+})
+
+router.post("/team_members_add", async function(req, res) {
+  var d = req.body;
+  if (req.files && req.files.image) {
+    var file_name = new Date().getTime() + "_" + req.files.image.name;
+    req.files.image.mv(path.join(uploadDir, file_name));
+  } else {
+    var file_name = "";
+  }
+  var sql = `INSERT INTO team_members(image, name, designation, description, experience_title, language) 
+             VALUES (?,?,?,?,?,?)`;
+  var result = await exe(sql, [
+    file_name,
+    d.name,
+    d.designation,
+    d.description,
+    d.experience_title,
+    d.language
+  ]);
+  res.redirect("/admin/team_members");
+});
+
+router.get("/team_members_list",async function(req,res){
+  var lang = req.query.language || "en";   // इथे बदल
+  console.log(lang)
+  var sql = `SELECT * FROM team_members WHERE language = ?`;
+  var team_members = await exe(sql,[lang]);
+  res.render("admin/team_members.ejs",{team_members, lang})
+})
+
+router.get("/team/edit/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `SELECT * FROM team_members  WHERE id = ?`;
+  var team_members = await exe(sql,[id]);
+  res.render("admin/edit_team_members.ejs",{team_members})
+})
+
+router.post("/team/update/:id",async function(req,res){
+  var id = req.params.id;
+  var d = req.body;
+  if(req.files && req.files.image){
+    var file_name = new Date().getTime()+"_"+req.files.image.name;
+    req.files.image.mv(path.join(uploadDir, file_name));
+  }else{
+    var old = await exe("SELECT image FROM team_members WHERE id=?",[id]);
+    var file_name = old[0].image;
+  }
+  var sql = `UPDATE team_members SET image=?, name=?, designation=?, description=?, experience_title=? WHERE id=?`;
+  await exe(sql,[file_name,d.name,d.designation,d.description,d.experience_title,id]);
+
+
+router.get("/soil_testing_bookings",async function(req,res){
+  var sql = `SELECT * FROM soil_tests`;
+  var bookings = await exe(sql);
+  res.render("admin/soil_testing_bookings.ejs",{bookings})
+})
+  res.redirect("/admin/team_members_list"); 
+});
+router.get("/team/delete/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = `DELETE FROM team_members WHERE id = ?`;
+  var result = await exe(sql,[id]);
+  res.redirect("/admin/team_members_list")
+})
+
+router.get("/h_recommendations", async function (req, res) {
+  var lang = req.query.language || "en";
+  var sql = "SELECT * FROM h_recommendations WHERE language = ?";
+  var data = await exe(sql, [lang]);
+  res.render("admin/h_recommendations_list.ejs", { data, lang });
+});
+router.get("/soil_testing_bookings",async function(req,res){
+  var sql = `SELECT * FROM soil_tests`;
+  var bookings = await exe(sql);
+  res.render("admin/soil_testing_bookings.ejs",{bookings})
+})
+
+router.get("/h_recommendations/edit/:id", async function (req, res) {
+  var id = req.params.id;
+  var sql = "SELECT * FROM h_recommendations WHERE id = ?";
+  var row = await exe(sql, [id]);
+  res.render("admin/h_recommendations_edit.ejs", { row: row[0] });
+});
+
+router.post("/h_recommendations/update/:id", async function (req, res) {
+  var id = req.params.id;
+  var d = req.body;
+
+  if (req.files && req.files.image) {
+    var file_name = Date.now() + "_" + req.files.image.name;
+    req.files.image.mv(path.join(uploadDir, file_name));
+  } else {
+    var old = await exe("SELECT image FROM h_recommendations WHERE id = ?", [id]);
+    var file_name = old[0].image;
+  }
+
+  var sql =
+    "UPDATE h_recommendations SET heading=?, description=?,  image=? WHERE id=?";
+  await exe(sql, [d.name, d.description, file_name, id]);
+
+  res.redirect("/admin/h_recommendations?language=" + d.language);
+});
+
+router.get("/recomendation_type",async function(req,res){
+  var type = await exe("SELECT * FROM recommendation_type ")
+  res.render("admin/recomendation_type.ejs",{type})
+});
+
+router.post("/add-recommendation-type",async function(req,res){
+  // res.send(req.body);
+  var d= req.body;
+var sql = `INSERT INTO recommendation_type (language, type_name) VALUES (?, ?)`;
+var data = await exe(sql,[d.language,d.type]);
+res.redirect("/admin/recomendation_type");
+});
+
+router.get("/delete_type/:id",async function(req,res){
+  var id = req.params.id;
+  var sql = await exe("DELETE  FROM recommendation_type WHERE id = ?",[id]);
+  res.redirect("admin/recomendation_type");
 })
 
 
 
 
-module.exports = router;
+ module.exports = router;

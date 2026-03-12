@@ -1,0 +1,100 @@
+<%-include("navbar")%>
+
+<div class="container overflow-auto my-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="gradient-heading">All Orders</h2>
+
+  <form method="GET" action="/admin/all_orders" class="d-flex">
+    <select name="status" class="form-select me-2" onchange="this.form.submit()">
+      <option value="All"       <%= selectedStatus==='All' ? 'selected' : '' %>>All</option>
+      <option value="Pending"   <%= selectedStatus==='Pending' ? 'selected' : '' %>>Pending</option>
+      <option value="Shipped"   <%= selectedStatus==='Shipped' ? 'selected' : '' %>>Shipped</option>
+      <option value="Completed" <%= selectedStatus==='Completed' ? 'selected' : '' %>>Completed</option>
+      <option value="Cancelled" <%= selectedStatus==='Cancelled' ? 'selected' : '' %>>Cancelled</option>
+    </select>
+  </form>
+</div>
+
+<div class="overflow-auto my-5" >
+  <table id="ordersTable" class="table table-striped table-bordered shadow-lg rounded">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Pincode</th>
+        <th>Village</th>
+        <th>Taluka</th>
+        <th>District</th>
+        <th>State</th>
+        <th>Payment Method</th>
+        <th>Product Name</th>
+        <th>Weight</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Saved Amount</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orders.forEach((order, index) => { %>
+        <tr>
+          <td><%= index+1 %></td>
+          <td><%= order.name %></td>
+          <td><%= order.phone %></td>
+          <td><%= order.pincode %></td>
+          <td><%= order.village %></td>
+          <td><%= order.taluka %></td>
+          <td><%= order.district %></td>
+          <td><%= order.state %></td>
+          <td><%= order.payment_method %></td>
+          <td><%= order.product_name %></td>
+          <td><%= order.weight %></td>
+          <td><%= order.quantity %></td>
+          <td>₹<%= order.order_total %></td>
+          <td>₹<%= order.saved %></td>
+          <td><%= order.created_at.toLocaleDateString("en-IN") %></td>
+          <td>
+            <form action="/admin/all_orders" method="POST">
+              <input type="hidden" name="order_id" value="<%= order.order_id %>">
+              <select name="order_status" onchange="this.form.submit()" class="form-select form-select-sm">
+                <option value="Pending"   <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                <option value="Shipped"   <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                <option value="Completed" <%= order.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+              </select>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+</div>
+<style>
+  .gradient-heading {
+    background: linear-gradient(90deg, #007BFF, #00CFC8);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+</style>
+
+<script>
+  $(document).ready(function() {
+    $('#ordersTable').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        { extend: 'excel', text: '📊 Export Excel', className: 'btn btn-success' },
+        { extend: 'pdf', text: '📄 Export PDF', className: 'btn btn-danger' },
+        { extend: 'print', text: '🖨️ Print', className: 'btn btn-primary' }
+      ]
+    });
+  });
+</script>
+
+<%-include("footer")%>

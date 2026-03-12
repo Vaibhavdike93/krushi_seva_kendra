@@ -1,6 +1,7 @@
 var express = require("express");
 var router =  express.Router()
 var exe = require("./conn");
+var CheckLogin = require("./CheckLogin");
 router.get("/login",function(req,res){
     res.render("accounts/login.ejs");
 });
@@ -24,7 +25,7 @@ router.get("/logout",function(req,res){
     res.redirect("/accounts/login");
 });
 
-router.post("/update-profile",async function(req,res){
+router.post("/update-profile",CheckLogin,async function(req,res){
     var d = req.body;
     var sql = `UPDATE admin SET name = ?, email = ? , phone = ? WHERE admin_id = ?`;
     var data = await exe(sql,[d.name,d.email,d.phone,d.admin_id]);

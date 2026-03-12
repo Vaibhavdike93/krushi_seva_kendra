@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krushi Seva Kendra - Admin Panel</title>
+    <title>Krushi Seva Kendra Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/admin/style.css">
  
+
+    <!-- Bootstrap CSS -->
    <!-- In <head> -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
@@ -17,7 +19,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
-<body>
+
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     
@@ -28,7 +30,7 @@
         </button>
         <div class="sidebar-header">
             <div class="logo-full">
-                <i class="bi bi-flower1 fs-4"></i>
+                <i class="bi bi-droplet-fill fs-4"></i>
                 <span class="fs-5 fw-bold">Krushi Seva Kendra</span>
             </div>
         </div>
@@ -38,6 +40,26 @@
                     <i class="bi bi-speedometer2"></i>
                     <span class="menu-text">Dashboard</span>
                 </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#orders" class="nav-link" data-bs-toggle="collapse" data-title="Orders">
+                    <i class="bi bi-hdd-stack"></i>
+                    <span class="menu-text">Orders</span>
+                    <i class="bi bi-chevron-down dropdown-indicator"></i>
+                </a>
+                <div class="collapse submenu" id="orders">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/admin/all_orders" class="nav-link" data-title="All Order">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">All Order</span>
+                            </a>
+                        </li>
+                        
+  
+                    </ul>
+                </div>
             </li>
             <li class="nav-item">
                 <a href="#brands" class="nav-link" data-bs-toggle="collapse" data-title="Brands">
@@ -114,6 +136,8 @@
             </li>
 
 
+
+
             <li class="nav-item">
                 <a href="#devicesSubmenu" class="nav-link" data-bs-toggle="collapse" data-title="Devices">
                     <i class="bi bi-hdd-stack"></i>
@@ -140,11 +164,129 @@
                 </div>
             </li>
 
+             <li class="nav-item">
+
+                <a href="/admin/company_info" class="nav-link " data-title="Company Info">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Company Info</span>
+                </a>
+            </li>
+           
+             <li class="nav-item">
+
+                <a href="/admin/soil_testing_report" class="nav-link " data-title="Book Soil Testing">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Book Soil Testing </span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+
+                <a href="/admin/soil_testing_bookings" class="nav-link " data-title="Soil Testing Bookings">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Soil Testing Bookings</span>
+                </a>
+            </li>
+
+
+              <li class="nav-item">
+                <a href="/admin/offer_banner" class="nav-link " data-title="offer banner">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Offer Banner</span>
+                </a>
+            </li>
+
+              <li class="nav-item">
+                <a href="/admin/features" class="nav-link " data-title="features">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Features</span>
+                </a>
+            </li>
+               <li class="nav-item">
+                <a href="/admin/services" class="nav-link " data-title="services">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Services</span>
+                </a>
+            </li>
+              <li class="nav-item">
+                <a href="/admin/story" class="nav-link " data-title="Our Story">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Our Story</span>
+                </a>
+            </li>
+             <li class="nav-item">
+                <a href="/admin/mission" class="nav-link " data-title="mission">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Mission</span>
+                </a>
+            </li>
+              <li class="nav-item">
+                <a href="/admin/vision" class="nav-link " data-title="vision">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Vision</span>
+                </a>
+            </li>
+             <li class="nav-item">
+                <a href="/admin/Values" class="nav-link " data-title="Values">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Values</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/about_count" class="nav-link " data-title="about count">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">About Count</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/recomendation_type" class="nav-link " data-title="about count">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Add Recomendation Type</span>
+                </a>
+            </li>
+             <li class="nav-item">
+                <a href="/admin/h_recommendations" class="nav-link " data-title="recommendations">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Home Page Recommendations</span>
+                </a>
+            </li>
+           
+            <li class="nav-item">
+                <a href="#team_members" class="nav-link" data-bs-toggle="collapse" data-title="Recomendation">
+                    <i class="bi bi-hdd-stack"></i>
+                    <span class="menu-text">Team Members</span>
+                    <i class="bi bi-chevron-down dropdown-indicator"></i>
+
+                </a>
+                <div class="collapse submenu" id="team_members">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/admin/team_members" class="nav-link" data-title="All Recomendation">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Add Team Members Add</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/team_members_list" class="nav-link" data-title="Add Recomendation">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Team  Members Add List</span>
+                            </a>
+                        </li>
+
+                       
+                    </ul>
+                </div>
+            </li>
+
+
+
             <li class="nav-item">
                 <a href="#recomendation" class="nav-link" data-bs-toggle="collapse" data-title="Recomendation">
                     <i class="bi bi-hdd-stack"></i>
-                    <span class="menu-text">Recomendation</span>
+                    <span class="menu-text">Add Recomendation</span>
                     <i class="bi bi-chevron-down dropdown-indicator"></i>
+
                 </a>
                 <div class="collapse submenu" id="recomendation">
                     <ul class="nav flex-column">
@@ -165,7 +307,32 @@
                     </ul>
                 </div>
             </li>
-           
+        
+            <li class="nav-item">
+                <a href="#Government_Schemes" class="nav-link" data-bs-toggle="collapse" data-title="Government Schemes">
+                    <i class="bi bi-hdd-stack"></i>
+                    <span class="menu-text">Government Schemes</span>
+                    <i class="bi bi-chevron-down dropdown-indicator"></i>
+
+                </a>
+                <div class="collapse submenu" id="Government_Schemes">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/admin/government_Schemes" class="nav-link" data-title="All Recomendation">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Add Government Schemes</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/Government_Scheme_list" class="nav-link" data-title="Government Schemes List">
+                                <i class="bi bi-circle"></i>
+                                <span class="menu-text">Government Schemes List</span>
+                            </a>
+                        </li>
+</ul>
+                </div>
+                </li>
+
         
         </ul>
     </div>
@@ -241,5 +408,11 @@
                 </div>
             </div>
         </nav>
+
+     
+
+       
+    
+        
 
       

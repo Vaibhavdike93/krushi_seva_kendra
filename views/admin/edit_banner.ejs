@@ -1,0 +1,30 @@
+<%-include("navbar")%>
+
+<div class="container mt-5">
+  <div class="card shadow-lg p-4" style="max-width: 600px; margin: auto; border-radius: 15px;">
+    <h2 class="text-center mb-4">Update Offer Banner</h2>
+
+    <!-- Current Image Section -->
+    <div class="text-center mb-4">
+      <p class="fw-bold">Current Image:</p>
+      <img src="/uploads/<%= offer[0].banner_image %>" 
+           alt="Current Banner" 
+           style="width:300px; height:200px; object-fit:cover; border:1px solid #ccc; border-radius:10px;">
+    </div>
+
+    <!-- Update Form -->
+    <form action="/admin/update_banner/<%= offer[0].id %>" method="post" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label class="form-label fw-bold">Upload New Image:</label>
+        <input type="file" name="newImage" class="form-control">
+      </div>
+      
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg">Update Banner</button>
+      </div>
+    </form>
+  </div>
+</div>
+<br><br>
+<br>
+<%-include("footer")%>

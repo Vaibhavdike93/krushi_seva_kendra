@@ -1,0 +1,50 @@
+<%- include("navbar") %>
+
+<div class="container mt-4">
+
+  <h2 class="text-center mb-4">Edit Count Section</h2>
+
+  <!-- Update Form -->
+  <form action="/admin/about_count/update/<%= about_count[0].id %>" method="POST">
+
+    <div class="row">
+      <!-- Title 1 & Count 1 -->
+      <div class="col-md-6 mb-3">
+        <label>Title 1</label>
+        <input type="text" name="title_1" class="form-control" value="<%= about_count[0].title_1 %>">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Count 1</label>
+        <input type="text" name="count_1" class="form-control" value="<%= about_count[0].count_1 %>">
+      </div>
+
+      <!-- Title 2 & Count 2 -->
+      <div class="col-md-6 mb-3">
+        <label>Title 2</label>
+        <input type="text" name="title_2" class="form-control" value="<%= about_count[0].title_2 %>">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Count 2</label>
+        <input type="text" name="count_2" class="form-control" value="<%= about_count[0].count_2 %>">
+      </div>
+
+      <!-- Title 3 & Count 3 -->
+      <div class="col-md-6 mb-3">
+        <label>Title 3</label>
+        <input type="text" name="title_3" class="form-control" value="<%= about_count[0].title_3 %>">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Count 3</label>
+        <input type="text" name="count_3" class="form-control" value="<%= about_count[0].count_3 %>">
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-success">Update</button>
+      <a href="/admin/about_count?lang=<%= lang %>" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<%- include("footer") %>

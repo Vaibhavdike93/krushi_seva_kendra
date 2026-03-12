@@ -1,0 +1,49 @@
+<%- include("navbar") %>
+
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Edit Service</h2>
+
+  <form method="POST" action="/admin/services/update/<%= service[0].id %>" style="max-width:700px; margin:auto;">
+    <!-- Heading -->
+    <div class="mb-3">
+      <label class="form-label">Heading</label>
+      <input type="text" name="heading" class="form-control" value="<%= service[0].title %>" required>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea name="description" class="form-control" rows="3" required><%= service[0].description %></textarea>
+    </div>
+
+    <!-- Points -->
+    <div class="mb-3">
+      <label class="form-label">Point 1</label>
+      <input type="text" name="point1" class="form-control" value="<%= service[0].point1 %>">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Point 2</label>
+      <input type="text" name="point2" class="form-control" value="<%= service[0].point2 %>">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Point 3</label>
+      <input type="text" name="point3" class="form-control" value="<%= service[0].point3 %>">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Point 4</label>
+      <input type="text" name="point4" class="form-control" value="<%= service[0].point4 %>">
+    </div>
+
+
+    <!-- Submit -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary">Update Service</button>
+      <a href="/admin/services" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+<br><br><br>
+<%- include("footer") %>

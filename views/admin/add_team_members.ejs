@@ -1,0 +1,55 @@
+<%- include("navbar") %>
+
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Add Team Member</h2>
+
+  <form action="/admin/team_members_add" method="POST" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
+    
+    <!-- Image Upload -->
+    <div class="mb-3">
+      <label class="form-label">Upload Image</label>
+      <input type="file" name="image" class="form-control" required>
+    </div>
+
+    <!-- Name -->
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input type="text" name="name" class="form-control" placeholder="Enter Name" required>
+    </div>
+
+    <!-- Designation -->
+    <div class="mb-3">
+      <label class="form-label">Designation</label>
+      <input type="text" name="designation" class="form-control" placeholder="Enter Designation" required>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea name="description" class="form-control" rows="3" placeholder="Enter Description"></textarea>
+    </div>
+
+    <!-- Experience Title -->
+    <div class="mb-3">
+      <label class="form-label">Experience Title</label>
+      <input type="text" name="experience_title" class="form-control" placeholder="e.g. 5 Years Experience">
+    </div>
+
+    <!-- Language Select -->
+    <div class="mb-3">
+      <label class="form-label">Language</label>
+      <select name="language" class="form-select" required>
+        <option value="">-- Select Language --</option>
+        <option value="en">English</option>
+        <option value="mr">Marathi</option>
+        <option value="hi">Hindi</option>
+      </select>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary w-100">Add Team Member</button>
+
+  </form>
+</div>
+
+<%- include("footer") %>
