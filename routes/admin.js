@@ -56,9 +56,9 @@ router.get("/brand_list", async function (req, res) {
 
 router.get("/delete_brand/:id",async function(req,res){
   var id = req.params.id;
-  var sql = `DELETE FROM product_barand WHERE brand_id = ?`;
+  var sql = `DELETE FROM brands WHERE brand_id = ?`;
   var result = await exe(sql,[id]);
-   res.redirect("/admin/Add_product_Brand")
+  res.redirect("/admin/brand_list");
 });
 
 router.get("/add_category",function(req,res){
@@ -154,7 +154,7 @@ router.get("/crops_list", async function (req, res) {
     }
 });
 
-router.get("/delete_crop", async function (req, res) {
+router.get("/delete_crop/:id", async function (req, res) {
     var id = req.params.id;
     try {
         var sql = `DELETE FROM crops WHERE crop_id = ?`;
@@ -550,13 +550,13 @@ router.get("/product_delete/:id", async (req, res) => {
   try {
     const productId = req.params.id;
 
+    await exe("DELETE FROM product_crops WHERE product_id = ?", [productId]);
     await exe("DELETE FROM product_variants WHERE product_id = ?", [productId]);
-
-    await exe("DELETE FROM products WHERE product_id = ?", [productId]);
+    await exe("DELETE FROM product WHERE product_id = ?", [productId]);
 
     res.redirect("/admin/product_list");
   } catch (err) {
-    console.error("❌ Error deleting product:", err);
+    console.error("Error deleting product:", err);
     res.status(500).send("Internal Server Error");
   }
 });
